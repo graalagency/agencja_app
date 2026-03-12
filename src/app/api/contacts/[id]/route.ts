@@ -3,10 +3,28 @@ import { NextResponse } from 'next/server'
 
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const id = Number(params.id)
-  const contact = await prisma.contact.findUnique({ 
-    where: { id }
+  const contact = await prisma.contact.findUnique({
+    where: { id },
+    include: {
+      Client: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
+    }
   })
-  return NextResponse.json(contact)
+  if (!contact) {
+    return NextResponse.json({ error: 'Contact not found' }, { status: 404 })
+  }
+
+  const mapped = {
+    ...contact,
+    client: contact.Client,
+    photos: Array.isArray(contact.photos) ? contact.photos : []
+  }
+
+  return NextResponse.json(mapped)
 }
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
@@ -25,6 +43,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       email: body.email || null,
       contactPosition: body.contactPosition || null,
       accountant: body.accountant || null,
+      clientId: body.clientId || null
     }
   })
   return NextResponse.json(contact)

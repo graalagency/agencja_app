@@ -27,20 +27,20 @@ export async function POST(
       return NextResponse.json({ error: 'File must be an image' }, { status: 400 })
     }
 
-    const authorId = parseInt(params.id)
-    const author = await prisma.author.findUnique({
-      where: { id: authorId }
+    const contactId = parseInt(params.id)
+    const contact = await prisma.contact.findUnique({
+      where: { id: contactId }
     })
 
-    if (!author) {
-      return NextResponse.json({ error: 'Author not found' }, { status: 404 })
+    if (!contact) {
+      return NextResponse.json({ error: 'Contact not found' }, { status: 404 })
     }
 
     // Utwórz nazwę pliku
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
     const ext = file.name.split('.').pop()
-    const filename = `contact-${authorId}-${Date.now()}.${ext}`
+    const filename = `contact-${contactId}-${Date.now()}.${ext}`
     
     // Ścieżka do zapisu
     const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'contacts')
@@ -50,12 +50,12 @@ export async function POST(
     await writeFile(filepath, buffer)
 
     // Dodaj do listy zdjęć w bazie
-    const currentPhotos = ((author as any).photos as string[]) || []
+    const currentPhotos = Array.isArray(contact.photos) ? (contact.photos as string[]) : []
     const photoUrl = `/uploads/contacts/${filename}`
     const updatedPhotos = [...currentPhotos, photoUrl]
 
-    await prisma.author.update({
-      where: { id: authorId },
+    await prisma.contact.update({
+      where: { id: contactId },
       data: { photos: updatedPhotos } as any
     })
 
@@ -87,21 +87,21 @@ export async function DELETE(
       return NextResponse.json({ error: 'Photo URL required' }, { status: 400 })
     }
 
-    const authorId = parseInt(params.id)
-    const author = await prisma.author.findUnique({
-      where: { id: authorId }
+    const contactId = parseInt(params.id)
+    const contact = await prisma.contact.findUnique({
+      where: { id: contactId }
     })
 
-    if (!author) {
-      return NextResponse.json({ error: 'Author not found' }, { status: 404 })
+    if (!contact) {
+      return NextResponse.json({ error: 'Contact not found' }, { status: 404 })
     }
 
     // Usuń z listy zdjęć
-    const currentPhotos = ((author as any).photos as string[]) || []
+    const currentPhotos = Array.isArray(contact.photos) ? (contact.photos as string[]) : []
     const updatedPhotos = currentPhotos.filter(url => url !== photoUrl)
 
-    await prisma.author.update({
-      where: { id: authorId },
+    await prisma.contact.update({
+      where: { id: contactId },
       data: { photos: updatedPhotos } as any
     })
 

@@ -17,7 +17,8 @@ export async function GET(req: Request) {
       lastName: 'lastName',
       email: 'email',
       phoneNumber: 'phoneNumber',
-      dateMod: 'dateMod'
+      dateMod: 'updatedAt',
+      createdAt: 'createdAt'
     }
     return mapping[field] || 'id'
   }
@@ -40,6 +41,14 @@ export async function GET(req: Request) {
   const total = await prisma.contact.count({ where })
   const contacts = await prisma.contact.findMany({
     where,
+    include: {
+      Client: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
+    },
     orderBy,
     skip: (page - 1) * pageSize,
     take: pageSize
@@ -56,8 +65,12 @@ export async function GET(req: Request) {
     email: c.email,
     contactPosition: c.contactPosition,
     accountant: c.accountant,
-    dateMod: c.dateMod,
-    userMod: c.userMod
+    client: c.Client,
+    photos: Array.isArray(c.photos) ? c.photos : [],
+    createdAt: c.createdAt,
+    updatedAt: c.updatedAt,
+    dateMod: c.updatedAt,
+    userMod: null
   }))
 
   return NextResponse.json({
@@ -83,7 +96,8 @@ export async function POST(req: Request) {
       fax: body.fax || null,
       email: body.email || null,
       contactPosition: body.contactPosition || null,
-      accountant: body.accountant || null
+      accountant: body.accountant || null,
+      clientId: body.clientId || null
     }
   })
 
@@ -98,8 +112,11 @@ export async function POST(req: Request) {
     email: contact.email,
     contactPosition: contact.contactPosition,
     accountant: contact.accountant,
-    dateMod: contact.dateMod,
-    userMod: contact.userMod
+    photos: Array.isArray(contact.photos) ? contact.photos : [],
+    createdAt: contact.createdAt,
+    updatedAt: contact.updatedAt,
+    dateMod: contact.updatedAt,
+    userMod: null
   }
 
   return NextResponse.json(mapped, { status: 201 })
