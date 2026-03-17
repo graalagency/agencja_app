@@ -1,0 +1,14 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { DictLanguageOrderByWithRelationInputObjectSchema as DictLanguageOrderByWithRelationInputObjectSchema } from './objects/DictLanguageOrderByWithRelationInput.schema';
+import { DictLanguageWhereInputObjectSchema as DictLanguageWhereInputObjectSchema } from './objects/DictLanguageWhereInput.schema';
+import { DictLanguageWhereUniqueInputObjectSchema as DictLanguageWhereUniqueInputObjectSchema } from './objects/DictLanguageWhereUniqueInput.schema';
+import { DictLanguageCountAggregateInputObjectSchema as DictLanguageCountAggregateInputObjectSchema } from './objects/DictLanguageCountAggregateInput.schema';
+import { DictLanguageMinAggregateInputObjectSchema as DictLanguageMinAggregateInputObjectSchema } from './objects/DictLanguageMinAggregateInput.schema';
+import { DictLanguageMaxAggregateInputObjectSchema as DictLanguageMaxAggregateInputObjectSchema } from './objects/DictLanguageMaxAggregateInput.schema';
+import { DictLanguageAvgAggregateInputObjectSchema as DictLanguageAvgAggregateInputObjectSchema } from './objects/DictLanguageAvgAggregateInput.schema';
+import { DictLanguageSumAggregateInputObjectSchema as DictLanguageSumAggregateInputObjectSchema } from './objects/DictLanguageSumAggregateInput.schema';
+
+export const DictLanguageAggregateSchema: z.ZodType<Prisma.DictLanguageAggregateArgs> = z.object({ orderBy: z.union([DictLanguageOrderByWithRelationInputObjectSchema, DictLanguageOrderByWithRelationInputObjectSchema.array()]).optional(), where: DictLanguageWhereInputObjectSchema.optional(), cursor: DictLanguageWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), DictLanguageCountAggregateInputObjectSchema ]).optional(), _min: DictLanguageMinAggregateInputObjectSchema.optional(), _max: DictLanguageMaxAggregateInputObjectSchema.optional(), _avg: DictLanguageAvgAggregateInputObjectSchema.optional(), _sum: DictLanguageSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.DictLanguageAggregateArgs>;
+
+export const DictLanguageAggregateZodSchema = z.object({ orderBy: z.union([DictLanguageOrderByWithRelationInputObjectSchema, DictLanguageOrderByWithRelationInputObjectSchema.array()]).optional(), where: DictLanguageWhereInputObjectSchema.optional(), cursor: DictLanguageWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), DictLanguageCountAggregateInputObjectSchema ]).optional(), _min: DictLanguageMinAggregateInputObjectSchema.optional(), _max: DictLanguageMaxAggregateInputObjectSchema.optional(), _avg: DictLanguageAvgAggregateInputObjectSchema.optional(), _sum: DictLanguageSumAggregateInputObjectSchema.optional() }).strict();

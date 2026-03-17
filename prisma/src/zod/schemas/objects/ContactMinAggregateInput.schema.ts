@@ -11,10 +11,11 @@ const makeSchema = () => z.object({
   informal: z.literal(true).optional(),
   fax: z.literal(true).optional(),
   email: z.literal(true).optional(),
-  userMod: z.literal(true).optional(),
-  dateMod: z.literal(true).optional(),
   contactPosition: z.literal(true).optional(),
-  accountant: z.literal(true).optional()
+  accountant: z.literal(true).optional(),
+  clientId: z.literal(true).optional(),
+  createdAt: z.literal(true).optional(),
+  updatedAt: z.literal(true).optional()
 }).strict();
 export const ContactMinAggregateInputObjectSchema: z.ZodType<Prisma.ContactMinAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.ContactMinAggregateInputType>;
 export const ContactMinAggregateInputObjectZodSchema = makeSchema();

@@ -1,12 +1,13 @@
 import * as z from 'zod';
+import { RoleSchema } from '../../enums/Role.schema';
 // prettier-ignore
 export const UserInputSchema = z.object({
     id: z.number().int(),
     name: z.string().optional().nullable(),
     email: z.string(),
     passwordHash: z.string(),
-    role: z.string(),
-    permissions: z.string().optional().nullable(),
+    role: RoleSchema,
+    permissions: z.unknown().optional().nullable(),
     createdAt: z.date(),
     updatedAt: z.date(),
     locale: z.string()

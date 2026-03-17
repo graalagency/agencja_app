@@ -1,6 +1,5 @@
 import { prisma } from '../../../lib/prisma'
 import { NextResponse } from 'next/server'
-import { Prisma } from '@prisma/client'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -11,34 +10,36 @@ export async function GET(req: Request) {
   const sortOrder = searchParams.get('sortOrder') || 'asc'
 
   const mapOrderField = (field: string) => {
-    const mapping: Record<string, string> = {
-      id: 'AuthorID',
-      firstName: 'FirstName',
-      lastName: 'LastName',
-      fullName: 'FullName',
-      penName: 'PenName',
-      dateMod: 'DateMod'
+    const mapping: Record<string, 'id' | 'firstName' | 'lastName' | 'createdAt' | 'updatedAt'> = {
+      id: 'id',
+      firstName: 'firstName',
+      lastName: 'lastName',
+      fullName: 'lastName',
+      penName: 'lastName',
+      dateMod: 'updatedAt'
     }
-    return mapping[field] || 'AuthorID'
+    return mapping[field] || 'id'
   }
 
-  const where: Prisma.tblAuthorsWhereInput = search
+  const where = search
     ? {
         OR: [
-          { FirstName: { contains: search, mode: 'insensitive' } },
-          { LastName: { contains: search, mode: 'insensitive' } },
-          { FullName: { contains: search, mode: 'insensitive' } },
-          { PenName: { contains: search, mode: 'insensitive' } }
+          { firstName: { contains: search, mode: 'insensitive' as const } },
+          { middleName: { contains: search, mode: 'insensitive' as const } },
+          { lastName: { contains: search, mode: 'insensitive' as const } },
+          { description: { contains: search, mode: 'insensitive' as const } },
+          { personalEmail: { contains: search, mode: 'insensitive' as const } },
+          { workEmail: { contains: search, mode: 'insensitive' as const } }
         ]
       }
     : {}
 
   const orderBy = {
     [mapOrderField(sortBy)]: sortOrder === 'desc' ? 'desc' : 'asc'
-  } as Prisma.tblAuthorsOrderByWithRelationInput
+  } as const
 
-  const total = await (prisma as any).tblAuthors.count({ where })
-  const authors = await (prisma as any).tblAuthors.findMany({
+  const total = await prisma.author.count({ where })
+  const authors = await prisma.author.findMany({
     where,
     orderBy,
     skip: (page - 1) * pageSize,
@@ -46,16 +47,16 @@ export async function GET(req: Request) {
   })
 
   const mapped = authors.map((a: any) => ({
-    id: a.AuthorID,
-    fullName: a.FullName,
-    firstName: a.FirstName,
-    middleName: a.MiddleName,
-    lastName: a.LastName,
-    suffix: a.Suffix,
-    penName: a.PenName,
-    remarks: a.Remarks,
-    dateMod: a.DateMod,
-    userMod: a.UserMod
+    id: a.id,
+    fullName: [a.firstName, a.middleName, a.lastName].filter(Boolean).join(' '),
+    firstName: a.firstName,
+    middleName: a.middleName,
+    lastName: a.lastName,
+    suffix: null,
+    penName: null,
+    remarks: a.description,
+    dateMod: a.updatedAt,
+    userMod: null
   }))
 
   return NextResponse.json({
@@ -71,29 +72,43 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const author = await (prisma as any).tblAuthors.create({
+
+  let firstName = body.firstName || null
+  let lastName = body.lastName || null
+  if ((!firstName || !lastName) && body.fullName) {
+    const parts = String(body.fullName).trim().split(/\s+/)
+    firstName = firstName || parts[0] || null
+    lastName = lastName || (parts.slice(1).join(' ') || null)
+  }
+
+  if (!firstName || !lastName) {
+    return NextResponse.json({ error: 'firstName and lastName are required' }, { status: 400 })
+  }
+
+  const author = await prisma.author.create({
     data: {
-      FullName: body.fullName || null,
-      FirstName: body.firstName || null,
-      MiddleName: body.middleName || null,
-      LastName: body.lastName || null,
-      Suffix: body.suffix || null,
-      PenName: body.penName || null,
-      Remarks: body.remarks || null
+      firstName,
+      middleName: body.middleName || null,
+      lastName,
+      description: body.remarks || body.description || null,
+      personalEmail: body.personalEmail || null,
+      workEmail: body.workEmail || null,
+      clientId: body.clientId ? Number(body.clientId) : null,
+      updatedAt: new Date()
     }
   })
 
   const mapped = {
-    id: author.AuthorID,
-    fullName: author.FullName,
-    firstName: author.FirstName,
-    middleName: author.MiddleName,
-    lastName: author.LastName,
-    suffix: author.Suffix,
-    penName: author.PenName,
-    remarks: author.Remarks,
-    dateMod: author.DateMod,
-    userMod: author.UserMod
+    id: author.id,
+    fullName: [author.firstName, author.middleName, author.lastName].filter(Boolean).join(' '),
+    firstName: author.firstName,
+    middleName: author.middleName,
+    lastName: author.lastName,
+    suffix: null,
+    penName: null,
+    remarks: author.description,
+    dateMod: author.updatedAt,
+    userMod: null
   }
 
   return NextResponse.json(mapped, { status: 201 })

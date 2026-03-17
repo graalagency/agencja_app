@@ -8,7 +8,6 @@ import { Pagination } from '@/components/ui/Pagination'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Search } from 'lucide-react'
 
 const initialFilters = { title: '', currency: '', dateFrom: '', dateTo: '', clientId: '', billToId: '', status: '' }
 
@@ -292,103 +291,13 @@ export default function SimpleInvoicesPage() {
           </Button>
         </div>
 
-        <div className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('publisher')}</label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  list="billto-datalist"
-                  placeholder={t('searchAndSelect')}
-                  value={billToSearch}
-                  onChange={e => handleBillToInput(e.target.value)}
-                  className="pl-9"
-                />
-                <datalist id="billto-datalist">
-                  {(Array.isArray(billToClients) ? billToClients : []).map(c => (
-                    <option key={c.id} value={c.name || ''} />
-                  ))}
-                </datalist>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('billTo')}</label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  list="clients-datalist"
-                  placeholder={t('searchAndSelect')}
-                  value={clientSearch}
-                  onChange={e => handleClientInput(e.target.value)}
-                  className="pl-9"
-                />
-                <datalist id="clients-datalist">
-                  {(Array.isArray(clients) ? clients : []).map(c => (
-                    <option key={c.id} value={c.name || ''} />
-                  ))}
-                </datalist>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{tCommon('title')}</label>
-              <Input
-                placeholder={tCommon('title')}
-                value={filters.title}
-                onChange={e => setFilters({ ...filters, title: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('currency')}</label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  list="currencies-datalist"
-                  placeholder={t('searchAndSelect')}
-                  value={currencySearch}
-                  onChange={e => handleCurrencyInput(e.target.value)}
-                  className="pl-9"
-                />
-                <datalist id="currencies-datalist">
-                  {(Array.isArray(currencies) ? currencies : []).map(c => (
-                    <option key={c} value={c || ''} />
-                  ))}
-                </datalist>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('dateFrom')}</label>
-              <input
-                type="date"
-                value={filters.dateFrom}
-                onChange={e => setFilters({ ...filters, dateFrom: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground h-9"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('dateTo')}</label>
-              <input
-                type="date"
-                value={filters.dateTo}
-                onChange={e => setFilters({ ...filters, dateTo: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground h-9"
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-6 items-end">
-            <div className="md:col-start-5">
-              <Button type="button" variant="primary" className="w-full h-9" onClick={applyFilters}>{tCommon('search')}</Button>
-            </div>
-            <div>
-              <Button type="button" onClick={resetFilters} variant="outline" className="w-full h-9">{tCommon('cancel')}</Button>
-            </div>
-          </div>
+        <div className="max-w-md">
+          <label className="block text-sm font-medium text-muted-foreground">{tCommon('search')}</label>
+          <Input
+            placeholder={`${t('description')} / ${t('billTo')}`}
+            value={filters.title}
+            onChange={e => setFilters(prev => ({ ...prev, title: e.target.value }))}
+          />
         </div>
 
         <Modal isOpen={showForm} onClose={() => setShowForm(false)} title={t('createInvoice')}>
@@ -570,25 +479,25 @@ export default function SimpleInvoicesPage() {
                 ))}
               </tbody>
             </Table>
-            <div className="mt-6 flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">
-                {t('total')}: <span className="font-semibold">{meta.total}</span> {t('records')}
-              </div>
+            <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
                 <Pagination page={meta.page} pages={meta.pages} onPage={p => load(p)} />
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">{tCommon('perPage')}:</label>
-                  <select
-                    value={pageSize}
-                    onChange={e => handlePageSizeChange(Number(e.target.value))}
-                    className="px-3 py-2 border border-input rounded-md bg-background text-foreground h-9 text-sm"
-                  >
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                  </select>
+                <div className="text-sm text-muted-foreground">
+                  {t('total')}: <span className="font-semibold">{meta.total}</span> {t('records')}
                 </div>
+              </div>
+              <div className="flex items-center gap-2 md:justify-end">
+                <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">{tCommon('perPage')}:</label>
+                <select
+                  value={pageSize}
+                  onChange={e => handlePageSizeChange(Number(e.target.value))}
+                  className="px-3 py-2 border border-input rounded-md bg-background text-foreground h-9 text-sm"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
               </div>
             </div>
           </div>

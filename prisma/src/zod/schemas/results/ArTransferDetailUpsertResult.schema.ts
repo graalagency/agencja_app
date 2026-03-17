@@ -1,8 +1,0 @@
-import * as z from 'zod';
-export const ArTransferDetailUpsertResultSchema = z.object({
-  TransferID: z.number().int(),
-  DebitID: z.number().int(),
-  AmtWired: z.number().optional(),
-  Notes: z.string().optional(),
-  ArTransaction: z.unknown()
-});

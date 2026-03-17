@@ -1,0 +1,15 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { DictCountryWhereInputObjectSchema as DictCountryWhereInputObjectSchema } from './objects/DictCountryWhereInput.schema';
+import { DictCountryOrderByWithAggregationInputObjectSchema as DictCountryOrderByWithAggregationInputObjectSchema } from './objects/DictCountryOrderByWithAggregationInput.schema';
+import { DictCountryScalarWhereWithAggregatesInputObjectSchema as DictCountryScalarWhereWithAggregatesInputObjectSchema } from './objects/DictCountryScalarWhereWithAggregatesInput.schema';
+import { DictCountryScalarFieldEnumSchema } from './enums/DictCountryScalarFieldEnum.schema';
+import { DictCountryCountAggregateInputObjectSchema as DictCountryCountAggregateInputObjectSchema } from './objects/DictCountryCountAggregateInput.schema';
+import { DictCountryMinAggregateInputObjectSchema as DictCountryMinAggregateInputObjectSchema } from './objects/DictCountryMinAggregateInput.schema';
+import { DictCountryMaxAggregateInputObjectSchema as DictCountryMaxAggregateInputObjectSchema } from './objects/DictCountryMaxAggregateInput.schema';
+import { DictCountryAvgAggregateInputObjectSchema as DictCountryAvgAggregateInputObjectSchema } from './objects/DictCountryAvgAggregateInput.schema';
+import { DictCountrySumAggregateInputObjectSchema as DictCountrySumAggregateInputObjectSchema } from './objects/DictCountrySumAggregateInput.schema';
+
+export const DictCountryGroupBySchema: z.ZodType<Prisma.DictCountryGroupByArgs> = z.object({ where: DictCountryWhereInputObjectSchema.optional(), orderBy: z.union([DictCountryOrderByWithAggregationInputObjectSchema, DictCountryOrderByWithAggregationInputObjectSchema.array()]).optional(), having: DictCountryScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(DictCountryScalarFieldEnumSchema), _count: z.union([ z.literal(true), DictCountryCountAggregateInputObjectSchema ]).optional(), _min: DictCountryMinAggregateInputObjectSchema.optional(), _max: DictCountryMaxAggregateInputObjectSchema.optional(), _avg: DictCountryAvgAggregateInputObjectSchema.optional(), _sum: DictCountrySumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.DictCountryGroupByArgs>;
+
+export const DictCountryGroupByZodSchema = z.object({ where: DictCountryWhereInputObjectSchema.optional(), orderBy: z.union([DictCountryOrderByWithAggregationInputObjectSchema, DictCountryOrderByWithAggregationInputObjectSchema.array()]).optional(), having: DictCountryScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(DictCountryScalarFieldEnumSchema), _count: z.union([ z.literal(true), DictCountryCountAggregateInputObjectSchema ]).optional(), _min: DictCountryMinAggregateInputObjectSchema.optional(), _max: DictCountryMaxAggregateInputObjectSchema.optional(), _avg: DictCountryAvgAggregateInputObjectSchema.optional(), _sum: DictCountrySumAggregateInputObjectSchema.optional() }).strict();

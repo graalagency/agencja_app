@@ -178,7 +178,7 @@ export default function ContactsPage() {
       fax: c.fax || '',
       email: c.email || '',
       contactPosition: c.contactPosition || '',
-      accountant: c.accountant,
+      accountant: c.accountant ?? null,
     })
     setFormErrors([])
   }
@@ -205,37 +205,9 @@ export default function ContactsPage() {
             {t('createContact')}
           </Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="label">{tCommon('search')}</label>
-            <Input value={search} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setSearch(e.target.value)} placeholder="Imię/Nazwisko/Email" />
-          </div>
-          <div>
-            <label className="label">{tCommon('sortBy')}</label>
-            <select className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={sortBy} onChange={e=>setSortBy(e.target.value as any)}>
-              <option value="id">ID</option>
-              <option value="firstName">{t('firstName')}</option>
-              <option value="lastName">{t('lastName')}</option>
-              <option value="phoneNumber">{t('phone')}</option>
-              <option value="email">{t('email')}</option>
-              <option value="createdAt">{tCommon('createdAt')}</option>
-            </select>
-          </div>
-          <div>
-            <label className="label">{tCommon('order')}</label>
-            <select className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={sortOrder} onChange={e=>setSortOrder(e.target.value as any)}>
-              <option value="asc">{tCommon('ascending')}</option>
-              <option value="desc">{tCommon('descending')}</option>
-            </select>
-          </div>
-          <div>
-            <label className="label">{tCommon('pageSize')}</label>
-            <select className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={String(pageSize)} onChange={e=>setPageSize(Number(e.target.value))}>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="20">20</option>
-            </select>
-          </div>
+        <div className="max-w-md">
+          <label className="label">{tCommon('search')}</label>
+          <Input value={search} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setSearch(e.target.value)} placeholder="Imię/Nazwisko/Email" />
         </div>
       </Card>
 
@@ -289,7 +261,17 @@ export default function ContactsPage() {
                 ))}
               </tbody>
             </Table>
-            <Pagination page={meta.page} pages={meta.pages} onPage={(p)=>load(p)} />
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <Pagination page={meta.page} pages={meta.pages} onPage={(p)=>load(p)} />
+              <div className="flex items-center gap-2 md:justify-end">
+                <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">{tCommon('pageSize')}:</label>
+                <select className="flex h-9 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={String(pageSize)} onChange={e=>setPageSize(Number(e.target.value))}>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                </select>
+              </div>
+            </div>
           </div>
         )}
       </Card>

@@ -26,12 +26,14 @@ export async function PUT(req: Request) {
         userAccess: userAccess ?? false,
         advancedAccess: advancedAccess ?? false,
         adminAccess: adminAccess ?? true,
+        updatedAt: new Date(),
       },
       create: {
         module,
         userAccess: userAccess ?? false,
         advancedAccess: advancedAccess ?? false,
         adminAccess: adminAccess ?? true,
+        updatedAt: new Date(),
       },
     })
 

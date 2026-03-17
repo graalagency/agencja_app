@@ -132,7 +132,7 @@ model RolePermissions {
   updatedAt      DateTime
 }
 
-model CountryDictionary {
+model DictCountry {
   id          Int      @id @default(autoincrement())
   description String
   code        String   @unique
@@ -140,22 +140,28 @@ model CountryDictionary {
   eu          Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime
+
+  @@map("DictCountry")
 }
 
-model CurrencyDictionary {
+model DictCurrency {
   id          Int      @id @default(autoincrement())
   code        String   @unique
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime
+
+  @@map("DictCurrency")
 }
 
-model LanguageDictionary {
+model DictLanguage {
   id          Int      @id @default(autoincrement())
   code        String   @unique
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime
+
+  @@map("DictLanguage")
 }
 
 model User {

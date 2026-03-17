@@ -18,12 +18,13 @@ export const ContactFindManySelectSchema: z.ZodType<Prisma.ContactSelect> = z.ob
     informal: z.boolean().optional(),
     fax: z.boolean().optional(),
     email: z.boolean().optional(),
-    userMod: z.boolean().optional(),
-    dateMod: z.boolean().optional(),
     contactPosition: z.boolean().optional(),
     accountant: z.boolean().optional(),
-    tblCustContacts: z.boolean().optional(),
-    _count: z.boolean().optional()
+    photos: z.boolean().optional(),
+    clientId: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    Client: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.ContactSelect>;
 
 export const ContactFindManySelectZodSchema = z.object({
@@ -35,12 +36,13 @@ export const ContactFindManySelectZodSchema = z.object({
     informal: z.boolean().optional(),
     fax: z.boolean().optional(),
     email: z.boolean().optional(),
-    userMod: z.boolean().optional(),
-    dateMod: z.boolean().optional(),
     contactPosition: z.boolean().optional(),
     accountant: z.boolean().optional(),
-    tblCustContacts: z.boolean().optional(),
-    _count: z.boolean().optional()
+    photos: z.boolean().optional(),
+    clientId: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    Client: z.boolean().optional()
   }).strict();
 
 export const ContactFindManySchema: z.ZodType<Prisma.ContactFindManyArgs> = z.object({ select: ContactFindManySelectSchema.optional(), include: z.lazy(() => ContactIncludeObjectSchema.optional()), orderBy: z.union([ContactOrderByWithRelationInputObjectSchema, ContactOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContactWhereInputObjectSchema.optional(), cursor: ContactWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContactScalarFieldEnumSchema, ContactScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContactFindManyArgs>;

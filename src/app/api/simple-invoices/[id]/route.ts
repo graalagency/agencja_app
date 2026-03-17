@@ -8,54 +8,44 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ error: 'Invalid ID' }, { status: 400 })
     }
 
-    const p = prisma as any
-    const invoice = await p.tblInvoice.findUnique({
-      where: { InvNum: id }
+    const invoice = await prisma.invoice.findUnique({
+      where: { id },
+      include: { Client: { select: { id: true, name: true, email: true, phone: true } } }
     })
 
     if (!invoice) {
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
     }
 
-    // Fetch client data if available
-    let client = null
-    if (invoice.ClientId) {
-      client = await p.tblCustomers.findUnique({
-        where: { CustID: invoice.ClientId },
-        select: { CustID: true, Name: true, DefaultEmail: true, DefaultPhone: true }
-      })
-    }
-
-    const data = {
-      id: invoice.InvNum,
-      invType: invoice.InvType || '',
-      invDate: invoice.InvDate?.toISOString() || null,
-      billToId: invoice.BillToId,
-      clientId: invoice.ClientId,
-      clientName: client?.Name ?? null,
-      clientEmail: client?.DefaultEmail ?? null,
-      clientPhone: client?.DefaultPhone ?? null,
-      shipToId: invoice.ShipToId,
-      currId: invoice.CurrId || null,
-      totalInvNET: invoice.TotalInvNET ?? 0,
-      vatPerc: invoice.VATPerc ?? 0,
-      termDD: invoice.TermDD ?? 0,
-      remarks: invoice.Remarks || '',
-      status: invoice.Status || '',
-      sumInWords: invoice.SumInWords || '',
-      balance: invoice.Balance ?? 0,
-      cliRef: invoice.CliRef || '',
-      descr: invoice.Descr || '',
-      dateDue: invoice.DateDue?.toISOString() || null,
-      userName: invoice.UserName || '',
-      agentID: invoice.AgentID,
-      taxCode: invoice.TaxCode || '',
-      taxValue: invoice.TaxValue ?? 0,
-      taxInfo: invoice.TaxInfo || '',
-      propID: invoice.PropID
-    }
-
-    return NextResponse.json(data)
+    return NextResponse.json({
+      id: invoice.id,
+      invNum: invoice.id,
+      invType: 'FV',
+      invDate: invoice.issueDate.toISOString(),
+      billToId: invoice.clientId,
+      clientId: invoice.clientId,
+      clientName: invoice.Client?.name ?? null,
+      clientEmail: invoice.Client?.email ?? null,
+      clientPhone: invoice.Client?.phone ?? null,
+      shipToId: null,
+      currId: 'PLN',
+      totalInvNET: invoice.net,
+      vatPerc: invoice.vatPerc,
+      termDD: 0,
+      remarks: '',
+      status: invoice.status,
+      sumInWords: '',
+      balance: invoice.gross,
+      cliRef: '',
+      descr: invoice.title,
+      dateDue: invoice.paymentDate.toISOString(),
+      userName: '',
+      agentID: null,
+      taxCode: '',
+      taxValue: invoice.vat,
+      taxInfo: '',
+      propID: null
+    })
   } catch (err: any) {
     console.error('Error in GET /api/simple-invoices/[id]:', err)
     return NextResponse.json({ error: err?.message ?? String(err) }, { status: 500 })
@@ -70,26 +60,27 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     const body = await req.json()
-    const updateData: any = {}
+    const data: any = { updatedAt: new Date() }
 
-    if (body.status !== undefined) updateData.Status = body.status
-    if (body.remarks !== undefined) updateData.Remarks = body.remarks
-    if (body.descr !== undefined) updateData.Descr = body.descr
-    if (body.totalInvNET !== undefined) updateData.TotalInvNET = Number(body.totalInvNET)
-    if (body.vatPerc !== undefined) updateData.VATPerc = Number(body.vatPerc)
-    if (body.taxValue !== undefined) updateData.TaxValue = Number(body.taxValue)
-    if (body.balance !== undefined) updateData.Balance = Number(body.balance)
-    if (body.dateDue !== undefined) updateData.DateDue = body.dateDue ? new Date(body.dateDue) : null
-    if (body.currId !== undefined) updateData.CurrId = body.currId
-    if (body.termDD !== undefined) updateData.TermDD = Number(body.termDD)
+    if (body.status !== undefined) data.status = body.status
+    if (body.descr !== undefined) data.title = body.descr
+    if (body.title !== undefined) data.title = body.title
+    if (body.totalInvNET !== undefined) data.net = Number(body.totalInvNET)
+    if (body.vatPerc !== undefined) data.vatPerc = Number(body.vatPerc)
+    if (body.taxValue !== undefined) data.vat = Number(body.taxValue)
+    if (body.balance !== undefined) data.gross = Number(body.balance)
+    if (body.dateDue !== undefined) data.paymentDate = body.dateDue ? new Date(body.dateDue) : undefined
 
-    const p = prisma as any
-    const invoice = await p.tblInvoice.update({
-      where: { InvNum: id },
-      data: updateData
+    if (data.net !== undefined && data.vat !== undefined && data.gross === undefined) {
+      data.gross = data.net + data.vat
+    }
+
+    const invoice = await prisma.invoice.update({
+      where: { id },
+      data
     })
 
-    return NextResponse.json({ id: invoice.InvNum })
+    return NextResponse.json({ id: invoice.id, invNum: invoice.id })
   } catch (err: any) {
     console.error('Error in PATCH /api/simple-invoices/[id]:', err)
     return NextResponse.json({ error: err?.message ?? String(err) }, { status: 500 })
@@ -103,8 +94,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       return NextResponse.json({ error: 'Invalid ID' }, { status: 400 })
     }
 
-    const p = prisma as any
-    await p.tblInvoice.delete({ where: { InvNum: id } })
+    await prisma.invoice.delete({ where: { id } })
 
     return NextResponse.json({ success: true })
   } catch (err: any) {

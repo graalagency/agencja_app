@@ -1,0 +1,10 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { CountryDictionaryOrderByWithRelationInputObjectSchema as CountryDictionaryOrderByWithRelationInputObjectSchema } from './objects/CountryDictionaryOrderByWithRelationInput.schema';
+import { CountryDictionaryWhereInputObjectSchema as CountryDictionaryWhereInputObjectSchema } from './objects/CountryDictionaryWhereInput.schema';
+import { CountryDictionaryWhereUniqueInputObjectSchema as CountryDictionaryWhereUniqueInputObjectSchema } from './objects/CountryDictionaryWhereUniqueInput.schema';
+import { CountryDictionaryCountAggregateInputObjectSchema as CountryDictionaryCountAggregateInputObjectSchema } from './objects/CountryDictionaryCountAggregateInput.schema';
+
+export const CountryDictionaryCountSchema: z.ZodType<Prisma.CountryDictionaryCountArgs> = z.object({ orderBy: z.union([CountryDictionaryOrderByWithRelationInputObjectSchema, CountryDictionaryOrderByWithRelationInputObjectSchema.array()]).optional(), where: CountryDictionaryWhereInputObjectSchema.optional(), cursor: CountryDictionaryWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), CountryDictionaryCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.CountryDictionaryCountArgs>;
+
+export const CountryDictionaryCountZodSchema = z.object({ orderBy: z.union([CountryDictionaryOrderByWithRelationInputObjectSchema, CountryDictionaryOrderByWithRelationInputObjectSchema.array()]).optional(), where: CountryDictionaryWhereInputObjectSchema.optional(), cursor: CountryDictionaryWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), CountryDictionaryCountAggregateInputObjectSchema ]).optional() }).strict();

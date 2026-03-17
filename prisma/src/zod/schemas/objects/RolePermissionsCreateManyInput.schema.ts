@@ -3,7 +3,8 @@ import type { Prisma } from '@prisma/client';
 
 
 const makeSchema = () => z.object({
-  module: z.string().max(255),
+  id: z.number().int().optional(),
+  module: z.string(),
   userAccess: z.boolean().optional(),
   advancedAccess: z.boolean().optional(),
   adminAccess: z.boolean().optional(),

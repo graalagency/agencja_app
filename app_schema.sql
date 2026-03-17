@@ -51,6 +51,26 @@ CREATE TABLE [dbo].[Client] (
 );
 
 -- CreateTable
+CREATE TABLE [dbo].[Publisher] (
+    [id] INT NOT NULL IDENTITY(1,1),
+    [name] NVARCHAR(1000) NOT NULL,
+    [email] NVARCHAR(1000),
+    [phone] NVARCHAR(1000),
+    [address] NVARCHAR(1000),
+    [city] NVARCHAR(1000),
+    [postalCode] NVARCHAR(1000),
+    [country] NVARCHAR(1000) CONSTRAINT [Publisher_country_df] DEFAULT 'Polska',
+    [nip] NVARCHAR(1000),
+    [regon] NVARCHAR(1000),
+    [legalForm] NVARCHAR(1000),
+    [bankAccount] NVARCHAR(1000),
+    [notes] NVARCHAR(1000),
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [Publisher_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+    [updatedAt] DATETIME2 NOT NULL,
+    CONSTRAINT [Publisher_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
+-- CreateTable
 CREATE TABLE [dbo].[Author] (
     [id] INT NOT NULL IDENTITY(1,1),
     [firstName] NVARCHAR(1000) NOT NULL,

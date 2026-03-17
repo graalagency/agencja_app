@@ -10,6 +10,7 @@ import {
   Receipt, 
   TrendingUp, 
   Shield,
+  Globe,
   UserCircle,
   UsersIcon,
   Languages as LanguagesIcon,
@@ -30,15 +31,19 @@ type Permission = {
 const MODULES = [
   { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, category: 'main' },
   { key: 'contacts', label: 'Kontakty', icon: UserCircle, category: 'data' },
-  { key: 'clients', label: 'Klienci', icon: Building2, category: 'data' },
+  { key: 'customers', label: 'Klienci', icon: Building2, category: 'data' },
+  { key: 'publishers', label: 'Wydawcy', icon: Building2, category: 'data' },
   { key: 'authors', label: 'Autorzy', icon: BookOpen, category: 'data' },
+  { key: 'countries', label: 'Słownik krajów', icon: Globe, category: 'dictionaries' },
+  { key: 'currencies', label: 'Słownik walut', icon: DollarSign, category: 'dictionaries' },
+  { key: 'language-dictionary', label: 'Słownik języków', icon: LanguagesIcon, category: 'dictionaries' },
   { key: 'invoices', label: 'Faktury VAT', icon: Receipt, category: 'main' },
   { key: 'simple-invoices', label: 'Faktury proste', icon: File, category: 'main' },
   { key: 'cashflow', label: 'Cashflow', icon: TrendingUp, category: 'main' },
   { key: 'finances', label: 'Finanse', icon: DollarSign, category: 'main' },
   { key: 'users', label: 'Użytkownicy', icon: UsersIcon, category: 'admin' },
   { key: 'permissions', label: 'Uprawnienia', icon: Shield, category: 'admin' },
-  { key: 'languages', label: 'Języki', icon: LanguagesIcon, category: 'admin' },
+  { key: 'languages', label: 'Tłumaczenia', icon: LanguagesIcon, category: 'admin' },
 ]
 
 export default function PermissionsPage(){
@@ -271,6 +276,55 @@ export default function PermissionsPage(){
                 )
               })}
               
+              {/* Admin Category Header */}
+              <tr className="bg-muted/30">
+                <td colSpan={4} className="py-2 px-4 text-sm font-semibold text-muted-foreground">
+                  {t('dictionaries')}
+                </td>
+              </tr>
+
+              {/* Dictionary Modules */}
+              {MODULES.filter(m => m.category === 'dictionaries').map(mod => {
+                const perm = permissions[mod.key]
+                const Icon = mod.icon
+                return (
+                  <tr key={mod.key} className="border-b border-gray-100 dark:border-gray-800 hover:bg-accent/50 transition-colors">
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Icon className="h-4 w-4 text-primary" />
+                        </div>
+                        <span className="font-medium">{mod.label}</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <input
+                        type="checkbox"
+                        checked={perm?.userAccess ?? false}
+                        onChange={() => toggleAccess(mod.key, 'userAccess')}
+                        className="w-5 h-5 cursor-pointer rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                      />
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <input
+                        type="checkbox"
+                        checked={perm?.advancedAccess ?? false}
+                        onChange={() => toggleAccess(mod.key, 'advancedAccess')}
+                        className="w-5 h-5 cursor-pointer rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                      />
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <input
+                        type="checkbox"
+                        checked={perm?.adminAccess ?? true}
+                        onChange={() => toggleAccess(mod.key, 'adminAccess')}
+                        className="w-5 h-5 cursor-pointer rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                      />
+                    </td>
+                  </tr>
+                )
+              })}
+
               {/* Admin Category Header */}
               <tr className="bg-muted/30">
                 <td colSpan={4} className="py-2 px-4 text-sm font-semibold text-muted-foreground">

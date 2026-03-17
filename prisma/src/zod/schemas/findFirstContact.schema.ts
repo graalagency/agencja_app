@@ -18,12 +18,13 @@ export const ContactFindFirstSelectSchema: z.ZodType<Prisma.ContactSelect> = z.o
     informal: z.boolean().optional(),
     fax: z.boolean().optional(),
     email: z.boolean().optional(),
-    userMod: z.boolean().optional(),
-    dateMod: z.boolean().optional(),
     contactPosition: z.boolean().optional(),
     accountant: z.boolean().optional(),
-    tblCustContacts: z.boolean().optional(),
-    _count: z.boolean().optional()
+    photos: z.boolean().optional(),
+    clientId: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    Client: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.ContactSelect>;
 
 export const ContactFindFirstSelectZodSchema = z.object({
@@ -35,12 +36,13 @@ export const ContactFindFirstSelectZodSchema = z.object({
     informal: z.boolean().optional(),
     fax: z.boolean().optional(),
     email: z.boolean().optional(),
-    userMod: z.boolean().optional(),
-    dateMod: z.boolean().optional(),
     contactPosition: z.boolean().optional(),
     accountant: z.boolean().optional(),
-    tblCustContacts: z.boolean().optional(),
-    _count: z.boolean().optional()
+    photos: z.boolean().optional(),
+    clientId: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
+    Client: z.boolean().optional()
   }).strict();
 
 export const ContactFindFirstSchema: z.ZodType<Prisma.ContactFindFirstArgs> = z.object({ select: ContactFindFirstSelectSchema.optional(), include: z.lazy(() => ContactIncludeObjectSchema.optional()), orderBy: z.union([ContactOrderByWithRelationInputObjectSchema, ContactOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContactWhereInputObjectSchema.optional(), cursor: ContactWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContactScalarFieldEnumSchema, ContactScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContactFindFirstArgs>;

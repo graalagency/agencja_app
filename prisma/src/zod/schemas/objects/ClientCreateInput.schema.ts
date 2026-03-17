@@ -1,0 +1,29 @@
+import * as z from 'zod';
+import type { Prisma } from '@prisma/client';
+import { AuthorCreateNestedManyWithoutClientInputObjectSchema as AuthorCreateNestedManyWithoutClientInputObjectSchema } from './AuthorCreateNestedManyWithoutClientInput.schema';
+import { ContactCreateNestedManyWithoutClientInputObjectSchema as ContactCreateNestedManyWithoutClientInputObjectSchema } from './ContactCreateNestedManyWithoutClientInput.schema';
+import { DocumentCreateNestedManyWithoutClientInputObjectSchema as DocumentCreateNestedManyWithoutClientInputObjectSchema } from './DocumentCreateNestedManyWithoutClientInput.schema';
+import { InvoiceCreateNestedManyWithoutClientInputObjectSchema as InvoiceCreateNestedManyWithoutClientInputObjectSchema } from './InvoiceCreateNestedManyWithoutClientInput.schema'
+
+const makeSchema = () => z.object({
+  name: z.string(),
+  email: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date(),
+  address: z.string().optional().nullable(),
+  bankAccount: z.string().optional().nullable(),
+  city: z.string().optional().nullable(),
+  country: z.string().optional().nullable(),
+  legalForm: z.string().optional().nullable(),
+  nip: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+  postalCode: z.string().optional().nullable(),
+  regon: z.string().optional().nullable(),
+  Author: z.lazy(() => AuthorCreateNestedManyWithoutClientInputObjectSchema).optional(),
+  Contact: z.lazy(() => ContactCreateNestedManyWithoutClientInputObjectSchema).optional(),
+  Document: z.lazy(() => DocumentCreateNestedManyWithoutClientInputObjectSchema).optional(),
+  Invoice: z.lazy(() => InvoiceCreateNestedManyWithoutClientInputObjectSchema).optional()
+}).strict();
+export const ClientCreateInputObjectSchema: z.ZodType<Prisma.ClientCreateInput> = makeSchema() as unknown as z.ZodType<Prisma.ClientCreateInput>;
+export const ClientCreateInputObjectZodSchema = makeSchema();

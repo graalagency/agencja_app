@@ -1,0 +1,10 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { LanguageDictionaryOrderByWithRelationInputObjectSchema as LanguageDictionaryOrderByWithRelationInputObjectSchema } from './objects/LanguageDictionaryOrderByWithRelationInput.schema';
+import { LanguageDictionaryWhereInputObjectSchema as LanguageDictionaryWhereInputObjectSchema } from './objects/LanguageDictionaryWhereInput.schema';
+import { LanguageDictionaryWhereUniqueInputObjectSchema as LanguageDictionaryWhereUniqueInputObjectSchema } from './objects/LanguageDictionaryWhereUniqueInput.schema';
+import { LanguageDictionaryCountAggregateInputObjectSchema as LanguageDictionaryCountAggregateInputObjectSchema } from './objects/LanguageDictionaryCountAggregateInput.schema';
+
+export const LanguageDictionaryCountSchema: z.ZodType<Prisma.LanguageDictionaryCountArgs> = z.object({ orderBy: z.union([LanguageDictionaryOrderByWithRelationInputObjectSchema, LanguageDictionaryOrderByWithRelationInputObjectSchema.array()]).optional(), where: LanguageDictionaryWhereInputObjectSchema.optional(), cursor: LanguageDictionaryWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), LanguageDictionaryCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.LanguageDictionaryCountArgs>;
+
+export const LanguageDictionaryCountZodSchema = z.object({ orderBy: z.union([LanguageDictionaryOrderByWithRelationInputObjectSchema, LanguageDictionaryOrderByWithRelationInputObjectSchema.array()]).optional(), where: LanguageDictionaryWhereInputObjectSchema.optional(), cursor: LanguageDictionaryWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), LanguageDictionaryCountAggregateInputObjectSchema ]).optional() }).strict();

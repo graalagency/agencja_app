@@ -111,6 +111,16 @@ export default function InvoicesPage() {
   const [currencySearch, setCurrencySearch] = useState(() => {
     return getCachedItem(CACHE_CURRENCY_SEARCH_KEY) || ''
   })
+  const [search, setSearch] = useState(() => {
+    const cached = getCachedItem(CACHE_FILTERS_KEY)
+    if (!cached) return ''
+    try {
+      const parsed = JSON.parse(cached)
+      return parsed?.title || ''
+    } catch {
+      return ''
+    }
+  })
   const [filters, setFilters] = useState<FiltersState>(() => {
     const cached = getCachedItem(CACHE_FILTERS_KEY)
     if (cached) {
@@ -156,6 +166,7 @@ export default function InvoicesPage() {
         pageSize: pageSize.toString(),
         sort: sortBy,
         order: sortDirection,
+        ...(search && { search }),
         ...(filters.title && { title: filters.title }),
         ...(filters.currency && { currency: filters.currency }),
         ...(filters.dateFrom && { dateFrom: filters.dateFrom }),
@@ -304,11 +315,23 @@ export default function InvoicesPage() {
   const resetFilters = () => {
     // Reset filters and search terms but keep page size
     setFilters({ title: '', currency: '', dateFrom: '', dateTo: '', clientName: '' })
+    setSearch('')
     setClientSearch('')
     setCurrencySearch('')
     setSortBy('date')
     setSortDirection('DESC')
   }
+
+  useEffect(() => {
+    setFilters(prev => ({
+      ...prev,
+      title: search,
+      clientName: search,
+      currency: '',
+      dateFrom: '',
+      dateTo: ''
+    }))
+  }, [search])
 
   const toggleSort = (field: string) => {
     if (sortBy === field) {
@@ -349,97 +372,22 @@ export default function InvoicesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('invoiceList')}</h1>
-        <Button onClick={() => setShowForm(true)} variant="primary" className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t('newInvoice')}
-        </Button>
-      </div>
-
-      {/* Filters Card */}
       <Card className="p-6">
-        <div className="space-y-4">
-          {/* Filters - first row: Klient, Tytuł, Waluta, Data od, Data do */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('client')}</label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  list="clients-datalist"
-                  placeholder={tCommon('search')}
-                  value={clientSearch}
-                  onChange={e => handleClientInput(e.target.value)}
-                  className="pl-9"
-                />
-                <datalist id="clients-datalist">
-                  {(Array.isArray(clients) ? clients : []).map(c => (
-                    <option key={c.id} value={c.name || ''} />
-                  ))}
-                </datalist>
-              </div>
-            </div>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">{t('invoiceList')}</h1>
+          <Button onClick={() => setShowForm(true)} variant="primary" className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t('newInvoice')}
+          </Button>
+        </div>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('invoiceTitle')}</label>
-              <Input
-                placeholder={t('invoiceTitlePlaceholder')}
-                value={filters.title}
-                onChange={e => setFilters({ ...filters, title: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('currency')}</label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  list="currencies-datalist"
-                  placeholder={tCommon('search')}
-                  value={currencySearch}
-                  onChange={e => handleCurrencyInput(e.target.value)}
-                  className="pl-9"
-                />
-                <datalist id="currencies-datalist">
-                  {(Array.isArray(currencies) ? currencies : []).map(c => (
-                    <option key={c.id} value={c.desc || c.id} />
-                  ))}
-                </datalist>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{tCommon('dateFrom')}</label>
-              <input
-                type="date"
-                value={filters.dateFrom}
-                onChange={e => setFilters({ ...filters, dateFrom: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground h-9"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{tCommon('dateTo')}</label>
-              <input
-                type="date"
-                value={filters.dateTo}
-                onChange={e => setFilters({ ...filters, dateTo: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground h-9"
-              />
-            </div>
-          </div>
-
-          {/* Second row: Buttons */}
-          <div className="grid gap-4 md:grid-cols-5 items-end">
-            <div className="md:col-start-4">
-              <Button type="button" variant="primary" className="w-full h-9" onClick={() => applyFilters(1)}>{tCommon('search')}</Button>
-            </div>
-            <div>
-              <Button type="button" onClick={resetFilters} variant="outline" className="w-full h-9">{tCommon('cancel')}</Button>
-            </div>
-          </div>
+        <div className="max-w-md">
+          <label className="block text-sm font-medium text-muted-foreground">{tCommon('search')}</label>
+          <Input
+            placeholder={tCommon('search')}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
         </div>
       </Card>
 

@@ -1,0 +1,14 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { DictCurrencyOrderByWithRelationInputObjectSchema as DictCurrencyOrderByWithRelationInputObjectSchema } from './objects/DictCurrencyOrderByWithRelationInput.schema';
+import { DictCurrencyWhereInputObjectSchema as DictCurrencyWhereInputObjectSchema } from './objects/DictCurrencyWhereInput.schema';
+import { DictCurrencyWhereUniqueInputObjectSchema as DictCurrencyWhereUniqueInputObjectSchema } from './objects/DictCurrencyWhereUniqueInput.schema';
+import { DictCurrencyCountAggregateInputObjectSchema as DictCurrencyCountAggregateInputObjectSchema } from './objects/DictCurrencyCountAggregateInput.schema';
+import { DictCurrencyMinAggregateInputObjectSchema as DictCurrencyMinAggregateInputObjectSchema } from './objects/DictCurrencyMinAggregateInput.schema';
+import { DictCurrencyMaxAggregateInputObjectSchema as DictCurrencyMaxAggregateInputObjectSchema } from './objects/DictCurrencyMaxAggregateInput.schema';
+import { DictCurrencyAvgAggregateInputObjectSchema as DictCurrencyAvgAggregateInputObjectSchema } from './objects/DictCurrencyAvgAggregateInput.schema';
+import { DictCurrencySumAggregateInputObjectSchema as DictCurrencySumAggregateInputObjectSchema } from './objects/DictCurrencySumAggregateInput.schema';
+
+export const DictCurrencyAggregateSchema: z.ZodType<Prisma.DictCurrencyAggregateArgs> = z.object({ orderBy: z.union([DictCurrencyOrderByWithRelationInputObjectSchema, DictCurrencyOrderByWithRelationInputObjectSchema.array()]).optional(), where: DictCurrencyWhereInputObjectSchema.optional(), cursor: DictCurrencyWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), DictCurrencyCountAggregateInputObjectSchema ]).optional(), _min: DictCurrencyMinAggregateInputObjectSchema.optional(), _max: DictCurrencyMaxAggregateInputObjectSchema.optional(), _avg: DictCurrencyAvgAggregateInputObjectSchema.optional(), _sum: DictCurrencySumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.DictCurrencyAggregateArgs>;
+
+export const DictCurrencyAggregateZodSchema = z.object({ orderBy: z.union([DictCurrencyOrderByWithRelationInputObjectSchema, DictCurrencyOrderByWithRelationInputObjectSchema.array()]).optional(), where: DictCurrencyWhereInputObjectSchema.optional(), cursor: DictCurrencyWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), DictCurrencyCountAggregateInputObjectSchema ]).optional(), _min: DictCurrencyMinAggregateInputObjectSchema.optional(), _max: DictCurrencyMaxAggregateInputObjectSchema.optional(), _avg: DictCurrencyAvgAggregateInputObjectSchema.optional(), _sum: DictCurrencySumAggregateInputObjectSchema.optional() }).strict();

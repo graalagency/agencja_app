@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Table, Th, Td } from '../../../../components/ui/Table'
 import { Pagination } from '../../../../components/ui/Pagination'
 import { ClientUpdateSchema } from '../../../../validation/client'
+import { DocumentCreateSchema } from '../../../../validation/document'
 
 type Client = { 
   id: number
@@ -42,13 +43,22 @@ type Meta = { page: number; pageSize: number; total: number; pages: number }
 
 type ListResponse<T> = { data: T[]; meta: Meta }
 
+type CustomerDocument = {
+  id: number
+  title: string
+  description?: string | null
+  status: 'DRAFT' | 'SIGNED'
+  createdAt: string
+  updatedAt: string
+}
+
 export default function ClientDetailPage() {
   const params = useParams()
   const id = Number(params.id)
   const [client, setClient] = useState<Client | null>(null)
-  const [activeTab, setActiveTab] = useState<'invoices' | 'authors'>('invoices')
+  const [activeTab, setActiveTab] = useState<'invoices' | 'documents' | 'authors'>('invoices')
 
-  const [docs, setDocs] = useState<Document[]>([])
+  const [docs, setDocs] = useState<CustomerDocument[]>([])
   const [meta, setMeta] = useState<Meta>({ page: 1, pageSize: 10, total: 0, pages: 1 })
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -205,6 +215,7 @@ export default function ClientDetailPage() {
   }, [authorSearchQuery, availableAuthors])
 
   const addDoc = async () => {
+    const parsed = DocumentCreateSchema.safeParse(formDoc)
     if (!parsed.success) {
       setFormDocErrors(parsed.error.errors.map(e=>e.message))
       return

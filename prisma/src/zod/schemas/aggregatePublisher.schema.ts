@@ -1,0 +1,14 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { PublisherOrderByWithRelationInputObjectSchema as PublisherOrderByWithRelationInputObjectSchema } from './objects/PublisherOrderByWithRelationInput.schema';
+import { PublisherWhereInputObjectSchema as PublisherWhereInputObjectSchema } from './objects/PublisherWhereInput.schema';
+import { PublisherWhereUniqueInputObjectSchema as PublisherWhereUniqueInputObjectSchema } from './objects/PublisherWhereUniqueInput.schema';
+import { PublisherCountAggregateInputObjectSchema as PublisherCountAggregateInputObjectSchema } from './objects/PublisherCountAggregateInput.schema';
+import { PublisherMinAggregateInputObjectSchema as PublisherMinAggregateInputObjectSchema } from './objects/PublisherMinAggregateInput.schema';
+import { PublisherMaxAggregateInputObjectSchema as PublisherMaxAggregateInputObjectSchema } from './objects/PublisherMaxAggregateInput.schema';
+import { PublisherAvgAggregateInputObjectSchema as PublisherAvgAggregateInputObjectSchema } from './objects/PublisherAvgAggregateInput.schema';
+import { PublisherSumAggregateInputObjectSchema as PublisherSumAggregateInputObjectSchema } from './objects/PublisherSumAggregateInput.schema';
+
+export const PublisherAggregateSchema: z.ZodType<Prisma.PublisherAggregateArgs> = z.object({ orderBy: z.union([PublisherOrderByWithRelationInputObjectSchema, PublisherOrderByWithRelationInputObjectSchema.array()]).optional(), where: PublisherWhereInputObjectSchema.optional(), cursor: PublisherWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), PublisherCountAggregateInputObjectSchema ]).optional(), _min: PublisherMinAggregateInputObjectSchema.optional(), _max: PublisherMaxAggregateInputObjectSchema.optional(), _avg: PublisherAvgAggregateInputObjectSchema.optional(), _sum: PublisherSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.PublisherAggregateArgs>;
+
+export const PublisherAggregateZodSchema = z.object({ orderBy: z.union([PublisherOrderByWithRelationInputObjectSchema, PublisherOrderByWithRelationInputObjectSchema.array()]).optional(), where: PublisherWhereInputObjectSchema.optional(), cursor: PublisherWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), PublisherCountAggregateInputObjectSchema ]).optional(), _min: PublisherMinAggregateInputObjectSchema.optional(), _max: PublisherMaxAggregateInputObjectSchema.optional(), _avg: PublisherAvgAggregateInputObjectSchema.optional(), _sum: PublisherSumAggregateInputObjectSchema.optional() }).strict();

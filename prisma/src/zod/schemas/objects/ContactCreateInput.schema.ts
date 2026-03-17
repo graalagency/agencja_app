@@ -1,20 +1,23 @@
 import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
-import { tblCustContactsCreateNestedManyWithoutContactInputObjectSchema as tblCustContactsCreateNestedManyWithoutContactInputObjectSchema } from './tblCustContactsCreateNestedManyWithoutContactInput.schema'
+import { NullableJsonNullValueInputSchema } from '../enums/NullableJsonNullValueInput.schema';
+import { ClientCreateNestedOneWithoutContactInputObjectSchema as ClientCreateNestedOneWithoutContactInputObjectSchema } from './ClientCreateNestedOneWithoutContactInput.schema'
+
+import { JsonValueSchema as jsonSchema } from '../../helpers/json-helpers';
 
 const makeSchema = () => z.object({
-  phoneNumber: z.string().max(20).optional().nullable(),
-  firstName: z.string().max(30).optional().nullable(),
-  middleName: z.string().max(30).optional().nullable(),
-  lastName: z.string().max(50).optional().nullable(),
-  informal: z.number().int(),
-  fax: z.string().max(20).optional().nullable(),
-  email: z.string().max(50).optional().nullable(),
-  userMod: z.string().max(30).optional(),
-  dateMod: z.coerce.date().optional(),
-  contactPosition: z.string().max(50).optional().nullable(),
+  phoneNumber: z.string().optional().nullable(),
+  firstName: z.string(),
+  middleName: z.string().optional().nullable(),
+  lastName: z.string(),
+  informal: z.number().int().optional(),
+  fax: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  contactPosition: z.string().optional().nullable(),
   accountant: z.number().int().optional().nullable(),
-  tblCustContacts: z.lazy(() => tblCustContactsCreateNestedManyWithoutContactInputObjectSchema).optional()
+  photos: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
+  createdAt: z.coerce.date().optional(),
+  Client: z.lazy(() => ClientCreateNestedOneWithoutContactInputObjectSchema).optional()
 }).strict();
 export const ContactCreateInputObjectSchema: z.ZodType<Prisma.ContactCreateInput> = makeSchema() as unknown as z.ZodType<Prisma.ContactCreateInput>;
 export const ContactCreateInputObjectZodSchema = makeSchema();

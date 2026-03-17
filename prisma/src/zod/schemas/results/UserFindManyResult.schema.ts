@@ -5,8 +5,8 @@ export const UserFindManyResultSchema = z.object({
   name: z.string().optional(),
   email: z.string(),
   passwordHash: z.string(),
-  role: z.string(),
-  permissions: z.string().optional(),
+  role: z.unknown(),
+  permissions: z.unknown().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
   locale: z.string()

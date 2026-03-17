@@ -8,21 +8,25 @@ export const ContactAggregateResultSchema = z.object({  _count: z.object({
     informal: z.number(),
     fax: z.number(),
     email: z.number(),
-    userMod: z.number(),
-    dateMod: z.number(),
     contactPosition: z.number(),
     accountant: z.number(),
-    tblCustContacts: z.number()
+    photos: z.number(),
+    clientId: z.number(),
+    createdAt: z.number(),
+    updatedAt: z.number(),
+    Client: z.number()
   }).optional(),
   _sum: z.object({
     id: z.number().nullable(),
     informal: z.number().nullable(),
-    accountant: z.number().nullable()
+    accountant: z.number().nullable(),
+    clientId: z.number().nullable()
   }).nullable().optional(),
   _avg: z.object({
     id: z.number().nullable(),
     informal: z.number().nullable(),
-    accountant: z.number().nullable()
+    accountant: z.number().nullable(),
+    clientId: z.number().nullable()
   }).nullable().optional(),
   _min: z.object({
     id: z.number().int().nullable(),
@@ -33,10 +37,11 @@ export const ContactAggregateResultSchema = z.object({  _count: z.object({
     informal: z.number().int().nullable(),
     fax: z.string().nullable(),
     email: z.string().nullable(),
-    userMod: z.string().nullable(),
-    dateMod: z.date().nullable(),
     contactPosition: z.string().nullable(),
-    accountant: z.number().int().nullable()
+    accountant: z.number().int().nullable(),
+    clientId: z.number().int().nullable(),
+    createdAt: z.date().nullable(),
+    updatedAt: z.date().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.number().int().nullable(),
@@ -47,8 +52,9 @@ export const ContactAggregateResultSchema = z.object({  _count: z.object({
     informal: z.number().int().nullable(),
     fax: z.string().nullable(),
     email: z.string().nullable(),
-    userMod: z.string().nullable(),
-    dateMod: z.date().nullable(),
     contactPosition: z.string().nullable(),
-    accountant: z.number().int().nullable()
+    accountant: z.number().int().nullable(),
+    clientId: z.number().int().nullable(),
+    createdAt: z.date().nullable(),
+    updatedAt: z.date().nullable()
   }).nullable().optional()});

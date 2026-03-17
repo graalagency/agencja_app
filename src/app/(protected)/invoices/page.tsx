@@ -15,6 +15,7 @@ type Client = { id: number; name: string }
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [meta, setMeta] = useState({ page: 1, pageSize: 50, total: 0, pages: 1 })
+  const [pageSize, setPageSize] = useState(50)
   const [loading, setLoading] = useState(false)
   const [clients, setClients] = useState<Client[]>([])
   const [showForm, setShowForm] = useState(false)
@@ -29,23 +30,23 @@ export default function InvoicesPage() {
   const load = async (page = 1, overrideFilters?: typeof initialFilters) => {
     const activeFilters = overrideFilters ?? filters
     setLoading(true)
-    const params = new URLSearchParams({ page: String(page), pageSize: String(meta.pageSize) })
-    if (activeFilters.status) params.append('status', activeFilters.status)
-    if (activeFilters.clientId) params.append('clientId', activeFilters.clientId)
-    if (activeFilters.dateFrom) params.append('dateFrom', activeFilters.dateFrom)
-    if (activeFilters.dateTo) params.append('dateTo', activeFilters.dateTo)
-    if (activeFilters.title) params.append('title', activeFilters.title)
-    if (activeFilters.currency) params.append('currency', activeFilters.currency)
+    const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) })
+    if (activeFilters.title) params.append('search', activeFilters.title)
 
     const res = await fetch(`/api/invoices?${params.toString()}`)
     if (!res.ok) { setInvoices([]); setLoading(false); return }
     const json = await res.json()
     setInvoices(json?.data ?? [])
-    setMeta(json?.meta ?? { page, pageSize: meta.pageSize, total: 0, pages: 1 })
+    setMeta(json?.meta ?? { page, pageSize, total: 0, pages: 1 })
     setLoading(false)
   }
 
   useEffect(() => { load(1, initialFilters); fetchClients(); fetchFilters() }, [])
+  useEffect(() => { load(1) }, [pageSize])
+  useEffect(() => {
+    const timer = setTimeout(() => load(1), 300)
+    return () => clearTimeout(timer)
+  }, [filters.title])
   useEffect(() => {
     const t = setTimeout(() => fetchClients(clientSearch), 300)
     return () => clearTimeout(t)
@@ -100,18 +101,6 @@ export default function InvoicesPage() {
     }
   }
 
-  const applyFilters = (e: any) => {
-    e.preventDefault()
-    load(1)
-  }
-
-  const resetFilters = () => {
-    const cleared = { ...initialFilters }
-    setFilters(cleared)
-    setClientSearch('')
-    load(1, cleared)
-  }
-
   return (
     <div className="space-y-6">
       <Card className="p-6">
@@ -120,85 +109,15 @@ export default function InvoicesPage() {
           <Button variant="primary" onClick={() => setShowForm(true)}>Nowa faktura</Button>
         </div>
 
-        <form onSubmit={applyFilters} className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 mb-6">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted-foreground">Tytuł</label>
-            <input
-              placeholder="Wpisz tytuł"
-              value={filters.title}
-              onChange={e => setFilters({ ...filters, title: e.target.value })}
-              className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted-foreground">Waluta</label>
-            <select
-              value={filters.currency}
-              onChange={e => setFilters({ ...filters, currency: e.target.value })}
-              className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Wszystkie waluty</option>
-              {currencies.map(curr => <option key={curr} value={curr}>{curr}</option>)}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">Data faktury od</label>
-              <input
-                type="date"
-                value={filters.dateFrom}
-                onChange={e => setFilters({ ...filters, dateFrom: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">Data faktury do</label>
-              <input
-                type="date"
-                value={filters.dateTo}
-                onChange={e => setFilters({ ...filters, dateTo: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted-foreground">Klient</label>
-            <input
-              placeholder="Szukaj klienta"
-              value={clientSearch}
-              onChange={e => setClientSearch(e.target.value)}
-              className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-            />
-            <select
-              value={filters.clientId}
-              onChange={e => setFilters({ ...filters, clientId: e.target.value })}
-              className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Wszyscy klienci</option>
-              {(Array.isArray(clients) ? clients : []).map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted-foreground">Status</label>
-            <select
-              value={filters.status}
-              onChange={e => setFilters({ ...filters, status: e.target.value })}
-              className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Wszystkie statusy</option>
-              {(statuses.length ? statuses : ['ISSUED', 'DRAFT']).map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </div>
-
-          <div className="flex items-end gap-2">
-            <Button type="submit" variant="primary" className="flex-1">Szukaj</Button>
-            <Button type="button" onClick={resetFilters} className="flex-1">Wyczyść</Button>
-          </div>
-        </form>
+        <div className="max-w-md mb-6">
+          <label className="block text-sm font-medium text-muted-foreground">Szukaj</label>
+          <input
+            placeholder="Tytuł lub klient"
+            value={filters.title}
+            onChange={e => setFilters({ ...filters, title: e.target.value })}
+            className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
+          />
+        </div>
 
         <Modal isOpen={showForm} onClose={() => setShowForm(false)} title="Dodaj nową fakturę">
           <form onSubmit={handleCreate} className="space-y-4">
@@ -337,8 +256,21 @@ export default function InvoicesPage() {
                 ))}
               </tbody>
             </Table>
-            <div className="mt-6">
+            <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <Pagination page={meta.page} pages={meta.pages} onPage={(p) => load(p)} />
+              <div className="flex items-center gap-2 md:justify-end">
+                <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">Na stronę:</label>
+                <select
+                  className="flex h-9 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  value={String(pageSize)}
+                  onChange={(e) => setPageSize(Number(e.target.value))}
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
             </div>
           </div>
         )}

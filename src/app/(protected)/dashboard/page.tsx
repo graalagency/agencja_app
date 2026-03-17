@@ -1,6 +1,5 @@
 import { prisma } from '../../../lib/prisma'
 import { HeroCards } from '../../../components/dashboard/HeroCards'
-import { useTranslations } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
 
 export const dynamic = 'force-dynamic'
@@ -8,8 +7,7 @@ export const dynamic = 'force-dynamic'
 export default async function DashboardPage() {
   const t = await getTranslations()
 
-  const p = prisma as any
-  const customers = await p.tblCustomers.count()
+  const customers = await prisma.client.count()
 
   return (
     <div className="space-y-6">

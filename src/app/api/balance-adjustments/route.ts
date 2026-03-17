@@ -32,6 +32,7 @@ export async function POST(req: Request) {
       date: new Date(date),
       amount: Number(amount),
       description: description || null,
+      updatedAt: new Date(),
     },
   })
 

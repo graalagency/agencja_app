@@ -18,6 +18,8 @@ export default function UsersPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const [sortBy, setSortBy] = useState<'id' | 'email' | 'name' | 'role'>('id')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [meta, setMeta] = useState({ page: 1, pageSize: 10, total: 0, pages: 1 })
 
   const [editingUser, setEditingUser] = useState<User | null>(null)
@@ -28,7 +30,7 @@ export default function UsersPage() {
 
   const load = async (p = page) => {
     setLoading(true)
-    const qs = new URLSearchParams({ search, page: String(p), pageSize: String(pageSize) })
+    const qs = new URLSearchParams({ search, page: String(p), pageSize: String(pageSize), sortBy, sortOrder })
     const res = await fetch(`/api/users?${qs.toString()}`)
     if (!res.ok) { setUsers([]); setLoading(false); return }
     const json = await res.json()
@@ -37,7 +39,16 @@ export default function UsersPage() {
     setLoading(false)
   }
 
-  useEffect(()=>{ load(1) }, [search, pageSize])
+  useEffect(()=>{ load(1) }, [search, pageSize, sortBy, sortOrder])
+
+  const toggleSort = (col: typeof sortBy) => {
+    if (sortBy !== col) {
+      setSortBy(col)
+      setSortOrder('asc')
+      return
+    }
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+  }
 
   const addUser = async () => {
     const parsed = UserCreateSchema.safeParse(form)
@@ -90,6 +101,10 @@ export default function UsersPage() {
           <h1 className="text-2xl font-bold">{t('title')}</h1>
           <Button variant="primary" onClick={() => { setShowAddModal(true); setFormErrors([]); }}>{t('createUser')}</Button>
         </div>
+        <div className="max-w-md">
+          <label className="label">{tCommon('search')}</label>
+          <Input value={search} onChange={e=>setSearch(e.target.value)} placeholder={`${t('name')}/${t('email')}`} />
+        </div>
       </Card>
 
       <Card className="p-6">
@@ -98,10 +113,10 @@ export default function UsersPage() {
             <Table>
               <thead>
                 <tr>
-                  <Th>ID</Th>
-                  <Th>{t('email')}</Th>
-                  <Th>{t('name')}</Th>
-                  <Th>{t('role')}</Th>
+                  <Th onClick={() => toggleSort('id')} active={sortBy === 'id'} order={sortOrder}>ID</Th>
+                  <Th onClick={() => toggleSort('email')} active={sortBy === 'email'} order={sortOrder}>{t('email')}</Th>
+                  <Th onClick={() => toggleSort('name')} active={sortBy === 'name'} order={sortOrder}>{t('name')}</Th>
+                  <Th onClick={() => toggleSort('role')} active={sortBy === 'role'} order={sortOrder}>{t('role')}</Th>
                   <th></th>
                 </tr>
               </thead>
@@ -128,11 +143,11 @@ export default function UsersPage() {
                 ))}
               </tbody>
             </Table>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <Pagination page={meta.page} pages={meta.pages} onPage={(p)=>{ setPage(p); load(p) }} />
-              <div>
-                <label className="label mr-2">{tCommon('perPage')}</label>
-                <select className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={String(pageSize)} onChange={e=>{ setPageSize(Number(e.target.value)); setPage(1); load(1) }}>
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">{tCommon('perPage')}:</label>
+                <select className="flex h-9 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={String(pageSize)} onChange={e=>{ setPageSize(Number(e.target.value)); setPage(1); load(1) }}>
                   <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="20">20</option>

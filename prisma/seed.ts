@@ -10,32 +10,78 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: adminEmail },
-    update: {},
+    update: { updatedAt: new Date() },
     create: {
       email: adminEmail,
       name: 'Administrator',
       role: 'ADMIN',
-      passwordHash
+      passwordHash,
+      updatedAt: new Date(),
     }
   })
 
-  const clientA = await prisma.customer.create({
+  await prisma.client.create({
     data: {
       name: 'Klient Alfa',
       email: 'alfa@firma.pl',
-      phone: '+48 123 456 789'
+      phone: '+48 123 456 789',
+      updatedAt: new Date(),
     }
   })
 
-  const clientB = await prisma.customer.create({
+  await prisma.client.create({
     data: {
       name: 'Klient Beta',
-      email: 'beta@firma.pl'
+      email: 'beta@firma.pl',
+      updatedAt: new Date(),
+    }
+  })
+
+  await prisma.publisher.create({
+    data: {
+      name: 'Wydawnictwo Meridian',
+      email: 'kontakt@meridian.pl',
+      phone: '+48 501 200 300',
+      city: 'Warszawa',
+      address: 'ul. Przykładowa 12',
+      postalCode: '00-123',
+      nip: '5252800011',
+      regon: '146543210',
+      notes: 'Przykładowy wydawca seeded w bazie.',
+      updatedAt: new Date(),
+    }
+  })
+
+  await prisma.publisher.create({
+    data: {
+      name: 'Nova Press',
+      email: 'biuro@novapress.pl',
+      phone: '+48 503 111 222',
+      city: 'Kraków',
+      address: 'ul. Książkowa 7',
+      postalCode: '30-001',
+      nip: '6762456789',
+      regon: '123456789',
+      updatedAt: new Date(),
+    }
+  })
+
+  await prisma.publisher.create({
+    data: {
+      name: 'Baltic Books',
+      email: 'hello@balticbooks.pl',
+      phone: '+48 577 222 444',
+      city: 'Gdańsk',
+      address: 'ul. Morska 45',
+      postalCode: '80-100',
+      nip: '5842765432',
+      regon: '987654321',
+      updatedAt: new Date(),
     }
   })
 
   // Generate many sample invoices for all clients
-  const clients = await prisma.customer.findMany()
+  const clients = await prisma.client.findMany()
   const invoicesData: any[] = []
   const now = new Date()
 
@@ -74,7 +120,8 @@ async function main() {
         vatPerc,
         vat,
         gross,
-        status: isPlanned ? 'planned' : 'issued'
+        status: isPlanned ? 'planned' : 'issued',
+        updatedAt: new Date(),
       })
     }
   }
@@ -82,8 +129,26 @@ async function main() {
   // Bulk insert (use prisma as any until prisma generate is run locally)
   await (prisma as any).invoice.createMany({ data: invoicesData })
 
-  // Seed role permissions
-  const modules = ['dashboard', 'clients', 'documents', 'invoices', 'cashflow', 'administration']
+    // Seed role permissions
+    const modules = [
+      'dashboard',
+      'contacts',
+      'customers',
+      'publishers',
+      'authors',
+      'documents',
+      'invoices',
+      'simple-invoices',
+      'cashflow',
+      'finances',
+      'users',
+      'permissions',
+      'languages',
+      'administration',
+      'countries',
+      'currencies',
+      'language-dictionary',
+    ]
   for (const module of modules) {
     await prisma.rolePermissions.upsert({
       where: { module },
@@ -93,6 +158,7 @@ async function main() {
         userAccess: false,
         advancedAccess: false,
         adminAccess: true,
+        updatedAt: new Date(),
       }
     })
   }

@@ -3,7 +3,8 @@
 export type ModuleKey = 
   | 'dashboard' 
   | 'contacts' 
-  | 'clients' 
+  | 'customers'
+  | 'publishers'
   | 'documents' 
   | 'invoices' 
   | 'simple-invoices'
@@ -13,6 +14,9 @@ export type ModuleKey =
   | 'users' 
   | 'permissions' 
   | 'languages'
+  | 'language-dictionary'
+  | 'countries'
+  | 'currencies'
   | 'administration'
 
 export type RolePermissionsMap = Record<ModuleKey, {
@@ -31,7 +35,7 @@ export function hasModuleAccess(
   if (userRole === 'ADMIN') return true
   
   // For nested modules, check both the specific module and the parent 'administration' module
-  if (['users', 'permissions', 'languages'].includes(moduleKey)) {
+  if (['users', 'permissions', 'languages', 'language-dictionary', 'countries', 'currencies'].includes(moduleKey)) {
     const specificPerm = permissions[moduleKey]
     const adminPerm = permissions['administration']
     
@@ -39,24 +43,6 @@ export function hasModuleAccess(
     
     // If specific permission exists, use it; otherwise fall back to administration
     const perm = specificPerm || adminPerm
-    
-    if (userRole === 'ADVANCED') {
-      return perm.advancedAccess
-    }
-    
-    if (userRole === 'USER') {
-      return perm.userAccess
-    }
-  }
-  
-  // For nested contacts/clients, check both specific and parent 'clients' module
-  if (moduleKey === 'contacts') {
-    const contactsPerm = permissions['contacts']
-    const clientsPerm = permissions['clients']
-    
-    if (!contactsPerm && !clientsPerm) return false
-    
-    const perm = contactsPerm || clientsPerm
     
     if (userRole === 'ADVANCED') {
       return perm.advancedAccess

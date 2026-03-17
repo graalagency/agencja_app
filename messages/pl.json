@@ -66,6 +66,7 @@
     "invoices": "Faktury VAT",
     "simpleInvoices": "Faktury Proste",
     "authors": "Autorzy",
+    "publishers": "Wydawcy",
     "contacts": "Kontakty",
     "finances": "Finanse",
     "cashflow": "Cashflow",
@@ -73,7 +74,11 @@
     "permissions": "Uprawnienia",
     "balanceAdjustments": "Korekty salda",
     "administration": "Administracja",
-    "languages": "Słownik języków"
+    "languages": "Tłumaczenia",
+    "languageDictionary": "Słownik języków",
+    "dictionaries": "Słowniki",
+    "countryDictionary": "Słownik krajów",
+    "currencyDictionary": "Słownik walut"
   },
   "dashboard": {
     "title": "Panel główny",
@@ -114,6 +119,40 @@
     "fetchData": "Pobierz dane",
     "fetching": "Pobieranie...",
     "autoFillHint": "Wprowadź NIP i kliknij \"Pobierz dane\" aby automatycznie wypełnić formularz danymi z CEIDG"
+  },
+  "publishers": {
+    "title": "Wydawcy",
+    "listTitle": "Lista Wydawców",
+    "createPublisher": "Dodaj wydawcę",
+    "editPublisher": "Edytuj wydawcę",
+    "deletePublisher": "Usuń wydawcę",
+    "publisherDetails": "Szczegóły wydawcy",
+    "name": "Nazwa",
+    "email": "Email",
+    "phone": "Telefon",
+    "address": "Adres",
+    "city": "Miasto",
+    "postalCode": "Kod pocztowy",
+    "country": "Kraj",
+    "nip": "NIP",
+    "regon": "REGON",
+    "legalForm": "Forma prawna",
+    "bankAccount": "Konto bankowe",
+    "notes": "Notatki",
+    "publisherCreated": "Wydawca został utworzony",
+    "publisherUpdated": "Wydawca został zaktualizowany",
+    "publisherDeleted": "Wydawca został usunięty",
+    "sortDirection": "Kierunek",
+    "ascending": "Rosnąco",
+    "descending": "Malejąco",
+    "created": "Utworzono",
+    "autoFill": "Autouzupełnianie danych z rejestru",
+    "fetchData": "Pobierz dane",
+    "fetching": "Pobieranie...",
+    "autoFillHint": "Wprowadź NIP i kliknij \"Pobierz dane\" aby automatycznie wypełnić formularz danymi z CEIDG",
+    "basicData": "Podstawowe dane",
+    "addressSection": "Adres",
+    "companyData": "Dane firmowe"
   },
   "invoices": {
     "title": "Faktury",
@@ -172,6 +211,7 @@
     "basic": "Podstawowy",
     "extended": "Rozszerzony",
     "full": "Pełny",
+    "dictionaries": "Słowniki",
     "administration": "Administracja",
     "accessLevels": "Poziomy dostępu",
     "basicAccess": "Podstawowy dostęp (zazwyczaj tylko odczyt)",
@@ -242,6 +282,46 @@
     "availableLanguages": "Dostępne języki",
     "newLanguageCode": "Kod nowego języka (np. de, fr, es)",
     "newLanguageName": "Nazwa nowego języka"
+  },
+  "countryDictionary": {
+    "title": "Słownik krajów",
+    "create": "Dodaj kraj",
+    "edit": "Edytuj kraj",
+    "description": "Opis",
+    "code": "Kod",
+    "tax": "Podatek",
+    "eu": "EU",
+    "euYes": "Kraj UE",
+    "euNo": "Poza UE",
+    "created": "Utworzono",
+    "countryCreated": "Kraj został dodany",
+    "countryUpdated": "Kraj został zaktualizowany",
+    "countryDeleted": "Kraj został usunięty",
+    "confirmDelete": "Czy na pewno chcesz usunąć ten kraj?"
+  },
+  "currencyDictionary": {
+    "title": "Słownik walut",
+    "create": "Dodaj walutę",
+    "edit": "Edytuj walutę",
+    "description": "Opis",
+    "code": "Kod",
+    "created": "Utworzono",
+    "currencyCreated": "Waluta została dodana",
+    "currencyUpdated": "Waluta została zaktualizowana",
+    "currencyDeleted": "Waluta została usunięta",
+    "confirmDelete": "Czy na pewno chcesz usunąć tę walutę?"
+  },
+  "languageDictionary": {
+    "title": "Słownik języków",
+    "create": "Dodaj język",
+    "edit": "Edytuj język",
+    "description": "Opis",
+    "abbreviation": "Skrót",
+    "created": "Utworzono",
+    "languageCreated": "Język został dodany",
+    "languageUpdated": "Język został zaktualizowany",
+    "languageDeleted": "Język został usunięty",
+    "confirmDelete": "Czy na pewno chcesz usunąć ten język?"
   },
   "authors": {
     "title": "Autorzy",
@@ -380,5 +460,24 @@
     "oldAmounts": "Stare kwoty",
     "newAmounts": "Nowe kwoty",
     "paidIn": "Zapłacono w"
+  },
+  "dictionaryHub": {
+    "title": "Centrum słowników",
+    "subtitle": "Wybierz słownik, przypnij najczęściej używane i filtruj listę przez wyszukiwarkę.",
+    "searchPlaceholder": "Szukaj po nazwie lub opisie słownika",
+    "favorites": "Ulubione",
+    "open": "Otwórz",
+    "pin": "Przypnij do ulubionych",
+    "unpin": "Usuń z ulubionych",
+    "emptySearch": "Brak słowników pasujących do wyszukiwania.",
+    "emptyForPermissions": "Brak dostępnych słowników dla Twojej roli.",
+    "countryDescription": "Państwa, kody krajów, stawki VAT i oznaczenia UE.",
+    "currencyDescription": "Waluty i kody używane w dokumentach finansowych.",
+    "languageDescription": "Języki i skróty używane w danych oraz interfejsie.",
+    "groups": {
+      "regional": "Regionalne",
+      "finance": "Finansowe",
+      "content": "Treść i lokalizacja"
+    }
   }
 }

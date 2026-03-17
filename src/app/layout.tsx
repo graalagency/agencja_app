@@ -2,9 +2,9 @@
 // src/app/layout.tsx
 import './globals.css'
 import type { Metadata } from 'next'
-import Layout from '../components/tailadmin/Layout'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, getLocale } from 'next-intl/server'
+import { Providers } from '../components/Providers'
 
 export const metadata: Metadata = {
   title: 'Aplikacja',
@@ -40,7 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Layout>{children}</Layout>
+          <Providers>{children}</Providers>
         </NextIntlClientProvider>
   {/* No external AdminLTE script — UI is implemented using Tailwind + lucide-react */}
       </body>

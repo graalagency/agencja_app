@@ -1,0 +1,10 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { CurrencyDictionaryOrderByWithRelationInputObjectSchema as CurrencyDictionaryOrderByWithRelationInputObjectSchema } from './objects/CurrencyDictionaryOrderByWithRelationInput.schema';
+import { CurrencyDictionaryWhereInputObjectSchema as CurrencyDictionaryWhereInputObjectSchema } from './objects/CurrencyDictionaryWhereInput.schema';
+import { CurrencyDictionaryWhereUniqueInputObjectSchema as CurrencyDictionaryWhereUniqueInputObjectSchema } from './objects/CurrencyDictionaryWhereUniqueInput.schema';
+import { CurrencyDictionaryCountAggregateInputObjectSchema as CurrencyDictionaryCountAggregateInputObjectSchema } from './objects/CurrencyDictionaryCountAggregateInput.schema';
+
+export const CurrencyDictionaryCountSchema: z.ZodType<Prisma.CurrencyDictionaryCountArgs> = z.object({ orderBy: z.union([CurrencyDictionaryOrderByWithRelationInputObjectSchema, CurrencyDictionaryOrderByWithRelationInputObjectSchema.array()]).optional(), where: CurrencyDictionaryWhereInputObjectSchema.optional(), cursor: CurrencyDictionaryWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), CurrencyDictionaryCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.CurrencyDictionaryCountArgs>;
+
+export const CurrencyDictionaryCountZodSchema = z.object({ orderBy: z.union([CurrencyDictionaryOrderByWithRelationInputObjectSchema, CurrencyDictionaryOrderByWithRelationInputObjectSchema.array()]).optional(), where: CurrencyDictionaryWhereInputObjectSchema.optional(), cursor: CurrencyDictionaryWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), CurrencyDictionaryCountAggregateInputObjectSchema ]).optional() }).strict();

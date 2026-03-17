@@ -5,17 +5,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   try {
     const id = Number(params.id)
 
-    const p = prisma as any
-    const agreement = await p.tblAgreements.findUnique({
-      where: { AgrID: id },
+    const agreement = await prisma.document.findUnique({
+      where: { id },
       include: {
-        tblCustomers: true,
-        tblTitles: { select: { TitleID: true, Title: true, ISBN: true } },
-        dictCurrencies: { select: { CurrID: true, CurrDesc: true } },
-        dictLanguages: { select: { LangAbb: true, LangDesc: true } },
-        tblAgrEvents: { take: 10, orderBy: { EventDate: 'desc' as const } },
-        tblAgrRights: { take: 10 },
-        tblRoyalty: { take: 10 }
+        Client: true
       }
     })
 
@@ -24,41 +17,41 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 
     return NextResponse.json({
-      id: agreement.AgrID,
-      customerId: agreement.CustID,
-      customerName: agreement.tblCustomers?.Name ?? null,
-      customerDetails: agreement.tblCustomers || null,
-      titleId: agreement.TitleID,
-      titleName: agreement.tblTitles?.Title ?? null,
-      titleDetails: agreement.tblTitles || null,
-      date: agreement.AgrDate.toISOString(),
-      currency: agreement.CurrID || null,
-      currencyDesc: agreement.dictCurrencies?.CurrDesc || null,
-      language: agreement.LangAbbr || null,
-      languageDesc: agreement.dictLanguages?.LangDesc || null,
-      commission: agreement.Commission ? Number(agreement.Commission) : 0,
-      commissionMaterials: agreement.CommissionMaterials ? Number(agreement.CommissionMaterials) : 0,
-      clientReference: agreement.ClientReference || null,
-      status: agreement.Status || 'A',
-      validYY: agreement.ValidYY || 0,
-      pubTermMM: agreement.PubTermMM || 0,
-      maxNoOfCopies: agreement.MaxNoOfCopies || 0,
-      minNoOfCopies: agreement.MinNoOfCopies || 0,
-      estimatedCopyPrice: agreement.EstimatedCopyPrice ? Number(agreement.EstimatedCopyPrice) : 0,
-      graalShare: agreement.GraalShare ? Number(agreement.GraalShare) : 0,
-      copiesToOwner: agreement.CopiesToOwner || 0,
-      copiesToGraal: agreement.CopiesToGraal || 0,
-      graalRepresent: agreement.GraalRepresent || false,
-      remarks: agreement.Remarks || null,
-      localTitle: agreement.LocalTitle || null,
-      localISBN: agreement.LocalISBN || null,
-      localPubDate: agreement.LocalPubDate?.toISOString() || null,
-      agrDoc: agreement.AgrDoc || null,
-      dateMod: agreement.DateMod?.toISOString() || null,
-      userMod: agreement.UserMod || null,
-      events: agreement.tblAgrEvents || [],
-      rights: agreement.tblAgrRights || [],
-      royalties: agreement.tblRoyalty || []
+      id: agreement.id,
+      customerId: agreement.clientId,
+      customerName: agreement.Client?.name ?? null,
+      customerDetails: agreement.Client || null,
+      titleId: agreement.id,
+      titleName: agreement.title,
+      titleDetails: { title: agreement.title },
+      date: agreement.createdAt.toISOString(),
+      currency: null,
+      currencyDesc: null,
+      language: null,
+      languageDesc: null,
+      commission: 0,
+      commissionMaterials: 0,
+      clientReference: null,
+      status: agreement.status,
+      validYY: 0,
+      pubTermMM: 0,
+      maxNoOfCopies: 0,
+      minNoOfCopies: 0,
+      estimatedCopyPrice: 0,
+      graalShare: 0,
+      copiesToOwner: 0,
+      copiesToGraal: 0,
+      graalRepresent: false,
+      remarks: agreement.description || null,
+      localTitle: agreement.title || null,
+      localISBN: null,
+      localPubDate: null,
+      agrDoc: null,
+      dateMod: agreement.updatedAt?.toISOString() || null,
+      userMod: null,
+      events: [],
+      rights: [],
+      royalties: []
     })
   } catch (err: any) {
     console.error('Error in GET /api/agreements/[id]:', err)

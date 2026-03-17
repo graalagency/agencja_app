@@ -66,6 +66,7 @@
     "invoices": "VAT Invoices",
     "simpleInvoices": "Simple Invoices",
     "authors": "Authors",
+    "publishers": "Publishers",
     "contacts": "Contacts",
     "finances": "Finances",
     "cashflow": "Cashflow",
@@ -73,7 +74,11 @@
     "permissions": "Permissions",
     "balanceAdjustments": "Balance Adjustments",
     "administration": "Administration",
-    "languages": "Language Dictionary"
+    "languages": "Translations",
+    "languageDictionary": "Language Dictionary",
+    "dictionaries": "Dictionaries",
+    "countryDictionary": "Country Dictionary",
+    "currencyDictionary": "Currency Dictionary"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -114,6 +119,40 @@
     "fetchData": "Fetch data",
     "fetching": "Fetching...",
     "autoFillHint": "Enter Tax ID and click \"Fetch data\" to automatically fill the form with data from CEIDG"
+  },
+  "publishers": {
+    "title": "Publishers",
+    "listTitle": "Publishers List",
+    "createPublisher": "Add Publisher",
+    "editPublisher": "Edit Publisher",
+    "deletePublisher": "Delete Publisher",
+    "publisherDetails": "Publisher Details",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "city": "City",
+    "postalCode": "Postal Code",
+    "country": "Country",
+    "nip": "Tax ID",
+    "regon": "REGON",
+    "legalForm": "Legal Form",
+    "bankAccount": "Bank Account",
+    "notes": "Notes",
+    "publisherCreated": "Publisher has been created",
+    "publisherUpdated": "Publisher has been updated",
+    "publisherDeleted": "Publisher has been deleted",
+    "sortDirection": "Direction",
+    "ascending": "Ascending",
+    "descending": "Descending",
+    "created": "Created",
+    "autoFill": "Auto-fill data from registry",
+    "fetchData": "Fetch data",
+    "fetching": "Fetching...",
+    "autoFillHint": "Enter Tax ID and click \"Fetch data\" to automatically fill the form with data from CEIDG",
+    "basicData": "Basic data",
+    "addressSection": "Address",
+    "companyData": "Company data"
   },
   "invoices": {
     "title": "Invoices",
@@ -172,6 +211,7 @@
     "basic": "Basic",
     "extended": "Extended",
     "full": "Full",
+    "dictionaries": "Dictionaries",
     "administration": "Administration",
     "accessLevels": "Access levels",
     "basicAccess": "Basic access (usually read-only)",
@@ -242,6 +282,46 @@
     "availableLanguages": "Available Languages",
     "newLanguageCode": "New language code (e.g. de, fr, es)",
     "newLanguageName": "New language name"
+  },
+  "countryDictionary": {
+    "title": "Country Dictionary",
+    "create": "Add country",
+    "edit": "Edit country",
+    "description": "Description",
+    "code": "Code",
+    "tax": "Tax",
+    "eu": "EU",
+    "euYes": "EU country",
+    "euNo": "Non-EU",
+    "created": "Created",
+    "countryCreated": "Country has been added",
+    "countryUpdated": "Country has been updated",
+    "countryDeleted": "Country has been deleted",
+    "confirmDelete": "Are you sure you want to delete this country?"
+  },
+  "currencyDictionary": {
+    "title": "Currency Dictionary",
+    "create": "Add currency",
+    "edit": "Edit currency",
+    "description": "Description",
+    "code": "Code",
+    "created": "Created",
+    "currencyCreated": "Currency has been added",
+    "currencyUpdated": "Currency has been updated",
+    "currencyDeleted": "Currency has been deleted",
+    "confirmDelete": "Are you sure you want to delete this currency?"
+  },
+  "languageDictionary": {
+    "title": "Language Dictionary",
+    "create": "Add language",
+    "edit": "Edit language",
+    "description": "Description",
+    "abbreviation": "Abbreviation",
+    "created": "Created",
+    "languageCreated": "Language has been added",
+    "languageUpdated": "Language has been updated",
+    "languageDeleted": "Language has been deleted",
+    "confirmDelete": "Are you sure you want to delete this language?"
   },
   "authors": {
     "title": "Authors",
@@ -380,5 +460,24 @@
     "oldAmounts": "Old amounts",
     "newAmounts": "New amounts",
     "paidIn": "Paid in"
+  },
+  "dictionaryHub": {
+    "title": "Dictionary Hub",
+    "subtitle": "Choose a dictionary, pin the ones you use most, and filter the list with search.",
+    "searchPlaceholder": "Search by dictionary name or description",
+    "favorites": "Favorites",
+    "open": "Open",
+    "pin": "Pin to favorites",
+    "unpin": "Remove from favorites",
+    "emptySearch": "No dictionaries match your search.",
+    "emptyForPermissions": "No dictionaries are available for your role.",
+    "countryDescription": "Countries, country codes, VAT rates, and EU flags.",
+    "currencyDescription": "Currencies and codes used in financial documents.",
+    "languageDescription": "Languages and abbreviations used in data and UI.",
+    "groups": {
+      "regional": "Regional",
+      "finance": "Financial",
+      "content": "Content and localization"
+    }
   }
 }

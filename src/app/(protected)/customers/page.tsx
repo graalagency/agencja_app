@@ -225,36 +225,9 @@ export default function ClientsPage() {
             {t('customers.createClient')}
           </Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="label">{t('common.search')}</label>
-            <Input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Nazwa/Email/Telefon/NIP/Skrót" />
-          </div>
-          <div>
-            <label className="label">{t('common.sortBy')}</label>
-            <select className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={sortBy} onChange={e=>setSortBy(e.target.value as any)}>
-              <option value="id">ID</option>
-              <option value="name">{t('customers.name')}</option>
-              <option value="email">{t('customers.email')}</option>
-              <option value="phone">{t('customers.phone')}</option>
-              <option value="createdAt">{t('customers.created')}</option>
-            </select>
-          </div>
-          <div>
-            <label className="label">{t('customers.sortDirection')}</label>
-            <select className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={sortOrder} onChange={e=>setSortOrder(e.target.value as any)}>
-              <option value="asc">{t('customers.ascending')}</option>
-              <option value="desc">{t('customers.descending')}</option>
-            </select>
-          </div>
-          <div>
-            <label className="label">{t('common.pageSize')}</label>
-            <select className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={String(pageSize)} onChange={e=>setPageSize(Number(e.target.value))}>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="20">20</option>
-            </select>
-          </div>
+        <div className="max-w-md">
+          <label className="label">{t('common.search')}</label>
+          <Input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Nazwa/Email/Telefon/NIP/Skrót" />
         </div>
       </Card>
 
@@ -289,7 +262,7 @@ export default function ClientsPage() {
                     <Td>{c.phone ?? '-'}</Td>
                     <Td>{c.nip ?? '-'}</Td>
                     <Td>{c.city ?? '-'}</Td>
-                    <Td>{new Intl.DateTimeFormat('pl-PL', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(c.createdAt))}</Td>
+                    <Td>{c.createdAt ? new Intl.DateTimeFormat('pl-PL', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(c.createdAt)) : '-'}</Td>
                     <Td>
                       <div className="flex gap-2">
                         <Button onClick={()=>openEditClient(c)}>{t('common.edit')}</Button>
@@ -300,7 +273,17 @@ export default function ClientsPage() {
                 ))}
               </tbody>
             </Table>
-            <Pagination page={meta.page} pages={meta.pages} onPage={(p)=>load(p)} />
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <Pagination page={meta.page} pages={meta.pages} onPage={(p)=>load(p)} />
+              <div className="flex items-center gap-2 md:justify-end">
+                <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">{t('common.pageSize')}:</label>
+                <select className="flex h-9 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={String(pageSize)} onChange={e=>setPageSize(Number(e.target.value))}>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                </select>
+              </div>
+            </div>
           </div>
         )}
       </Card>

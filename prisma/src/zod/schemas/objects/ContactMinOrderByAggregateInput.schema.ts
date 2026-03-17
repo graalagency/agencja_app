@@ -11,10 +11,11 @@ const makeSchema = () => z.object({
   informal: SortOrderSchema.optional(),
   fax: SortOrderSchema.optional(),
   email: SortOrderSchema.optional(),
-  userMod: SortOrderSchema.optional(),
-  dateMod: SortOrderSchema.optional(),
   contactPosition: SortOrderSchema.optional(),
-  accountant: SortOrderSchema.optional()
+  accountant: SortOrderSchema.optional(),
+  clientId: SortOrderSchema.optional(),
+  createdAt: SortOrderSchema.optional(),
+  updatedAt: SortOrderSchema.optional()
 }).strict();
 export const ContactMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ContactMinOrderByAggregateInput> = makeSchema() as unknown as z.ZodType<Prisma.ContactMinOrderByAggregateInput>;
 export const ContactMinOrderByAggregateInputObjectZodSchema = makeSchema();

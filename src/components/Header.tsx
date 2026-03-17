@@ -57,7 +57,7 @@ export function Header({ collapsed = false, onToggleSidebar }: Props) {
             variant="ghost"
             size="icon"
             onClick={onToggleSidebar}
-            className="md:hidden"
+            className=""
           >
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle menu</span>
