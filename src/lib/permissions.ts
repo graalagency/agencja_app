@@ -14,6 +14,7 @@ export type ModuleKey =
   | 'users' 
   | 'permissions' 
   | 'languages'
+  | 'dictionaries'
   | 'language-dictionary'
   | 'countries'
   | 'currencies'
@@ -34,8 +35,27 @@ export function hasModuleAccess(
   // Admin always has access to everything
   if (userRole === 'ADMIN') return true
   
-  // For nested modules, check both the specific module and the parent 'administration' module
-  if (['users', 'permissions', 'languages', 'language-dictionary', 'countries', 'currencies'].includes(moduleKey)) {
+  // Dictionary modules can inherit access from unified `dictionaries` permission
+  if (['language-dictionary', 'countries', 'currencies', 'dictionaries'].includes(moduleKey)) {
+    const specificPerm = permissions[moduleKey]
+    const dictionariesPerm = permissions['dictionaries']
+    const adminPerm = permissions['administration']
+
+    if (!specificPerm && !dictionariesPerm && !adminPerm) return false
+
+    const perm = specificPerm || dictionariesPerm || adminPerm
+
+    if (userRole === 'ADVANCED') {
+      return perm.advancedAccess
+    }
+
+    if (userRole === 'USER') {
+      return perm.userAccess
+    }
+  }
+
+  // For admin modules, check both specific module and parent administration module
+  if (['users', 'permissions', 'languages'].includes(moduleKey)) {
     const specificPerm = permissions[moduleKey]
     const adminPerm = permissions['administration']
     

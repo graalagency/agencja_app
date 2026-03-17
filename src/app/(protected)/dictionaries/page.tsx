@@ -3,67 +3,67 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { useTranslations } from 'next-intl'
-import { Coins, Globe, Languages, Search, Star } from 'lucide-react'
+import { Database, Search, Star } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { hasModuleAccess, type ModuleKey, type RolePermissionsMap } from '@/lib/permissions'
+import { DICTIONARIES, DICTIONARY_GROUPS } from '@/lib/dictionaries'
 
-type DictionaryItem = {
-  id: 'countries' | 'currencies' | 'language-dictionary'
-  moduleKey: ModuleKey
-  href: string
-  labelKey: 'navigation.countryDictionary' | 'navigation.currencyDictionary' | 'navigation.languageDictionary'
-  descriptionKey: 'dictionaryHub.countryDescription' | 'dictionaryHub.currencyDescription' | 'dictionaryHub.languageDescription'
-  group: 'regional' | 'finance' | 'content'
-}
-
-const DICTIONARY_ITEMS: DictionaryItem[] = [
-  {
-    id: 'countries',
-    moduleKey: 'countries',
-    href: '/countries',
-    labelKey: 'navigation.countryDictionary',
-    descriptionKey: 'dictionaryHub.countryDescription',
-    group: 'regional',
-  },
-  {
-    id: 'currencies',
-    moduleKey: 'currencies',
-    href: '/currencies',
-    labelKey: 'navigation.currencyDictionary',
-    descriptionKey: 'dictionaryHub.currencyDescription',
-    group: 'finance',
-  },
-  {
-    id: 'language-dictionary',
-    moduleKey: 'language-dictionary',
-    href: '/language-dictionary',
-    labelKey: 'navigation.languageDictionary',
-    descriptionKey: 'dictionaryHub.languageDescription',
-    group: 'content',
-  },
-]
-
-const GROUP_ORDER: Array<DictionaryItem['group']> = ['regional', 'finance', 'content']
 const FAVORITES_STORAGE_KEY = 'dictionary_hub_favorites'
 
-function iconForDictionary(id: DictionaryItem['id']) {
-  if (id === 'countries') return <Globe className="h-4 w-4" />
-  if (id === 'currencies') return <Coins className="h-4 w-4" />
-  return <Languages className="h-4 w-4" />
+function iconForDictionary() {
+  return <Database className="h-4 w-4" />
 }
 
 export default function DictionariesHubPage() {
-  const t = useTranslations()
   const { data: session } = useSession()
   const role = (session as any)?.user?.role as 'USER' | 'ADVANCED' | 'ADMIN' | undefined
-
   const [search, setSearch] = useState('')
-  const [permissions, setPermissions] = useState<RolePermissionsMap | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [favorites, setFavorites] = useState<DictionaryItem['id'][]>([])
+  const [favorites, setFavorites] = useState<string[]>([])
+  const [permissionsLoading, setPermissionsLoading] = useState(true)
+  const [canViewDictionaries, setCanViewDictionaries] = useState(false)
+
+  useEffect(() => {
+    const loadAccess = async () => {
+      if (role === 'ADMIN') {
+        setCanViewDictionaries(true)
+        setPermissionsLoading(false)
+        return
+      }
+
+      try {
+        const res = await fetch('/api/permissions')
+        if (!res.ok) {
+          setCanViewDictionaries(false)
+          setPermissionsLoading(false)
+          return
+        }
+
+        const json = await res.json()
+        const list = Array.isArray(json?.data) ? json.data : []
+        const dictionariesPerm = list.find((item: any) => item.module === 'dictionaries')
+
+        if (dictionariesPerm) {
+          setCanViewDictionaries(role === 'ADVANCED' ? Boolean(dictionariesPerm.advancedAccess) : Boolean(dictionariesPerm.userAccess))
+          setPermissionsLoading(false)
+          return
+        }
+
+        // Backward compatibility for old permission matrix entries
+        const legacy = list.filter((item: any) => ['countries', 'currencies', 'language-dictionary'].includes(item.module))
+        const legacyAccess = legacy.some((item: any) => role === 'ADVANCED' ? Boolean(item.advancedAccess) : Boolean(item.userAccess))
+        setCanViewDictionaries(legacyAccess)
+      } catch {
+        setCanViewDictionaries(false)
+      } finally {
+        setPermissionsLoading(false)
+      }
+    }
+
+    if (role) {
+      loadAccess()
+    }
+  }, [role])
 
   useEffect(() => {
     try {
@@ -71,91 +71,32 @@ export default function DictionariesHubPage() {
       if (!raw) return
       const parsed = JSON.parse(raw)
       if (Array.isArray(parsed)) {
-        setFavorites(parsed.filter((value): value is DictionaryItem['id'] => typeof value === 'string' && DICTIONARY_ITEMS.some((item) => item.id === value)))
+        setFavorites(parsed.filter((value): value is string => typeof value === 'string' && DICTIONARIES.some((item) => item.key === value)))
       }
     } catch {
-      // ignore storage parse errors
+      // ignore
     }
   }, [])
-
-  useEffect(() => {
-    const loadPermissions = async () => {
-      try {
-        const res = await fetch('/api/permissions')
-        if (!res.ok) {
-          setLoading(false)
-          return
-        }
-
-        const json = await res.json()
-        const permMap: RolePermissionsMap = {
-          dashboard: { userAccess: false, advancedAccess: false, adminAccess: true },
-          contacts: { userAccess: false, advancedAccess: false, adminAccess: true },
-          customers: { userAccess: false, advancedAccess: false, adminAccess: true },
-          publishers: { userAccess: false, advancedAccess: false, adminAccess: true },
-          authors: { userAccess: false, advancedAccess: false, adminAccess: true },
-          invoices: { userAccess: false, advancedAccess: false, adminAccess: true },
-          'simple-invoices': { userAccess: false, advancedAccess: false, adminAccess: true },
-          cashflow: { userAccess: false, advancedAccess: false, adminAccess: true },
-          finances: { userAccess: false, advancedAccess: false, adminAccess: true },
-          users: { userAccess: false, advancedAccess: false, adminAccess: true },
-          permissions: { userAccess: false, advancedAccess: false, adminAccess: true },
-          languages: { userAccess: false, advancedAccess: false, adminAccess: true },
-          'language-dictionary': { userAccess: false, advancedAccess: false, adminAccess: true },
-          countries: { userAccess: false, advancedAccess: false, adminAccess: true },
-          currencies: { userAccess: false, advancedAccess: false, adminAccess: true },
-          administration: { userAccess: false, advancedAccess: false, adminAccess: true },
-          documents: { userAccess: false, advancedAccess: false, adminAccess: true },
-        }
-
-        if (Array.isArray(json.data)) {
-          json.data.forEach((permission: any) => {
-            if (permission.module in permMap) {
-              permMap[permission.module as ModuleKey] = {
-                userAccess: permission.userAccess,
-                advancedAccess: permission.advancedAccess,
-                adminAccess: permission.adminAccess,
-              }
-            }
-          })
-        }
-
-        setPermissions(permMap)
-      } catch {
-        // keep empty state
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadPermissions()
-  }, [])
-
-  const canAccess = (moduleKey: ModuleKey) => {
-    if (!role || !permissions) return false
-    return hasModuleAccess(moduleKey, role, permissions)
-  }
-
-  const availableItems = useMemo(() => DICTIONARY_ITEMS.filter((item) => canAccess(item.moduleKey)), [role, permissions])
 
   const filteredItems = useMemo(() => {
     const needle = search.trim().toLowerCase()
-    if (!needle) return availableItems
-    return availableItems.filter((item) => {
-      const title = t(item.labelKey).toLowerCase()
-      const description = t(item.descriptionKey).toLowerCase()
+    if (!needle) return DICTIONARIES
+    return DICTIONARIES.filter((item) => {
+      const title = item.label.toLowerCase()
+      const description = item.description.toLowerCase()
       return title.includes(needle) || description.includes(needle)
     })
-  }, [availableItems, search, t])
+  }, [search])
 
-  const favoriteItems = filteredItems.filter((item) => favorites.includes(item.id))
+  const favoriteItems = filteredItems.filter((item) => favorites.includes(item.key))
 
-  const groupedItems = GROUP_ORDER.map((group) => ({
-    group,
-    items: filteredItems.filter((item) => item.group === group),
+  const groupedItems = DICTIONARY_GROUPS.map((group) => ({
+    key: group.key,
+    label: group.label,
+    items: filteredItems.filter((item) => item.group === group.key),
   })).filter((group) => group.items.length > 0)
 
-  const toggleFavorite = (id: DictionaryItem['id']) => {
+  const toggleFavorite = (id: string) => {
     setFavorites((prev) => {
       const next = prev.includes(id) ? prev.filter((entry) => entry !== id) : [...prev, id]
       localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(next))
@@ -165,48 +106,50 @@ export default function DictionariesHubPage() {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6">
-        <div className="space-y-3">
-          <h1 className="text-2xl font-bold">{t('dictionaryHub.title')}</h1>
-          <p className="text-sm text-muted-foreground">{t('dictionaryHub.subtitle')}</p>
-        </div>
-
-        <div className="mt-5 relative max-w-xl">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="pl-9"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder={t('dictionaryHub.searchPlaceholder')}
-          />
-        </div>
-      </Card>
-
-      {loading ? (
-        <Card className="p-6 text-sm text-muted-foreground">{t('common.loading')}</Card>
+      {permissionsLoading ? (
+        <Card className="p-6 text-sm text-muted-foreground">Ladowanie uprawnien...</Card>
+      ) : !canViewDictionaries ? (
+        <Card className="p-6 text-sm text-muted-foreground">Brak dostepu do modulu slownikow.</Card>
       ) : (
         <>
+          <Card className="p-6">
+            <div className="space-y-3">
+              <h1 className="text-2xl font-bold">Centrum slownikowe</h1>
+              <p className="text-sm text-muted-foreground">Wszystkie slowniki sa pogrupowane i kazdy prowadzi do ekranu edycji.</p>
+            </div>
+
+            <div className="mt-5 relative max-w-xl">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                className="pl-9"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Szukaj slownika po nazwie lub opisie"
+              />
+            </div>
+          </Card>
+
           {favoriteItems.length > 0 && (
             <Card className="p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-amber-500" />
-                <h2 className="text-lg font-semibold">{t('dictionaryHub.favorites')}</h2>
+                <h2 className="text-lg font-semibold">Ulubione</h2>
               </div>
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {favoriteItems.map((item) => (
-                  <div key={`fav-${item.id}`} className="rounded-lg border p-4">
+                  <div key={`fav-${item.key}`} className="rounded-lg border p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 font-medium">
-                          {iconForDictionary(item.id)}
-                          <span>{t(item.labelKey)}</span>
+                          {iconForDictionary()}
+                          <span>{item.label}</span>
                         </div>
-                        <p className="text-xs text-muted-foreground">{t(item.descriptionKey)}</p>
+                        <p className="text-xs text-muted-foreground">{item.description}</p>
                       </div>
                       <button
                         type="button"
-                        onClick={() => toggleFavorite(item.id)}
-                        aria-label={t('dictionaryHub.unpin')}
+                        onClick={() => toggleFavorite(item.key)}
+                        aria-label="Usun z ulubionych"
                         className="text-amber-500"
                       >
                         <Star className="h-4 w-4 fill-current" />
@@ -214,7 +157,7 @@ export default function DictionariesHubPage() {
                     </div>
                     <div className="mt-4">
                       <Button asChild size="sm" className="w-full">
-                        <Link href={item.href}>{t('dictionaryHub.open')}</Link>
+                        <Link href={`/dictionaries/${item.key}`}>Otworz</Link>
                       </Button>
                     </div>
                   </div>
@@ -225,29 +168,29 @@ export default function DictionariesHubPage() {
 
           {groupedItems.length === 0 ? (
             <Card className="p-6 text-sm text-muted-foreground">
-              {availableItems.length === 0 ? t('dictionaryHub.emptyForPermissions') : t('dictionaryHub.emptySearch')}
+              Brak slownikow pasujacych do wyszukiwania.
             </Card>
           ) : (
             groupedItems.map((group) => (
-              <Card key={group.group} className="p-6 space-y-4">
-                <h2 className="text-lg font-semibold">{t(`dictionaryHub.groups.${group.group}`)}</h2>
+              <Card key={group.key} className="p-6 space-y-4">
+                <h2 className="text-lg font-semibold">{group.label}</h2>
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                   {group.items.map((item) => {
-                    const isFavorite = favorites.includes(item.id)
+                    const isFavorite = favorites.includes(item.key)
                     return (
-                      <div key={item.id} className="rounded-lg border p-4">
+                      <div key={item.key} className="rounded-lg border p-4">
                         <div className="flex items-start justify-between gap-3">
                           <div className="space-y-1">
                             <div className="flex items-center gap-2 font-medium">
-                              {iconForDictionary(item.id)}
-                              <span>{t(item.labelKey)}</span>
+                              {iconForDictionary()}
+                              <span>{item.label}</span>
                             </div>
-                            <p className="text-xs text-muted-foreground">{t(item.descriptionKey)}</p>
+                            <p className="text-xs text-muted-foreground">{item.description}</p>
                           </div>
                           <button
                             type="button"
-                            onClick={() => toggleFavorite(item.id)}
-                            aria-label={isFavorite ? t('dictionaryHub.unpin') : t('dictionaryHub.pin')}
+                            onClick={() => toggleFavorite(item.key)}
+                            aria-label={isFavorite ? 'Usun z ulubionych' : 'Przypnij do ulubionych'}
                             className={isFavorite ? 'text-amber-500' : 'text-muted-foreground'}
                           >
                             <Star className={isFavorite ? 'h-4 w-4 fill-current' : 'h-4 w-4'} />
@@ -255,7 +198,7 @@ export default function DictionariesHubPage() {
                         </div>
                         <div className="mt-4">
                           <Button asChild size="sm" variant="outline" className="w-full">
-                            <Link href={item.href}>{t('dictionaryHub.open')}</Link>
+                            <Link href={`/dictionaries/${item.key}`}>Otworz slownik</Link>
                           </Button>
                         </div>
                       </div>

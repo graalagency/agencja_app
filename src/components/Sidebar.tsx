@@ -60,6 +60,7 @@ export function Sidebar({ collapsed = false }: Props) {
           users: { userAccess: false, advancedAccess: false, adminAccess: true },
           permissions: { userAccess: false, advancedAccess: false, adminAccess: true },
           languages: { userAccess: false, advancedAccess: false, adminAccess: true },
+          dictionaries: { userAccess: false, advancedAccess: false, adminAccess: true },
           'language-dictionary': { userAccess: false, advancedAccess: false, adminAccess: true },
           countries: { userAccess: false, advancedAccess: false, adminAccess: true },
           currencies: { userAccess: false, advancedAccess: false, adminAccess: true },
@@ -205,7 +206,7 @@ export function Sidebar({ collapsed = false }: Props) {
               renderCollapsedItem('/authors', 'Autorzy', pathname.startsWith('/authors'), <UserCircle className="h-4 w-4" />)
             )}
 
-            {(canAccess('countries') || canAccess('currencies') || canAccess('language-dictionary')) && (
+            {canAccess('dictionaries') && (
               renderCollapsedItem(
                 '/dictionaries',
                 t('navigation.dictionaries'),
@@ -286,7 +287,7 @@ export function Sidebar({ collapsed = false }: Props) {
           )}
 
           {/* Dictionaries */}
-          {(canAccess('countries') || canAccess('currencies') || canAccess('language-dictionary')) && (
+          {canAccess('dictionaries') && (
             <Link 
               href="/dictionaries" 
               className={cn(
