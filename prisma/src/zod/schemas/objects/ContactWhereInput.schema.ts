@@ -6,8 +6,8 @@ import { StringFilterObjectSchema as StringFilterObjectSchema } from './StringFi
 import { IntNullableFilterObjectSchema as IntNullableFilterObjectSchema } from './IntNullableFilter.schema';
 import { JsonNullableFilterObjectSchema as JsonNullableFilterObjectSchema } from './JsonNullableFilter.schema';
 import { DateTimeFilterObjectSchema as DateTimeFilterObjectSchema } from './DateTimeFilter.schema';
-import { ClientNullableScalarRelationFilterObjectSchema as ClientNullableScalarRelationFilterObjectSchema } from './ClientNullableScalarRelationFilter.schema';
-import { ClientWhereInputObjectSchema as ClientWhereInputObjectSchema } from './ClientWhereInput.schema'
+import { ClientContactListRelationFilterObjectSchema as ClientContactListRelationFilterObjectSchema } from './ClientContactListRelationFilter.schema';
+import { PublisherContactListRelationFilterObjectSchema as PublisherContactListRelationFilterObjectSchema } from './PublisherContactListRelationFilter.schema'
 
 const contactwhereinputSchema = z.object({
   AND: z.union([z.lazy(() => ContactWhereInputObjectSchema), z.lazy(() => ContactWhereInputObjectSchema).array()]).optional(),
@@ -24,10 +24,10 @@ const contactwhereinputSchema = z.object({
   contactPosition: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   accountant: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
   photos: z.lazy(() => JsonNullableFilterObjectSchema).optional(),
-  clientId: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-  Client: z.union([z.lazy(() => ClientNullableScalarRelationFilterObjectSchema), z.lazy(() => ClientWhereInputObjectSchema)]).optional()
+  ClientContact: z.lazy(() => ClientContactListRelationFilterObjectSchema).optional(),
+  PublisherContact: z.lazy(() => PublisherContactListRelationFilterObjectSchema).optional()
 }).strict();
 export const ContactWhereInputObjectSchema: z.ZodType<Prisma.ContactWhereInput> = contactwhereinputSchema as unknown as z.ZodType<Prisma.ContactWhereInput>;
 export const ContactWhereInputObjectZodSchema = contactwhereinputSchema;

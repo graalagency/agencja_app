@@ -1,0 +1,10 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { TaxResidenceCertOrderByWithRelationInputObjectSchema as TaxResidenceCertOrderByWithRelationInputObjectSchema } from './objects/TaxResidenceCertOrderByWithRelationInput.schema';
+import { TaxResidenceCertWhereInputObjectSchema as TaxResidenceCertWhereInputObjectSchema } from './objects/TaxResidenceCertWhereInput.schema';
+import { TaxResidenceCertWhereUniqueInputObjectSchema as TaxResidenceCertWhereUniqueInputObjectSchema } from './objects/TaxResidenceCertWhereUniqueInput.schema';
+import { TaxResidenceCertCountAggregateInputObjectSchema as TaxResidenceCertCountAggregateInputObjectSchema } from './objects/TaxResidenceCertCountAggregateInput.schema';
+
+export const TaxResidenceCertCountSchema: z.ZodType<Prisma.TaxResidenceCertCountArgs> = z.object({ orderBy: z.union([TaxResidenceCertOrderByWithRelationInputObjectSchema, TaxResidenceCertOrderByWithRelationInputObjectSchema.array()]).optional(), where: TaxResidenceCertWhereInputObjectSchema.optional(), cursor: TaxResidenceCertWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), TaxResidenceCertCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.TaxResidenceCertCountArgs>;
+
+export const TaxResidenceCertCountZodSchema = z.object({ orderBy: z.union([TaxResidenceCertOrderByWithRelationInputObjectSchema, TaxResidenceCertOrderByWithRelationInputObjectSchema.array()]).optional(), where: TaxResidenceCertWhereInputObjectSchema.optional(), cursor: TaxResidenceCertWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), TaxResidenceCertCountAggregateInputObjectSchema ]).optional() }).strict();

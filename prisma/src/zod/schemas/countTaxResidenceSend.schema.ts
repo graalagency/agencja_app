@@ -1,0 +1,10 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { TaxResidenceSendOrderByWithRelationInputObjectSchema as TaxResidenceSendOrderByWithRelationInputObjectSchema } from './objects/TaxResidenceSendOrderByWithRelationInput.schema';
+import { TaxResidenceSendWhereInputObjectSchema as TaxResidenceSendWhereInputObjectSchema } from './objects/TaxResidenceSendWhereInput.schema';
+import { TaxResidenceSendWhereUniqueInputObjectSchema as TaxResidenceSendWhereUniqueInputObjectSchema } from './objects/TaxResidenceSendWhereUniqueInput.schema';
+import { TaxResidenceSendCountAggregateInputObjectSchema as TaxResidenceSendCountAggregateInputObjectSchema } from './objects/TaxResidenceSendCountAggregateInput.schema';
+
+export const TaxResidenceSendCountSchema: z.ZodType<Prisma.TaxResidenceSendCountArgs> = z.object({ orderBy: z.union([TaxResidenceSendOrderByWithRelationInputObjectSchema, TaxResidenceSendOrderByWithRelationInputObjectSchema.array()]).optional(), where: TaxResidenceSendWhereInputObjectSchema.optional(), cursor: TaxResidenceSendWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), TaxResidenceSendCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.TaxResidenceSendCountArgs>;
+
+export const TaxResidenceSendCountZodSchema = z.object({ orderBy: z.union([TaxResidenceSendOrderByWithRelationInputObjectSchema, TaxResidenceSendOrderByWithRelationInputObjectSchema.array()]).optional(), where: TaxResidenceSendWhereInputObjectSchema.optional(), cursor: TaxResidenceSendWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), TaxResidenceSendCountAggregateInputObjectSchema ]).optional() }).strict();

@@ -12,10 +12,10 @@ export const ContactInputSchema = z.object({
     contactPosition: z.string().optional().nullable(),
     accountant: z.number().int().optional().nullable(),
     photos: z.unknown().optional().nullable(),
-    clientId: z.number().int().optional().nullable(),
     createdAt: z.date(),
     updatedAt: z.date(),
-    Client: z.unknown().optional().nullable()
+    ClientContact: z.array(z.unknown()),
+    PublisherContact: z.array(z.unknown())
 }).strict();
 
 export type ContactInputType = z.infer<typeof ContactInputSchema>;

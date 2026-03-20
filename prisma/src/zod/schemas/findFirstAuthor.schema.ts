@@ -11,9 +11,12 @@ import { AuthorScalarFieldEnumSchema } from './enums/AuthorScalarFieldEnum.schem
 
 export const AuthorFindFirstSelectSchema: z.ZodType<Prisma.AuthorSelect> = z.object({
     id: z.boolean().optional(),
+    sourceId: z.boolean().optional(),
     firstName: z.boolean().optional(),
     middleName: z.boolean().optional(),
     lastName: z.boolean().optional(),
+    suffix: z.boolean().optional(),
+    penName: z.boolean().optional(),
     description: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
@@ -21,14 +24,19 @@ export const AuthorFindFirstSelectSchema: z.ZodType<Prisma.AuthorSelect> = z.obj
     personalEmail: z.boolean().optional(),
     workEmail: z.boolean().optional(),
     clientId: z.boolean().optional(),
-    Client: z.boolean().optional()
+    Client: z.boolean().optional(),
+    TitleAuthors: z.boolean().optional(),
+    _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.AuthorSelect>;
 
 export const AuthorFindFirstSelectZodSchema = z.object({
     id: z.boolean().optional(),
+    sourceId: z.boolean().optional(),
     firstName: z.boolean().optional(),
     middleName: z.boolean().optional(),
     lastName: z.boolean().optional(),
+    suffix: z.boolean().optional(),
+    penName: z.boolean().optional(),
     description: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
@@ -36,7 +44,9 @@ export const AuthorFindFirstSelectZodSchema = z.object({
     personalEmail: z.boolean().optional(),
     workEmail: z.boolean().optional(),
     clientId: z.boolean().optional(),
-    Client: z.boolean().optional()
+    Client: z.boolean().optional(),
+    TitleAuthors: z.boolean().optional(),
+    _count: z.boolean().optional()
   }).strict();
 
 export const AuthorFindFirstSchema: z.ZodType<Prisma.AuthorFindFirstArgs> = z.object({ select: AuthorFindFirstSelectSchema.optional(), include: z.lazy(() => AuthorIncludeObjectSchema.optional()), orderBy: z.union([AuthorOrderByWithRelationInputObjectSchema, AuthorOrderByWithRelationInputObjectSchema.array()]).optional(), where: AuthorWhereInputObjectSchema.optional(), cursor: AuthorWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([AuthorScalarFieldEnumSchema, AuthorScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.AuthorFindFirstArgs>;

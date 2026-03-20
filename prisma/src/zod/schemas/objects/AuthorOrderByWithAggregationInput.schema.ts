@@ -10,9 +10,12 @@ import { AuthorSumOrderByAggregateInputObjectSchema as AuthorSumOrderByAggregate
 
 const makeSchema = () => z.object({
   id: SortOrderSchema.optional(),
+  sourceId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   firstName: SortOrderSchema.optional(),
   middleName: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   lastName: SortOrderSchema.optional(),
+  suffix: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  penName: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   description: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),

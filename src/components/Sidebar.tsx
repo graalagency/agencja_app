@@ -12,7 +12,8 @@ import {
   UserCircle,
   Building2,
   TrendingUp,
-  Wallet
+  Wallet,
+  BookOpen
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
@@ -53,6 +54,7 @@ export function Sidebar({ collapsed = false }: Props) {
           customers: { userAccess: false, advancedAccess: false, adminAccess: true },
           publishers: { userAccess: false, advancedAccess: false, adminAccess: true },
           authors: { userAccess: false, advancedAccess: false, adminAccess: true },
+          titles: { userAccess: false, advancedAccess: false, adminAccess: true },
           invoices: { userAccess: false, advancedAccess: false, adminAccess: true },
           'simple-invoices': { userAccess: false, advancedAccess: false, adminAccess: true },
           cashflow: { userAccess: false, advancedAccess: false, adminAccess: true },
@@ -93,7 +95,7 @@ export function Sidebar({ collapsed = false }: Props) {
 
   // Auto-open the relevant accordion when the current path belongs to that group
   useEffect(() => {
-    const isData = pathname.startsWith('/customers') || pathname.startsWith('/publishers') || pathname.startsWith('/contacts') || pathname.startsWith('/authors')
+    const isData = pathname.startsWith('/customers') || pathname.startsWith('/publishers') || pathname.startsWith('/contacts') || pathname.startsWith('/authors') || pathname.startsWith('/titles')
     const isFinance = pathname.startsWith('/finances') || pathname.startsWith('/simple-invoices') || pathname.startsWith('/invoices/calendar')
     const isAdmin = pathname.startsWith('/users') || pathname.startsWith('/permissions') || pathname.startsWith('/languages')
     setOpen(prev => ({
@@ -206,6 +208,10 @@ export function Sidebar({ collapsed = false }: Props) {
               renderCollapsedItem('/authors', 'Autorzy', pathname.startsWith('/authors'), <UserCircle className="h-4 w-4" />)
             )}
 
+            {canAccess('titles') && (
+              renderCollapsedItem('/titles', 'Tytuły', pathname.startsWith('/titles'), <BookOpen className="h-4 w-4" />)
+            )}
+
             {canAccess('dictionaries') && (
               renderCollapsedItem(
                 '/dictionaries',
@@ -303,14 +309,14 @@ export function Sidebar({ collapsed = false }: Props) {
           )}
 
           {/* Data group */}
-          {(canAccess('contacts') || canAccess('customers') || canAccess('publishers') || canAccess('authors')) && (
+          {(canAccess('contacts') || canAccess('customers') || canAccess('publishers') || canAccess('authors') || canAccess('titles')) && (
             <div className="space-y-1">
               <button 
                 onClick={() => toggle('data')} 
                 className={cn(
                   "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  (pathname.startsWith('/customers') || pathname.startsWith('/publishers') || pathname.startsWith('/contacts') || pathname.startsWith('/authors'))
-                    ? "bg-accent text-accent-foreground" 
+                  (pathname.startsWith('/customers') || pathname.startsWith('/publishers') || pathname.startsWith('/contacts') || pathname.startsWith('/authors') || pathname.startsWith('/titles'))
+                    ? "bg-accent text-accent-foreground"
                     : "hover:bg-accent hover:text-accent-foreground"
                 )}
               >
@@ -322,7 +328,7 @@ export function Sidebar({ collapsed = false }: Props) {
               </button>
               <div className={cn(
                 "overflow-hidden transition-all duration-200 space-y-1",
-                open.data ? "max-h-60 mt-1" : "max-h-0"
+                open.data ? "max-h-80 mt-1" : "max-h-0"
               )}>
                 {canAccess('contacts') && (
                   <Link 
@@ -367,17 +373,31 @@ export function Sidebar({ collapsed = false }: Props) {
                   </Link>
                 )}
                 {canAccess('authors') && (
-                  <Link 
-                    href="/authors" 
+                  <Link
+                    href="/authors"
                     className={cn(
                       "flex items-center gap-3 pl-10 pr-3 py-2 rounded-md text-sm transition-colors",
                       pathname.startsWith('/authors')
-                        ? "bg-primary/10 text-primary font-medium" 
+                        ? "bg-primary/10 text-primary font-medium"
                         : "hover:bg-accent hover:text-accent-foreground"
                     )}
                   >
                     <UserCircle className="h-3.5 w-3.5" />
                     <span>Autorzy</span>
+                  </Link>
+                )}
+                {canAccess('titles') && (
+                  <Link
+                    href="/titles"
+                    className={cn(
+                      "flex items-center gap-3 pl-10 pr-3 py-2 rounded-md text-sm transition-colors",
+                      pathname.startsWith('/titles')
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "hover:bg-accent hover:text-accent-foreground"
+                    )}
+                  >
+                    <BookOpen className="h-3.5 w-3.5" />
+                    <span>Tytuły</span>
                   </Link>
                 )}
               </div>

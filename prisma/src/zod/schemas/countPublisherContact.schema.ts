@@ -1,0 +1,10 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { PublisherContactOrderByWithRelationInputObjectSchema as PublisherContactOrderByWithRelationInputObjectSchema } from './objects/PublisherContactOrderByWithRelationInput.schema';
+import { PublisherContactWhereInputObjectSchema as PublisherContactWhereInputObjectSchema } from './objects/PublisherContactWhereInput.schema';
+import { PublisherContactWhereUniqueInputObjectSchema as PublisherContactWhereUniqueInputObjectSchema } from './objects/PublisherContactWhereUniqueInput.schema';
+import { PublisherContactCountAggregateInputObjectSchema as PublisherContactCountAggregateInputObjectSchema } from './objects/PublisherContactCountAggregateInput.schema';
+
+export const PublisherContactCountSchema: z.ZodType<Prisma.PublisherContactCountArgs> = z.object({ orderBy: z.union([PublisherContactOrderByWithRelationInputObjectSchema, PublisherContactOrderByWithRelationInputObjectSchema.array()]).optional(), where: PublisherContactWhereInputObjectSchema.optional(), cursor: PublisherContactWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), PublisherContactCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.PublisherContactCountArgs>;
+
+export const PublisherContactCountZodSchema = z.object({ orderBy: z.union([PublisherContactOrderByWithRelationInputObjectSchema, PublisherContactOrderByWithRelationInputObjectSchema.array()]).optional(), where: PublisherContactWhereInputObjectSchema.optional(), cursor: PublisherContactWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), PublisherContactCountAggregateInputObjectSchema ]).optional() }).strict();

@@ -21,10 +21,11 @@ export const ContactFindManySelectSchema: z.ZodType<Prisma.ContactSelect> = z.ob
     contactPosition: z.boolean().optional(),
     accountant: z.boolean().optional(),
     photos: z.boolean().optional(),
-    clientId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
-    Client: z.boolean().optional()
+    ClientContact: z.boolean().optional(),
+    PublisherContact: z.boolean().optional(),
+    _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.ContactSelect>;
 
 export const ContactFindManySelectZodSchema = z.object({
@@ -39,10 +40,11 @@ export const ContactFindManySelectZodSchema = z.object({
     contactPosition: z.boolean().optional(),
     accountant: z.boolean().optional(),
     photos: z.boolean().optional(),
-    clientId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
-    Client: z.boolean().optional()
+    ClientContact: z.boolean().optional(),
+    PublisherContact: z.boolean().optional(),
+    _count: z.boolean().optional()
   }).strict();
 
 export const ContactFindManySchema: z.ZodType<Prisma.ContactFindManyArgs> = z.object({ select: ContactFindManySelectSchema.optional(), include: z.lazy(() => ContactIncludeObjectSchema.optional()), orderBy: z.union([ContactOrderByWithRelationInputObjectSchema, ContactOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContactWhereInputObjectSchema.optional(), cursor: ContactWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContactScalarFieldEnumSchema, ContactScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContactFindManyArgs>;

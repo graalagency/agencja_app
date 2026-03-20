@@ -52,8 +52,8 @@ export async function GET(req: Request) {
     firstName: a.firstName,
     middleName: a.middleName,
     lastName: a.lastName,
-    suffix: null,
-    penName: null,
+    suffix: a.suffix ?? null,
+    penName: a.penName ?? null,
     remarks: a.description,
     dateMod: a.updatedAt,
     userMod: null

@@ -13,7 +13,6 @@ const makeSchema = () => z.object({
   email: z.literal(true).optional(),
   contactPosition: z.literal(true).optional(),
   accountant: z.literal(true).optional(),
-  clientId: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional()
 }).strict();

@@ -1,0 +1,15 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { TitleAuthorWhereInputObjectSchema as TitleAuthorWhereInputObjectSchema } from './objects/TitleAuthorWhereInput.schema';
+import { TitleAuthorOrderByWithAggregationInputObjectSchema as TitleAuthorOrderByWithAggregationInputObjectSchema } from './objects/TitleAuthorOrderByWithAggregationInput.schema';
+import { TitleAuthorScalarWhereWithAggregatesInputObjectSchema as TitleAuthorScalarWhereWithAggregatesInputObjectSchema } from './objects/TitleAuthorScalarWhereWithAggregatesInput.schema';
+import { TitleAuthorScalarFieldEnumSchema } from './enums/TitleAuthorScalarFieldEnum.schema';
+import { TitleAuthorCountAggregateInputObjectSchema as TitleAuthorCountAggregateInputObjectSchema } from './objects/TitleAuthorCountAggregateInput.schema';
+import { TitleAuthorMinAggregateInputObjectSchema as TitleAuthorMinAggregateInputObjectSchema } from './objects/TitleAuthorMinAggregateInput.schema';
+import { TitleAuthorMaxAggregateInputObjectSchema as TitleAuthorMaxAggregateInputObjectSchema } from './objects/TitleAuthorMaxAggregateInput.schema';
+import { TitleAuthorAvgAggregateInputObjectSchema as TitleAuthorAvgAggregateInputObjectSchema } from './objects/TitleAuthorAvgAggregateInput.schema';
+import { TitleAuthorSumAggregateInputObjectSchema as TitleAuthorSumAggregateInputObjectSchema } from './objects/TitleAuthorSumAggregateInput.schema';
+
+export const TitleAuthorGroupBySchema: z.ZodType<Prisma.TitleAuthorGroupByArgs> = z.object({ where: TitleAuthorWhereInputObjectSchema.optional(), orderBy: z.union([TitleAuthorOrderByWithAggregationInputObjectSchema, TitleAuthorOrderByWithAggregationInputObjectSchema.array()]).optional(), having: TitleAuthorScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(TitleAuthorScalarFieldEnumSchema), _count: z.union([ z.literal(true), TitleAuthorCountAggregateInputObjectSchema ]).optional(), _min: TitleAuthorMinAggregateInputObjectSchema.optional(), _max: TitleAuthorMaxAggregateInputObjectSchema.optional(), _avg: TitleAuthorAvgAggregateInputObjectSchema.optional(), _sum: TitleAuthorSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.TitleAuthorGroupByArgs>;
+
+export const TitleAuthorGroupByZodSchema = z.object({ where: TitleAuthorWhereInputObjectSchema.optional(), orderBy: z.union([TitleAuthorOrderByWithAggregationInputObjectSchema, TitleAuthorOrderByWithAggregationInputObjectSchema.array()]).optional(), having: TitleAuthorScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(TitleAuthorScalarFieldEnumSchema), _count: z.union([ z.literal(true), TitleAuthorCountAggregateInputObjectSchema ]).optional(), _min: TitleAuthorMinAggregateInputObjectSchema.optional(), _max: TitleAuthorMaxAggregateInputObjectSchema.optional(), _avg: TitleAuthorAvgAggregateInputObjectSchema.optional(), _sum: TitleAuthorSumAggregateInputObjectSchema.optional() }).strict();

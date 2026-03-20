@@ -11,8 +11,8 @@ export const ContactDeleteResultSchema = z.nullable(z.object({
   contactPosition: z.string().optional(),
   accountant: z.number().int().optional(),
   photos: z.unknown().optional(),
-  clientId: z.number().int().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  Client: z.unknown().optional()
+  ClientContact: z.array(z.unknown()),
+  PublisherContact: z.array(z.unknown())
 }));

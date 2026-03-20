@@ -12,10 +12,10 @@ export const ContactModelSchema = z.object({
     contactPosition: z.string().nullable(),
     accountant: z.number().int().nullable(),
     photos: z.unknown().nullable(),
-    clientId: z.number().int().nullable(),
     createdAt: z.date(),
     updatedAt: z.date(),
-    Client: z.unknown().nullable()
+    ClientContact: z.array(z.unknown()),
+    PublisherContact: z.array(z.unknown())
 }).strict();
 
 export type ContactPureType = z.infer<typeof ContactModelSchema>;

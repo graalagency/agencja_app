@@ -4,9 +4,12 @@ import type { Prisma } from '@prisma/client';
 
 const makeSchema = () => z.object({
   id: z.literal(true).optional(),
+  sourceId: z.literal(true).optional(),
   firstName: z.literal(true).optional(),
   middleName: z.literal(true).optional(),
   lastName: z.literal(true).optional(),
+  suffix: z.literal(true).optional(),
+  penName: z.literal(true).optional(),
   description: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),

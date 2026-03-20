@@ -5,7 +5,9 @@ import { NullableStringFieldUpdateOperationsInputObjectSchema as NullableStringF
 import { StringFieldUpdateOperationsInputObjectSchema as StringFieldUpdateOperationsInputObjectSchema } from './StringFieldUpdateOperationsInput.schema';
 import { NullableIntFieldUpdateOperationsInputObjectSchema as NullableIntFieldUpdateOperationsInputObjectSchema } from './NullableIntFieldUpdateOperationsInput.schema';
 import { NullableJsonNullValueInputSchema } from '../enums/NullableJsonNullValueInput.schema';
-import { DateTimeFieldUpdateOperationsInputObjectSchema as DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema'
+import { DateTimeFieldUpdateOperationsInputObjectSchema as DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
+import { ClientContactUncheckedUpdateManyWithoutContactNestedInputObjectSchema as ClientContactUncheckedUpdateManyWithoutContactNestedInputObjectSchema } from './ClientContactUncheckedUpdateManyWithoutContactNestedInput.schema';
+import { PublisherContactUncheckedUpdateManyWithoutContactNestedInputObjectSchema as PublisherContactUncheckedUpdateManyWithoutContactNestedInputObjectSchema } from './PublisherContactUncheckedUpdateManyWithoutContactNestedInput.schema'
 
 import { JsonValueSchema as jsonSchema } from '../../helpers/json-helpers';
 
@@ -21,9 +23,10 @@ const makeSchema = () => z.object({
   contactPosition: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   accountant: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   photos: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
-  clientId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional()
+  updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  ClientContact: z.lazy(() => ClientContactUncheckedUpdateManyWithoutContactNestedInputObjectSchema).optional(),
+  PublisherContact: z.lazy(() => PublisherContactUncheckedUpdateManyWithoutContactNestedInputObjectSchema).optional()
 }).strict();
 export const ContactUncheckedUpdateInputObjectSchema: z.ZodType<Prisma.ContactUncheckedUpdateInput> = makeSchema() as unknown as z.ZodType<Prisma.ContactUncheckedUpdateInput>;
 export const ContactUncheckedUpdateInputObjectZodSchema = makeSchema();

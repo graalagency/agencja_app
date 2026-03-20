@@ -6,7 +6,8 @@ import { IntFieldUpdateOperationsInputObjectSchema as IntFieldUpdateOperationsIn
 import { NullableIntFieldUpdateOperationsInputObjectSchema as NullableIntFieldUpdateOperationsInputObjectSchema } from './NullableIntFieldUpdateOperationsInput.schema';
 import { NullableJsonNullValueInputSchema } from '../enums/NullableJsonNullValueInput.schema';
 import { DateTimeFieldUpdateOperationsInputObjectSchema as DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
-import { ClientUpdateOneWithoutContactNestedInputObjectSchema as ClientUpdateOneWithoutContactNestedInputObjectSchema } from './ClientUpdateOneWithoutContactNestedInput.schema'
+import { ClientContactUpdateManyWithoutContactNestedInputObjectSchema as ClientContactUpdateManyWithoutContactNestedInputObjectSchema } from './ClientContactUpdateManyWithoutContactNestedInput.schema';
+import { PublisherContactUpdateManyWithoutContactNestedInputObjectSchema as PublisherContactUpdateManyWithoutContactNestedInputObjectSchema } from './PublisherContactUpdateManyWithoutContactNestedInput.schema'
 
 import { JsonValueSchema as jsonSchema } from '../../helpers/json-helpers';
 
@@ -23,7 +24,8 @@ const makeSchema = () => z.object({
   photos: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  Client: z.lazy(() => ClientUpdateOneWithoutContactNestedInputObjectSchema).optional()
+  ClientContact: z.lazy(() => ClientContactUpdateManyWithoutContactNestedInputObjectSchema).optional(),
+  PublisherContact: z.lazy(() => PublisherContactUpdateManyWithoutContactNestedInputObjectSchema).optional()
 }).strict();
 export const ContactUpdateInputObjectSchema: z.ZodType<Prisma.ContactUpdateInput> = makeSchema() as unknown as z.ZodType<Prisma.ContactUpdateInput>;
 export const ContactUpdateInputObjectZodSchema = makeSchema();

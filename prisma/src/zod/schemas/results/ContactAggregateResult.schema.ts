@@ -11,22 +11,20 @@ export const ContactAggregateResultSchema = z.object({  _count: z.object({
     contactPosition: z.number(),
     accountant: z.number(),
     photos: z.number(),
-    clientId: z.number(),
     createdAt: z.number(),
     updatedAt: z.number(),
-    Client: z.number()
+    ClientContact: z.number(),
+    PublisherContact: z.number()
   }).optional(),
   _sum: z.object({
     id: z.number().nullable(),
     informal: z.number().nullable(),
-    accountant: z.number().nullable(),
-    clientId: z.number().nullable()
+    accountant: z.number().nullable()
   }).nullable().optional(),
   _avg: z.object({
     id: z.number().nullable(),
     informal: z.number().nullable(),
-    accountant: z.number().nullable(),
-    clientId: z.number().nullable()
+    accountant: z.number().nullable()
   }).nullable().optional(),
   _min: z.object({
     id: z.number().int().nullable(),
@@ -39,7 +37,6 @@ export const ContactAggregateResultSchema = z.object({  _count: z.object({
     email: z.string().nullable(),
     contactPosition: z.string().nullable(),
     accountant: z.number().int().nullable(),
-    clientId: z.number().int().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable()
   }).nullable().optional(),
@@ -54,7 +51,6 @@ export const ContactAggregateResultSchema = z.object({  _count: z.object({
     email: z.string().nullable(),
     contactPosition: z.string().nullable(),
     accountant: z.number().int().nullable(),
-    clientId: z.number().int().nullable(),
     createdAt: z.date().nullable(),
     updatedAt: z.date().nullable()
   }).nullable().optional()});

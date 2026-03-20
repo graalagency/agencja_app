@@ -14,7 +14,6 @@ const makeSchema = () => z.object({
   contactPosition: SortOrderSchema.optional(),
   accountant: SortOrderSchema.optional(),
   photos: SortOrderSchema.optional(),
-  clientId: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional()
 }).strict();

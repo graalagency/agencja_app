@@ -6,9 +6,12 @@ import { JsonValueSchema as jsonSchema } from '../../helpers/json-helpers';
 
 const makeSchema = () => z.object({
   id: z.number().int().optional(),
+  sourceId: z.number().int().optional().nullable(),
   firstName: z.string(),
   middleName: z.string().optional().nullable(),
   lastName: z.string(),
+  suffix: z.string().optional().nullable(),
+  penName: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date(),

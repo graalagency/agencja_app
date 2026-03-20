@@ -21,10 +21,11 @@ export const ContactFindFirstOrThrowSelectSchema: z.ZodType<Prisma.ContactSelect
     contactPosition: z.boolean().optional(),
     accountant: z.boolean().optional(),
     photos: z.boolean().optional(),
-    clientId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
-    Client: z.boolean().optional()
+    ClientContact: z.boolean().optional(),
+    PublisherContact: z.boolean().optional(),
+    _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.ContactSelect>;
 
 export const ContactFindFirstOrThrowSelectZodSchema = z.object({
@@ -39,10 +40,11 @@ export const ContactFindFirstOrThrowSelectZodSchema = z.object({
     contactPosition: z.boolean().optional(),
     accountant: z.boolean().optional(),
     photos: z.boolean().optional(),
-    clientId: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),
-    Client: z.boolean().optional()
+    ClientContact: z.boolean().optional(),
+    PublisherContact: z.boolean().optional(),
+    _count: z.boolean().optional()
   }).strict();
 
 export const ContactFindFirstOrThrowSchema: z.ZodType<Prisma.ContactFindFirstOrThrowArgs> = z.object({ select: ContactFindFirstOrThrowSelectSchema.optional(), include: z.lazy(() => ContactIncludeObjectSchema.optional()), orderBy: z.union([ContactOrderByWithRelationInputObjectSchema, ContactOrderByWithRelationInputObjectSchema.array()]).optional(), where: ContactWhereInputObjectSchema.optional(), cursor: ContactWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([ContactScalarFieldEnumSchema, ContactScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.ContactFindFirstOrThrowArgs>;

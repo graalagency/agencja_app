@@ -16,7 +16,6 @@ const makeSchema = () => z.object({
   contactPosition: z.string().optional().nullable(),
   accountant: z.number().int().optional().nullable(),
   photos: z.union([NullableJsonNullValueInputSchema, jsonSchema]).optional(),
-  clientId: z.number().int().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();

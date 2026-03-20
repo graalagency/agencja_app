@@ -15,17 +15,32 @@ datasource db {
 
 model Author {
   id            Int      @id @default(autoincrement())
+  sourceId      Int?     @unique              // AuthorID z tblAuthors
   firstName     String
   middleName    String?
   lastName      String
-  description   String?
+  suffix        String?                       // Suffix
+  penName       String?                       // PenName
+  description   String?                       // Remarks
   createdAt     DateTime @default(now())
   updatedAt     DateTime
   photos        Json?
   personalEmail String?
   workEmail     String?
   clientId      Int?
-  Client        Client?  @relation(fields: [clientId], references: [id])
+  Client        Client?       @relation(fields: [clientId], references: [id])
+  TitleAuthors  TitleAuthor[]
+}
+
+model TitleAuthor {
+  titleId   Int
+  authorId  Int
+  isMain    Boolean @default(false)          // Main
+  order     Int     @default(1)              // Lp
+  Title     Title   @relation(fields: [titleId],  references: [id], onDelete: Cascade)
+  Author    Author  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@id([titleId, authorId])
 }
 
 model BalanceAdjustment {
@@ -38,61 +53,201 @@ model BalanceAdjustment {
 }
 
 model Client {
-  id          Int        @id @default(autoincrement())
-  name        String
-  email       String?
-  phone       String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime
-  address     String?
-  bankAccount String?
-  city        String?
-  country     String?    @default("Polska")
-  legalForm   String?
-  nip         String?
-  notes       String?
-  postalCode  String?
-  regon       String?
-  Author      Author[]
-  Contact     Contact[]
-  Document    Document[]
-  Invoice     Invoice[]
+  id                   Int        @id @default(autoincrement())
+  sourceId             Int?       @unique // CustID z tblCustomers (do mapowania przy migracji)
+  name                 String
+  abbreviation         String?    // CustAbb
+  email                String?
+  phone                String?
+  fax                  String?    // DefaultFax
+  www                  String?    // DefaultWWW
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime
+  address              String?    // Address1
+  address2             String?    // Address2
+  city                 String?
+  state                String?    // StateAbb
+  postalCode           String?
+  country              String?    @default("Polska")
+  language             String?    // LangAbb
+  legalForm            String?
+  nip                  String?    // TaxID
+  vatId                String?    // VATID
+  regon                String?
+  jurisdiction         String?
+  status               String?    // A=active, I=inactive
+  notes                String?
+  bankAccount          String?    // AccountNo
+  bankName             String?    // BankName
+  bankAddress          String?    // BankAddress
+  bankRoutingNo        String?    // RoutingNo
+  bankAccountName      String?    // AccountName
+  commission           Decimal?   @db.Decimal(18, 2)
+  commissionForeign    Decimal?   @db.Decimal(18, 2)
+  commissionMaterials  Decimal?   @db.Decimal(18, 2)
+  repModeId            Int?       // RepModeID
+  parentId             Int?       // ParentCustID
+  Parent               Client?    @relation("ClientHierarchy", fields: [parentId], references: [id])
+  Children             Client[]   @relation("ClientHierarchy")
+  Author               Author[]
+  ClientContact        ClientContact[]
+  Document             Document[]
+  Invoice              Invoice[]
+  TaxResidenceCert     TaxResidenceCert[]
+  TaxResidenceSend     TaxResidenceSend[]
+  Title                Title[]
 }
 
 model Contact {
-  id              Int      @id @default(autoincrement())
+  id              Int                @id @default(autoincrement())
   phoneNumber     String?
   firstName       String
   middleName      String?
   lastName        String
-  informal        Int      @default(0)
+  informal        Int                @default(0)
   fax             String?
   email           String?
   contactPosition String?
   accountant      Int?
   photos          Json?
-  clientId        Int?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  Client          Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  ClientContact   ClientContact[]
+  PublisherContact PublisherContact[]
+}
+
+model ClientContact {
+  id        Int      @id @default(autoincrement())
+  contactId Int
+  clientId  Int
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  Contact   Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  Client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, clientId])
+}
+
+model PublisherContact {
+  id          Int       @id @default(autoincrement())
+  contactId   Int
+  publisherId Int
+  isDefault   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  Contact     Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  Publisher   Publisher @relation(fields: [publisherId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, publisherId])
 }
 
 model Publisher {
-  id          Int      @id @default(autoincrement())
-  name        String
-  email       String?
-  phone       String?
-  createdAt   DateTime @default(now())
+  id                   Int      @id @default(autoincrement())
+  sourceId             Int?     @unique // CustID z tblCustomers (do mapowania przy migracji)
+  name                 String
+  abbreviation         String?  // CustAbb
+  email                String?
+  phone                String?
+  fax                  String?  // DefaultFax
+  www                  String?  // DefaultWWW
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime
+  address              String?  // Address1
+  address2             String?  // Address2
+  city                 String?
+  state                String?  // StateAbb
+  postalCode           String?
+  country              String?  @default("Polska")
+  language             String?  // LangAbb
+  legalForm            String?
+  nip                  String?  // TaxID
+  vatId                String?  // VATID
+  regon                String?
+  jurisdiction         String?
+  status               String?  // A=active, I=inactive
+  notes                String?
+  bankAccount          String?  // AccountNo
+  bankName             String?  // BankName
+  bankAddress          String?  // BankAddress
+  bankRoutingNo        String?  // RoutingNo
+  bankAccountName      String?  // AccountName
+  commission           Decimal? @db.Decimal(18, 2)
+  commissionForeign    Decimal? @db.Decimal(18, 2)
+  commissionMaterials  Decimal? @db.Decimal(18, 2)
+  repModeId            Int?     // RepModeID
+  parentId             Int?     // ParentCustID
+  Parent               Publisher?        @relation("PublisherHierarchy", fields: [parentId], references: [id])
+  Children             Publisher[]       @relation("PublisherHierarchy")
+  PublisherContact     PublisherContact[]
+  TaxResidenceCert     TaxResidenceCert[]
+  TaxResidenceSend     TaxResidenceSend[]
+  Title                Title[]
+}
+
+// Tytuł (książka/utwór) — właścicielem praw jest Client lub Publisher
+model Title {
+  id              Int       @id @default(autoincrement())
+  sourceId        Int?      @unique              // TitleID z tblTitles
+  clientId        Int?                           // CustID → Client (właściciel praw)
+  publisherId     Int?                           // CustID → Publisher (właściciel praw)
+  title           String                         // tytuł oryginalny
+  isbn            String?                        // ISBN (pełny)
+  languageCode    String?                        // LangAbb
+  classCode       String?                        // ClassCode (klasa tematyczna)
+  edition         Int?                           // numer wydania
+  pages           Int?                           // NoOfPages
+  copyrightYear   String?                        // rok praw
+  copyrightOwner  String?                        // CopyrightOwnerDesc
+  keywords        String?                        // KeyWords
+  volume          Int?                           // TitleVolume
+  totalVolumes    Int?                           // NoOfTitleVolumes
+  isHit           Boolean   @default(false)     // Hit
+  isCollection    Boolean   @default(false)     // Collection
+  isCD            Boolean   @default(false)     // CD
+  notes           String?                        // Remarks
+  dateOfReceipt   DateTime?                      // DateOfReceipt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime
+
+  Client       Client?       @relation(fields: [clientId],    references: [id], onDelete: SetNull)
+  Publisher    Publisher?    @relation(fields: [publisherId], references: [id], onDelete: SetNull)
+  TitleAuthors TitleAuthor[]
+}
+
+// Certyfikat rezydencji podatkowej (dla klienta lub wydawcy)
+model TaxResidenceCert {
+  id          Int       @id @default(autoincrement())
+  sourceId    Int?      @unique           // CertID z tblTaxResidenceCertificate
+  clientId    Int?                        // właściciel certyfikatu → Client
+  publisherId Int?                        // właściciel certyfikatu → Publisher
+  validDate   DateTime                    // data ważności
+  requestDate DateTime?                   // data złożenia wniosku
+  receiveDate DateTime?                   // data otrzymania
+  hasCert     Boolean   @default(false)  // czy certyfikat fizycznie jest
+  notes       String?                     // uwagi
+  fileData    Bytes?                      // plik PDF certyfikatu
+  fileName    String?                     // nazwa pliku
+  createdAt   DateTime  @default(now())
   updatedAt   DateTime
-  address     String?
-  bankAccount String?
-  city        String?
-  country     String?  @default("Polska")
-  legalForm   String?
-  nip         String?
-  notes       String?
-  postalCode  String?
-  regon       String?
+
+  Client      Client?    @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  Publisher   Publisher? @relation(fields: [publisherId], references: [id], onDelete: SetNull)
+  SendLog     TaxResidenceSend[]
+}
+
+// Historia wysyłek certyfikatu (do kogo i kiedy)
+model TaxResidenceSend {
+  id          Int       @id @default(autoincrement())
+  certId      Int
+  clientId    Int?                        // odbiorca → Client
+  publisherId Int?                        // odbiorca → Publisher
+  dateSend    DateTime?                   // data wysłania
+  sendOrig    Boolean   @default(false)  // wysłano oryginał
+  sendCopy    Boolean   @default(false)  // wysłano kopię
+  createdAt   DateTime  @default(now())
+
+  Cert      TaxResidenceCert @relation(fields: [certId], references: [id], onDelete: Cascade)
+  Client    Client?          @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  Publisher Publisher?       @relation(fields: [publisherId], references: [id], onDelete: SetNull)
 }
 
 model Document {

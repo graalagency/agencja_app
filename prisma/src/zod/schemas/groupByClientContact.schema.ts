@@ -1,0 +1,15 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { ClientContactWhereInputObjectSchema as ClientContactWhereInputObjectSchema } from './objects/ClientContactWhereInput.schema';
+import { ClientContactOrderByWithAggregationInputObjectSchema as ClientContactOrderByWithAggregationInputObjectSchema } from './objects/ClientContactOrderByWithAggregationInput.schema';
+import { ClientContactScalarWhereWithAggregatesInputObjectSchema as ClientContactScalarWhereWithAggregatesInputObjectSchema } from './objects/ClientContactScalarWhereWithAggregatesInput.schema';
+import { ClientContactScalarFieldEnumSchema } from './enums/ClientContactScalarFieldEnum.schema';
+import { ClientContactCountAggregateInputObjectSchema as ClientContactCountAggregateInputObjectSchema } from './objects/ClientContactCountAggregateInput.schema';
+import { ClientContactMinAggregateInputObjectSchema as ClientContactMinAggregateInputObjectSchema } from './objects/ClientContactMinAggregateInput.schema';
+import { ClientContactMaxAggregateInputObjectSchema as ClientContactMaxAggregateInputObjectSchema } from './objects/ClientContactMaxAggregateInput.schema';
+import { ClientContactAvgAggregateInputObjectSchema as ClientContactAvgAggregateInputObjectSchema } from './objects/ClientContactAvgAggregateInput.schema';
+import { ClientContactSumAggregateInputObjectSchema as ClientContactSumAggregateInputObjectSchema } from './objects/ClientContactSumAggregateInput.schema';
+
+export const ClientContactGroupBySchema: z.ZodType<Prisma.ClientContactGroupByArgs> = z.object({ where: ClientContactWhereInputObjectSchema.optional(), orderBy: z.union([ClientContactOrderByWithAggregationInputObjectSchema, ClientContactOrderByWithAggregationInputObjectSchema.array()]).optional(), having: ClientContactScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(ClientContactScalarFieldEnumSchema), _count: z.union([ z.literal(true), ClientContactCountAggregateInputObjectSchema ]).optional(), _min: ClientContactMinAggregateInputObjectSchema.optional(), _max: ClientContactMaxAggregateInputObjectSchema.optional(), _avg: ClientContactAvgAggregateInputObjectSchema.optional(), _sum: ClientContactSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.ClientContactGroupByArgs>;
+
+export const ClientContactGroupByZodSchema = z.object({ where: ClientContactWhereInputObjectSchema.optional(), orderBy: z.union([ClientContactOrderByWithAggregationInputObjectSchema, ClientContactOrderByWithAggregationInputObjectSchema.array()]).optional(), having: ClientContactScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(ClientContactScalarFieldEnumSchema), _count: z.union([ z.literal(true), ClientContactCountAggregateInputObjectSchema ]).optional(), _min: ClientContactMinAggregateInputObjectSchema.optional(), _max: ClientContactMaxAggregateInputObjectSchema.optional(), _avg: ClientContactAvgAggregateInputObjectSchema.optional(), _sum: ClientContactSumAggregateInputObjectSchema.optional() }).strict();

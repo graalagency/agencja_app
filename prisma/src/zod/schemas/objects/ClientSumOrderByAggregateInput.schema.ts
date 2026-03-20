@@ -3,7 +3,13 @@ import type { Prisma } from '@prisma/client';
 import { SortOrderSchema } from '../enums/SortOrder.schema'
 
 const makeSchema = () => z.object({
-  id: SortOrderSchema.optional()
+  id: SortOrderSchema.optional(),
+  sourceId: SortOrderSchema.optional(),
+  commission: SortOrderSchema.optional(),
+  commissionForeign: SortOrderSchema.optional(),
+  commissionMaterials: SortOrderSchema.optional(),
+  repModeId: SortOrderSchema.optional(),
+  parentId: SortOrderSchema.optional()
 }).strict();
 export const ClientSumOrderByAggregateInputObjectSchema: z.ZodType<Prisma.ClientSumOrderByAggregateInput> = makeSchema() as unknown as z.ZodType<Prisma.ClientSumOrderByAggregateInput>;
 export const ClientSumOrderByAggregateInputObjectZodSchema = makeSchema();

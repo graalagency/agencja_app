@@ -1,22 +1,26 @@
 import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
 import { IntFilterObjectSchema as IntFilterObjectSchema } from './IntFilter.schema';
+import { IntNullableFilterObjectSchema as IntNullableFilterObjectSchema } from './IntNullableFilter.schema';
 import { StringFilterObjectSchema as StringFilterObjectSchema } from './StringFilter.schema';
 import { StringNullableFilterObjectSchema as StringNullableFilterObjectSchema } from './StringNullableFilter.schema';
 import { DateTimeFilterObjectSchema as DateTimeFilterObjectSchema } from './DateTimeFilter.schema';
 import { JsonNullableFilterObjectSchema as JsonNullableFilterObjectSchema } from './JsonNullableFilter.schema';
-import { IntNullableFilterObjectSchema as IntNullableFilterObjectSchema } from './IntNullableFilter.schema';
 import { ClientNullableScalarRelationFilterObjectSchema as ClientNullableScalarRelationFilterObjectSchema } from './ClientNullableScalarRelationFilter.schema';
-import { ClientWhereInputObjectSchema as ClientWhereInputObjectSchema } from './ClientWhereInput.schema'
+import { ClientWhereInputObjectSchema as ClientWhereInputObjectSchema } from './ClientWhereInput.schema';
+import { TitleAuthorListRelationFilterObjectSchema as TitleAuthorListRelationFilterObjectSchema } from './TitleAuthorListRelationFilter.schema'
 
 const authorwhereinputSchema = z.object({
   AND: z.union([z.lazy(() => AuthorWhereInputObjectSchema), z.lazy(() => AuthorWhereInputObjectSchema).array()]).optional(),
   OR: z.lazy(() => AuthorWhereInputObjectSchema).array().optional(),
   NOT: z.union([z.lazy(() => AuthorWhereInputObjectSchema), z.lazy(() => AuthorWhereInputObjectSchema).array()]).optional(),
   id: z.union([z.lazy(() => IntFilterObjectSchema), z.number().int()]).optional(),
+  sourceId: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
   firstName: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   middleName: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   lastName: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  suffix: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
+  penName: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   description: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
@@ -24,7 +28,8 @@ const authorwhereinputSchema = z.object({
   personalEmail: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   workEmail: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   clientId: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
-  Client: z.union([z.lazy(() => ClientNullableScalarRelationFilterObjectSchema), z.lazy(() => ClientWhereInputObjectSchema)]).optional()
+  Client: z.union([z.lazy(() => ClientNullableScalarRelationFilterObjectSchema), z.lazy(() => ClientWhereInputObjectSchema)]).optional(),
+  TitleAuthors: z.lazy(() => TitleAuthorListRelationFilterObjectSchema).optional()
 }).strict();
 export const AuthorWhereInputObjectSchema: z.ZodType<Prisma.AuthorWhereInput> = authorwhereinputSchema as unknown as z.ZodType<Prisma.AuthorWhereInput>;
 export const AuthorWhereInputObjectZodSchema = authorwhereinputSchema;
