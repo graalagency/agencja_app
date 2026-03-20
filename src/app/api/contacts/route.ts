@@ -43,19 +43,15 @@ export async function GET(req: Request) {
     const contacts = await prisma.contact.findMany({
       where,
       include: {
-        Client: {
-          select: {
-            id: true,
-            name: true
-          }
-        }
+        ClientContact: { include: { Client: { select: { id: true, name: true } } } },
+        PublisherContact: { include: { Publisher: { select: { id: true, name: true } } } }
       },
       orderBy,
       skip: (page - 1) * pageSize,
       take: pageSize
     })
 
-    const mapped = contacts.map((c: any) => ({
+    const mapped = contacts.map((c) => ({
       id: c.id,
       phoneNumber: c.phoneNumber,
       firstName: c.firstName,
@@ -66,12 +62,11 @@ export async function GET(req: Request) {
       email: c.email,
       contactPosition: c.contactPosition,
       accountant: c.accountant,
-      client: c.Client,
       photos: Array.isArray(c.photos) ? c.photos : [],
+      clients: c.ClientContact.map((cc) => ({ id: cc.Client.id, name: cc.Client.name, isDefault: cc.isDefault })),
+      publishers: c.PublisherContact.map((pc) => ({ id: pc.Publisher.id, name: pc.Publisher.name, isDefault: pc.isDefault })),
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
-      dateMod: c.updatedAt,
-      userMod: null
     }))
 
     return NextResponse.json({
@@ -102,11 +97,10 @@ export async function POST(req: Request) {
       email: body.email || null,
       contactPosition: body.contactPosition || null,
       accountant: body.accountant || null,
-      clientId: body.clientId || null
     }
   })
 
-  const mapped = {
+  return NextResponse.json({
     id: contact.id,
     phoneNumber: contact.phoneNumber,
     firstName: contact.firstName,
@@ -117,12 +111,10 @@ export async function POST(req: Request) {
     email: contact.email,
     contactPosition: contact.contactPosition,
     accountant: contact.accountant,
-    photos: Array.isArray(contact.photos) ? contact.photos : [],
+    photos: [],
+    clients: [],
+    publishers: [],
     createdAt: contact.createdAt,
     updatedAt: contact.updatedAt,
-    dateMod: contact.updatedAt,
-    userMod: null
-  }
-
-  return NextResponse.json(mapped, { status: 201 })
+  }, { status: 201 })
 }

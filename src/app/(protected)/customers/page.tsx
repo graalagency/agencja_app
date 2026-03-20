@@ -9,9 +9,9 @@ import { Pagination } from '../../../components/ui/Pagination'
 import { ClientCreateSchema, ClientUpdateSchema } from '../../../validation/client'
 import { useTranslations } from 'next-intl'
 
-type Client = { 
-  id: number; 
-  custAbb?: string | null;
+type Client = {
+  id: number;
+  abbreviation?: string | null;
   name?: string | null; 
   email?: string | null; 
   phone?: string | null; 
@@ -254,7 +254,7 @@ export default function ClientsPage() {
                 {(Array.isArray(clients) ? clients : []).map(c => (
                   <tr key={c.id}>
                     <Td>{c.id}</Td>
-                    <Td>{c.custAbb ?? '-'}</Td>
+                    <Td>{c.abbreviation ?? '-'}</Td>
                     <Td>
                       <Link className="text-primary-600 hover:underline" href={`/customers/${c.id}`}>{c.name}</Link>
                     </Td>

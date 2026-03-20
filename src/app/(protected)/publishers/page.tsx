@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl'
 
 type Publisher = {
   id: number
+  abbreviation?: string | null
   name?: string | null
   email?: string | null
   phone?: string | null
@@ -304,6 +305,7 @@ export default function PublishersPage() {
               <thead>
                 <tr>
                   <Th onClick={() => toggleSort('id')} active={sortBy === 'id'} order={sortOrder}>ID</Th>
+                  <Th>Skrót</Th>
                   <Th onClick={() => toggleSort('name')} active={sortBy === 'name'} order={sortOrder}>{t('common.name')}</Th>
                   <Th onClick={() => toggleSort('email')} active={sortBy === 'email'} order={sortOrder}>{t('common.email')}</Th>
                   <Th onClick={() => toggleSort('phone')} active={sortBy === 'phone'} order={sortOrder}>{t('common.phone')}</Th>
@@ -317,6 +319,7 @@ export default function PublishersPage() {
                 {publishers.map((publisher) => (
                   <tr key={publisher.id}>
                     <Td>{publisher.id}</Td>
+                    <Td>{publisher.abbreviation ?? '-'}</Td>
                     <Td>
                       <Link className="text-primary-600 hover:underline" href={`/publishers/${publisher.id}`}>
                         {publisher.name}

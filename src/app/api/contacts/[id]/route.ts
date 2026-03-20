@@ -6,34 +6,29 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   const contact = await prisma.contact.findUnique({
     where: { id },
     include: {
-      Client: {
-        select: {
-          id: true,
-          name: true
-        }
-      }
+      ClientContact: { include: { Client: { select: { id: true, name: true } } } },
+      PublisherContact: { include: { Publisher: { select: { id: true, name: true } } } }
     }
   })
   if (!contact) {
     return NextResponse.json({ error: 'Contact not found' }, { status: 404 })
   }
 
-  const mapped = {
+  return NextResponse.json({
     ...contact,
-    client: contact.Client,
-    photos: Array.isArray(contact.photos) ? contact.photos : []
-  }
-
-  return NextResponse.json(mapped)
+    photos: Array.isArray(contact.photos) ? contact.photos : [],
+    clients: contact.ClientContact.map((cc) => ({ id: cc.Client.id, name: cc.Client.name, isDefault: cc.isDefault })),
+    publishers: contact.PublisherContact.map((pc) => ({ id: pc.Publisher.id, name: pc.Publisher.name, isDefault: pc.isDefault })),
+  })
 }
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   const id = Number(params.id)
   const body = await req.json()
-  
-  const contact = await prisma.contact.update({ 
-    where: { id }, 
-    data: { 
+
+  const contact = await prisma.contact.update({
+    where: { id },
+    data: {
       phoneNumber: body.phoneNumber || null,
       firstName: body.firstName,
       middleName: body.middleName || null,
@@ -43,7 +38,6 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       email: body.email || null,
       contactPosition: body.contactPosition || null,
       accountant: body.accountant || null,
-      clientId: body.clientId || null
     }
   })
   return NextResponse.json(contact)

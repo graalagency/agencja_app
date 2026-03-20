@@ -11,11 +11,12 @@ export async function GET(req: Request) {
 
   const where = search ? {
     OR: [
-      { name: { contains: search } },
-      { email: { contains: search } },
-      { phone: { contains: search } },
-      { nip: { contains: search } },
-      { regon: { contains: search } },
+      { name: { contains: search, mode: 'insensitive' as const } },
+      { email: { contains: search, mode: 'insensitive' as const } },
+      { phone: { contains: search, mode: 'insensitive' as const } },
+      { nip: { contains: search, mode: 'insensitive' as const } },
+      { regon: { contains: search, mode: 'insensitive' as const } },
+      { abbreviation: { contains: search, mode: 'insensitive' as const } },
     ]
   } : {}
 
@@ -42,6 +43,7 @@ export async function GET(req: Request) {
   return NextResponse.json({
     data: clients.map(c => ({
       id: c.id,
+      abbreviation: c.abbreviation,
       name: c.name,
       email: c.email,
       phone: c.phone,

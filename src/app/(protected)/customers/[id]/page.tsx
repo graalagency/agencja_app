@@ -10,20 +10,31 @@ import { Pagination } from '../../../../components/ui/Pagination'
 import { ClientUpdateSchema } from '../../../../validation/client'
 import { DocumentCreateSchema } from '../../../../validation/document'
 import { TitlesTab } from '../../../../components/TitlesTab'
+import { DictSelect } from '../../../../components/ui/DictSelect'
 
-type Client = { 
+type Client = {
   id: number
   name: string
+  abbreviation?: string | null
   email?: string | null
   phone?: string | null
+  fax?: string | null
+  www?: string | null
   address?: string | null
+  address2?: string | null
   city?: string | null
+  state?: string | null
   postalCode?: string | null
   country?: string | null
+  language?: string | null
   nip?: string | null
+  vatId?: string | null
   regon?: string | null
   legalForm?: string | null
+  status?: string | null
+  repModeId?: number | null
   bankAccount?: string | null
+  bankName?: string | null
   notes?: string | null
   createdAt: string
   updatedAt: string
@@ -512,7 +523,14 @@ export default function ClientDetailPage() {
             <div>
               <label className="label text-xs">Kraj</label>
               {editMode ? (
-                <Input value={client.country ?? ''} onChange={e => setClient({ ...client, country: e.target.value })} />
+                <DictSelect
+                  dictKey="countries"
+                  valueField="CountryPL"
+                  labelField="CountryPL"
+                  format="label-only"
+                  value={client.country}
+                  onChange={v => setClient({ ...client, country: v || null })}
+                />
               ) : (
                 <p className="text-base">{client.country || '-'}</p>
               )}
@@ -554,6 +572,52 @@ export default function ClientDetailPage() {
                 <Input value={client.bankAccount ?? ''} onChange={e => setClient({ ...client, bankAccount: e.target.value })} />
               ) : (
                 <p className="text-sm font-mono">{client.bankAccount || '-'}</p>
+              )}
+            </div>
+            <div>
+              <label className="label text-xs">Status</label>
+              {editMode ? (
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  value={client.status ?? ''}
+                  onChange={e => setClient({ ...client, status: e.target.value || null })}
+                >
+                  <option value="">— wybierz —</option>
+                  <option value="A">A — Aktywny</option>
+                  <option value="I">I — Nieaktywny</option>
+                </select>
+              ) : (
+                <p className="text-base">{client.status === 'A' ? 'Aktywny' : client.status === 'I' ? 'Nieaktywny' : '-'}</p>
+              )}
+            </div>
+            <div>
+              <label className="label text-xs">Język</label>
+              {editMode ? (
+                <DictSelect
+                  dictKey="languages"
+                  valueField="LangAbb"
+                  labelField="LangPL"
+                  format="code-label"
+                  value={client.language}
+                  onChange={v => setClient({ ...client, language: v || null })}
+                />
+              ) : (
+                <p className="text-base">{client.language || '-'}</p>
+              )}
+            </div>
+            <div>
+              <label className="label text-xs">Tryb reprezentacji</label>
+              {editMode ? (
+                <DictSelect
+                  dictKey="report-modes"
+                  valueField="RepModeID"
+                  labelField="RepModeDesc"
+                  format="label-only"
+                  value={client.repModeId}
+                  onChange={v => setClient({ ...client, repModeId: v ? Number(v) : null })}
+                />
+              ) : (
+                <p className="text-base">{client.repModeId ?? '-'}</p>
               )}
             </div>
           </div>

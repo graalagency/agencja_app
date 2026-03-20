@@ -10,20 +10,31 @@ import { Table, Th, Td } from '../../../../components/ui/Table'
 import { ClientUpdateSchema } from '../../../../validation/client'
 import { useTranslations } from 'next-intl'
 import { TitlesTab } from '../../../../components/TitlesTab'
+import { DictSelect } from '../../../../components/ui/DictSelect'
 
 type Publisher = {
   id: number
   name: string
+  abbreviation?: string | null
   email?: string | null
   phone?: string | null
+  fax?: string | null
+  www?: string | null
   address?: string | null
+  address2?: string | null
   city?: string | null
+  state?: string | null
   postalCode?: string | null
   country?: string | null
+  language?: string | null
   nip?: string | null
+  vatId?: string | null
   regon?: string | null
   legalForm?: string | null
+  status?: string | null
+  repModeId?: number | null
   bankAccount?: string | null
+  bankName?: string | null
   notes?: string | null
   createdAt: string
   updatedAt: string
@@ -332,7 +343,14 @@ export default function PublisherDetailPage() {
             <div>
               <label className="label text-xs">{t('publishers.country')}</label>
               {editMode ? (
-                <Input value={publisher.country ?? ''} onChange={(e) => setPublisher({ ...publisher, country: e.target.value })} />
+                <DictSelect
+                  dictKey="countries"
+                  valueField="CountryPL"
+                  labelField="CountryPL"
+                  format="label-only"
+                  value={publisher.country}
+                  onChange={v => setPublisher({ ...publisher, country: v || null })}
+                />
               ) : (
                 <p className="text-base">{publisher.country || '-'}</p>
               )}
@@ -371,6 +389,52 @@ export default function PublisherDetailPage() {
                 <Input value={publisher.bankAccount ?? ''} onChange={(e) => setPublisher({ ...publisher, bankAccount: e.target.value })} />
               ) : (
                 <p className="text-sm font-mono">{publisher.bankAccount || '-'}</p>
+              )}
+            </div>
+            <div>
+              <label className="label text-xs">Status</label>
+              {editMode ? (
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  value={publisher.status ?? ''}
+                  onChange={e => setPublisher({ ...publisher, status: e.target.value || null })}
+                >
+                  <option value="">— wybierz —</option>
+                  <option value="A">A — Aktywny</option>
+                  <option value="I">I — Nieaktywny</option>
+                </select>
+              ) : (
+                <p className="text-base">{publisher.status === 'A' ? 'Aktywny' : publisher.status === 'I' ? 'Nieaktywny' : '-'}</p>
+              )}
+            </div>
+            <div>
+              <label className="label text-xs">Język</label>
+              {editMode ? (
+                <DictSelect
+                  dictKey="languages"
+                  valueField="LangAbb"
+                  labelField="LangPL"
+                  format="code-label"
+                  value={publisher.language}
+                  onChange={v => setPublisher({ ...publisher, language: v || null })}
+                />
+              ) : (
+                <p className="text-base">{publisher.language || '-'}</p>
+              )}
+            </div>
+            <div>
+              <label className="label text-xs">Tryb reprezentacji</label>
+              {editMode ? (
+                <DictSelect
+                  dictKey="report-modes"
+                  valueField="RepModeID"
+                  labelField="RepModeDesc"
+                  format="label-only"
+                  value={publisher.repModeId}
+                  onChange={v => setPublisher({ ...publisher, repModeId: v ? Number(v) : null })}
+                />
+              ) : (
+                <p className="text-base">{publisher.repModeId ?? '-'}</p>
               )}
             </div>
           </div>

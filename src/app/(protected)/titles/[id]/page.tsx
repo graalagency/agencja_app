@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DictSelect } from '@/components/ui/DictSelect'
 
 type AuthorEntry = {
   authorId: number
@@ -179,13 +180,13 @@ export default function TitleDetailPage() {
             <div>
               <label className="label text-xs">Język</label>
               {editMode
-                ? <Input value={title.languageCode ?? ''} onChange={e => set({ languageCode: e.target.value || null })} placeholder="np. PL, EN" />
+                ? <DictSelect dictKey="languages" valueField="LangAbb" labelField="LangPL" format="code-label" value={title.languageCode} onChange={v => set({ languageCode: v || null })} />
                 : <p className="text-base">{title.languageCode || '-'}</p>}
             </div>
             <div>
               <label className="label text-xs">Klasa tematyczna</label>
               {editMode
-                ? <Input value={title.classCode ?? ''} onChange={e => set({ classCode: e.target.value || null })} />
+                ? <DictSelect dictKey="title-main-class" valueField="ClassCode" labelField="ClassDesc" format="code-label" value={title.classCode} onChange={v => set({ classCode: v || null })} />
                 : <p className="text-base">{title.classCode || '-'}</p>}
             </div>
             <div>
