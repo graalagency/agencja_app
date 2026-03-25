@@ -12,7 +12,9 @@ import { PublisherListRelationFilterObjectSchema as PublisherListRelationFilterO
 import { PublisherContactListRelationFilterObjectSchema as PublisherContactListRelationFilterObjectSchema } from './PublisherContactListRelationFilter.schema';
 import { TaxResidenceCertListRelationFilterObjectSchema as TaxResidenceCertListRelationFilterObjectSchema } from './TaxResidenceCertListRelationFilter.schema';
 import { TaxResidenceSendListRelationFilterObjectSchema as TaxResidenceSendListRelationFilterObjectSchema } from './TaxResidenceSendListRelationFilter.schema';
-import { TitleListRelationFilterObjectSchema as TitleListRelationFilterObjectSchema } from './TitleListRelationFilter.schema'
+import { TitleListRelationFilterObjectSchema as TitleListRelationFilterObjectSchema } from './TitleListRelationFilter.schema';
+import { AgreementListRelationFilterObjectSchema as AgreementListRelationFilterObjectSchema } from './AgreementListRelationFilter.schema';
+import { SubmissionListRelationFilterObjectSchema as SubmissionListRelationFilterObjectSchema } from './SubmissionListRelationFilter.schema'
 
 import { DecimalJSLikeSchema, isValidDecimalInput } from '../../helpers/decimal-helpers';
 const publisherwhereinputSchema = z.object({
@@ -82,7 +84,9 @@ const publisherwhereinputSchema = z.object({
   PublisherContact: z.lazy(() => PublisherContactListRelationFilterObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertListRelationFilterObjectSchema).optional(),
   TaxResidenceSend: z.lazy(() => TaxResidenceSendListRelationFilterObjectSchema).optional(),
-  Title: z.lazy(() => TitleListRelationFilterObjectSchema).optional()
+  Title: z.lazy(() => TitleListRelationFilterObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementListRelationFilterObjectSchema).optional(),
+  Submissions: z.lazy(() => SubmissionListRelationFilterObjectSchema).optional()
 }).strict();
 export const PublisherWhereInputObjectSchema: z.ZodType<Prisma.PublisherWhereInput> = publisherwhereinputSchema as unknown as z.ZodType<Prisma.PublisherWhereInput>;
 export const PublisherWhereInputObjectZodSchema = publisherwhereinputSchema;

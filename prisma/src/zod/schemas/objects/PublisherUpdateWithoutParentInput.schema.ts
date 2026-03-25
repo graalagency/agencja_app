@@ -10,7 +10,9 @@ import { PublisherUpdateManyWithoutParentNestedInputObjectSchema as PublisherUpd
 import { PublisherContactUpdateManyWithoutPublisherNestedInputObjectSchema as PublisherContactUpdateManyWithoutPublisherNestedInputObjectSchema } from './PublisherContactUpdateManyWithoutPublisherNestedInput.schema';
 import { TaxResidenceCertUpdateManyWithoutPublisherNestedInputObjectSchema as TaxResidenceCertUpdateManyWithoutPublisherNestedInputObjectSchema } from './TaxResidenceCertUpdateManyWithoutPublisherNestedInput.schema';
 import { TaxResidenceSendUpdateManyWithoutPublisherNestedInputObjectSchema as TaxResidenceSendUpdateManyWithoutPublisherNestedInputObjectSchema } from './TaxResidenceSendUpdateManyWithoutPublisherNestedInput.schema';
-import { TitleUpdateManyWithoutPublisherNestedInputObjectSchema as TitleUpdateManyWithoutPublisherNestedInputObjectSchema } from './TitleUpdateManyWithoutPublisherNestedInput.schema'
+import { TitleUpdateManyWithoutPublisherNestedInputObjectSchema as TitleUpdateManyWithoutPublisherNestedInputObjectSchema } from './TitleUpdateManyWithoutPublisherNestedInput.schema';
+import { AgreementUpdateManyWithoutPublisherNestedInputObjectSchema as AgreementUpdateManyWithoutPublisherNestedInputObjectSchema } from './AgreementUpdateManyWithoutPublisherNestedInput.schema';
+import { SubmissionUpdateManyWithoutPublisherNestedInputObjectSchema as SubmissionUpdateManyWithoutPublisherNestedInputObjectSchema } from './SubmissionUpdateManyWithoutPublisherNestedInput.schema'
 
 import { DecimalJSLikeSchema, isValidDecimalInput } from '../../helpers/decimal-helpers';
 const makeSchema = () => z.object({
@@ -74,7 +76,9 @@ const makeSchema = () => z.object({
   PublisherContact: z.lazy(() => PublisherContactUpdateManyWithoutPublisherNestedInputObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertUpdateManyWithoutPublisherNestedInputObjectSchema).optional(),
   TaxResidenceSend: z.lazy(() => TaxResidenceSendUpdateManyWithoutPublisherNestedInputObjectSchema).optional(),
-  Title: z.lazy(() => TitleUpdateManyWithoutPublisherNestedInputObjectSchema).optional()
+  Title: z.lazy(() => TitleUpdateManyWithoutPublisherNestedInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementUpdateManyWithoutPublisherNestedInputObjectSchema).optional(),
+  Submissions: z.lazy(() => SubmissionUpdateManyWithoutPublisherNestedInputObjectSchema).optional()
 }).strict();
 export const PublisherUpdateWithoutParentInputObjectSchema: z.ZodType<Prisma.PublisherUpdateWithoutParentInput> = makeSchema() as unknown as z.ZodType<Prisma.PublisherUpdateWithoutParentInput>;
 export const PublisherUpdateWithoutParentInputObjectZodSchema = makeSchema();

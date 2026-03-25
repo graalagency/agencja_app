@@ -25,7 +25,9 @@ export const TitleInputSchema = z.object({
     updatedAt: z.date(),
     Client: z.unknown().optional().nullable(),
     Publisher: z.unknown().optional().nullable(),
-    TitleAuthors: z.array(z.unknown())
+    TitleAuthors: z.array(z.unknown()),
+    Agreements: z.array(z.unknown()),
+    Submissions: z.array(z.unknown())
 }).strict();
 
 export type TitleInputType = z.infer<typeof TitleInputSchema>;

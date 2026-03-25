@@ -35,6 +35,8 @@ export const TitleFindManySelectSchema: z.ZodType<Prisma.TitleSelect> = z.object
     Client: z.boolean().optional(),
     Publisher: z.boolean().optional(),
     TitleAuthors: z.boolean().optional(),
+    Agreements: z.boolean().optional(),
+    Submissions: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.TitleSelect>;
 
@@ -64,6 +66,8 @@ export const TitleFindManySelectZodSchema = z.object({
     Client: z.boolean().optional(),
     Publisher: z.boolean().optional(),
     TitleAuthors: z.boolean().optional(),
+    Agreements: z.boolean().optional(),
+    Submissions: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 

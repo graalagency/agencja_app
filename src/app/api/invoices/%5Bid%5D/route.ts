@@ -1,7 +1,17 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
+import { requireModuleAccess } from '../../../../lib/api-permissions'
+import { z } from 'zod'
+import { translateZodErrors } from '../../../../lib/zod-error-handler'
+
+const UpdateInvoiceStatusSchema = z.object({
+  status: z.string().optional().default('A'),
+})
 
 export async function GET(req: Request) {
+  const auth = await requireModuleAccess(req, 'finances')
+  if (auth.error) return auth.error
+
   try {
     const url = new URL(req.url)
     const parts = url.pathname.split('/')
@@ -47,6 +57,9 @@ export async function GET(req: Request) {
 }
 
 export async function PATCH(req: Request) {
+  const auth = await requireModuleAccess(req, 'finances')
+  if (auth.error) return auth.error
+
   try {
     const url = new URL(req.url)
     const parts = url.pathname.split('/')
@@ -55,12 +68,19 @@ export async function PATCH(req: Request) {
     if (!invNum) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
 
     const body = await req.json()
-    const status = body.status || 'A'
+    const validationResult = UpdateInvoiceStatusSchema.safeParse(body)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: translateZodErrors(validationResult.error.issues, 'pl') },
+        { status: 400 }
+      )
+    }
 
+    const validated = validationResult.data
     const p = prisma as any
-    const updated = await p.tblInvoice.update({ 
-      where: { InvNum: invNum }, 
-      data: { Status: status } 
+    const updated = await p.tblInvoice.update({
+      where: { InvNum: invNum },
+      data: { Status: validated.status }
     })
     return NextResponse.json({ invNum: updated.InvNum, status: updated.Status })
   } catch (err: any) {

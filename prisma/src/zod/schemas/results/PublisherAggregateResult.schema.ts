@@ -39,7 +39,9 @@ export const PublisherAggregateResultSchema = z.object({  _count: z.object({
     PublisherContact: z.number(),
     TaxResidenceCert: z.number(),
     TaxResidenceSend: z.number(),
-    Title: z.number()
+    Title: z.number(),
+    Agreements: z.number(),
+    Submissions: z.number()
   }).optional(),
   _sum: z.object({
     id: z.number().nullable(),

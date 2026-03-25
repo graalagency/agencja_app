@@ -1,5 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useSearchMemory } from '../../../hooks/useSearchMemory'
+import { RememberCheckbox } from '../../../components/ui/RememberCheckbox'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -35,25 +37,13 @@ export default function ClientsPage() {
   const [meta, setMeta] = useState<Meta>({ page: 1, pageSize: 10, total: 0, pages: 1 })
   const [loading, setLoading] = useState(true)
 
-  const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState<'id'|'name'|'email'|'phone'|'createdAt'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('customers_sortBy') as any) || 'id'
-    }
-    return 'id'
+  const { remember, setRemember, initialCriteria, save } = useSearchMemory('customers', {
+    search: '', sortBy: 'id', sortOrder: 'asc', pageSize: 10,
   })
-  const [sortOrder, setSortOrder] = useState<'asc'|'desc'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('customers_sortOrder') as any) || 'asc'
-    }
-    return 'asc'
-  })
-  const [pageSize, setPageSize] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return Number(localStorage.getItem('customers_pageSize')) || 10
-    }
-    return 10
-  })
+  const [search, setSearch]     = useState(initialCriteria.search as string)
+  const [sortBy, setSortBy]     = useState<'id'|'name'|'email'|'phone'|'createdAt'>(initialCriteria.sortBy as any)
+  const [sortOrder, setSortOrder] = useState<'asc'|'desc'>(initialCriteria.sortOrder as any)
+  const [pageSize, setPageSize] = useState(Number(initialCriteria.pageSize))
 
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingClient, setEditingClient] = useState<Client | null>(null)
@@ -110,14 +100,7 @@ export default function ClientsPage() {
 
   useEffect(() => { load(1) }, [search, sortBy, sortOrder, pageSize])
 
-  // Zapisz ustawienia sortowania i rozmiaru strony do localStorage
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('customers_sortBy', sortBy)
-      localStorage.setItem('customers_sortOrder', sortOrder)
-      localStorage.setItem('customers_pageSize', String(pageSize))
-    }
-  }, [sortBy, sortOrder, pageSize])
+  useEffect(() => { save({ search, sortBy, sortOrder, pageSize }) }, [search, sortBy, sortOrder, pageSize])
 
   const addClient = async () => {
     const parsed = ClientCreateSchema.safeParse(form)
@@ -226,7 +209,10 @@ export default function ClientsPage() {
           </Button>
         </div>
         <div className="max-w-md">
-          <label className="label">{t('common.search')}</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="label">{t('common.search')}</label>
+            <RememberCheckbox checked={remember} onChange={setRemember} />
+          </div>
           <Input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Nazwa/Email/Telefon/NIP/Skrót" />
         </div>
       </Card>

@@ -39,11 +39,11 @@ export const ClientResultSchema = z.object({
     Children: z.array(z.unknown()),
     Author: z.array(z.unknown()),
     ClientContact: z.array(z.unknown()),
-    Document: z.array(z.unknown()),
     Invoice: z.array(z.unknown()),
     TaxResidenceCert: z.array(z.unknown()),
     TaxResidenceSend: z.array(z.unknown()),
-    Title: z.array(z.unknown())
+    Title: z.array(z.unknown()),
+    Agreements: z.array(z.unknown())
 }).strict();
 
 export type ClientResultType = z.infer<typeof ClientResultSchema>;

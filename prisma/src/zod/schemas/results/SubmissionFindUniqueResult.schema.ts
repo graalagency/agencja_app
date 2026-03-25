@@ -1,0 +1,27 @@
+import * as z from 'zod';
+export const SubmissionFindUniqueResultSchema = z.nullable(z.object({
+  id: z.number().int(),
+  sourceId: z.number().int().optional(),
+  titleId: z.number().int().optional(),
+  publisherId: z.number().int().optional(),
+  contactId: z.number().int().optional(),
+  copyTypeId: z.number().int().optional(),
+  submSentTypeId: z.number().int().optional(),
+  submDate: z.date(),
+  sentDate: z.date().optional(),
+  endDate: z.date().optional(),
+  returnDate: z.date().optional(),
+  noOfCopies: z.number().int().optional(),
+  trackingNo: z.string().optional(),
+  exclusive: z.boolean(),
+  submNr: z.number().int().optional(),
+  status: z.string().optional(),
+  remarks: z.string().optional(),
+  userMod: z.string().optional(),
+  dateMod: z.date().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  Title: z.unknown().optional(),
+  Publisher: z.unknown().optional(),
+  Events: z.array(z.unknown())
+}));

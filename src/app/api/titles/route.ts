@@ -1,7 +1,34 @@
 import { prisma } from '../../../lib/prisma'
 import { NextResponse } from 'next/server'
+import { z } from 'zod'
+import { requireModuleAccess } from '../../../lib/api-permissions'
+import { translateZodErrors } from '../../../lib/zod-error-handler'
+
+const CreateTitleSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  isbn: z.string().optional().nullable(),
+  languageCode: z.string().optional().nullable(),
+  classCode: z.string().optional().nullable(),
+  edition: z.number().int().optional().nullable(),
+  pages: z.number().int().optional().nullable(),
+  copyrightYear: z.string().optional().nullable(),
+  copyrightOwner: z.string().optional().nullable(),
+  keywords: z.string().optional().nullable(),
+  volume: z.number().int().optional().nullable(),
+  totalVolumes: z.number().int().optional().nullable(),
+  isHit: z.boolean().optional(),
+  isCollection: z.boolean().optional(),
+  isCD: z.boolean().optional(),
+  notes: z.string().optional().nullable(),
+  dateOfReceipt: z.string().optional().nullable(),
+  clientId: z.number().int().optional().nullable(),
+  publisherId: z.number().int().optional().nullable(),
+})
 
 export async function GET(req: Request) {
+  const auth = await requireModuleAccess(req, 'titles')
+  if (auth.error) return auth.error
+
   const { searchParams } = new URL(req.url)
   const search = searchParams.get('search') || ''
   const page = parseInt(searchParams.get('page') || '1')
@@ -13,13 +40,32 @@ export async function GET(req: Request) {
 
   const where: any = {}
 
-  if (search) {
-    where.OR = [
-      { title: { contains: search, mode: 'insensitive' } },
-      { isbn: { contains: search, mode: 'insensitive' } },
-      { keywords: { contains: search, mode: 'insensitive' } },
-      { copyrightOwner: { contains: search, mode: 'insensitive' } },
-    ]
+  const trimmed = search.trim()
+  const exactMatch = trimmed.match(/^"(.*)"$/)
+  const startsMatch = !exactMatch && trimmed.startsWith('"') ? trimmed.slice(1) : null
+  if (exactMatch) {
+    // "fraza" — dokładny tytuł (equals, case insensitive)
+    const q = exactMatch[1]
+    if (q) where.title = { equals: q, mode: 'insensitive' }
+  } else if (startsMatch !== null) {
+    // "fraza bez zamknięcia — tytuł zaczyna się od
+    if (startsMatch) where.title = { startsWith: startsMatch, mode: 'insensitive' }
+  } else {
+    const words = trimmed.split(/\s+/).filter(Boolean)
+    if (words.length > 0) {
+      where.AND = words.map(w => ({
+        OR: [
+          { title:          { contains: w, mode: 'insensitive' } },
+          { isbn:           { contains: w, mode: 'insensitive' } },
+          { keywords:       { contains: w, mode: 'insensitive' } },
+          { copyrightOwner: { contains: w, mode: 'insensitive' } },
+          { Client:    { abbreviation: { contains: w, mode: 'insensitive' } } },
+          { Publisher: { abbreviation: { contains: w, mode: 'insensitive' } } },
+          { TitleAuthors: { some: { Author: { firstName: { contains: w, mode: 'insensitive' } } } } },
+          { TitleAuthors: { some: { Author: { lastName:  { contains: w, mode: 'insensitive' } } } } },
+        ],
+      }))
+    }
   }
 
   if (clientId) where.clientId = Number(clientId)
@@ -86,29 +132,44 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json()
-  const title = await prisma.title.create({
-    data: {
-      title: body.title,
-      isbn: body.isbn || null,
-      languageCode: body.languageCode || null,
-      classCode: body.classCode || null,
-      edition: body.edition ? Number(body.edition) : null,
-      pages: body.pages ? Number(body.pages) : null,
-      copyrightYear: body.copyrightYear || null,
-      copyrightOwner: body.copyrightOwner || null,
-      keywords: body.keywords || null,
-      volume: body.volume ? Number(body.volume) : null,
-      totalVolumes: body.totalVolumes ? Number(body.totalVolumes) : null,
-      isHit: body.isHit ?? false,
-      isCollection: body.isCollection ?? false,
-      isCD: body.isCD ?? false,
-      notes: body.notes || null,
-      dateOfReceipt: body.dateOfReceipt ? new Date(body.dateOfReceipt) : null,
-      clientId: body.clientId ? Number(body.clientId) : null,
-      publisherId: body.publisherId ? Number(body.publisherId) : null,
-      updatedAt: new Date(),
-    },
-  })
-  return NextResponse.json({ id: title.id }, { status: 201 })
+  const auth = await requireModuleAccess(req, 'titles')
+  if (auth.error) return auth.error
+
+  try {
+    const body = await req.json()
+    const validated = CreateTitleSchema.parse(body)
+
+    const title = await prisma.title.create({
+      data: {
+        title: validated.title,
+        isbn: validated.isbn,
+        languageCode: validated.languageCode,
+        classCode: validated.classCode,
+        edition: validated.edition,
+        pages: validated.pages,
+        copyrightYear: validated.copyrightYear,
+        copyrightOwner: validated.copyrightOwner,
+        keywords: validated.keywords,
+        volume: validated.volume,
+        totalVolumes: validated.totalVolumes,
+        isHit: validated.isHit ?? false,
+        isCollection: validated.isCollection ?? false,
+        isCD: validated.isCD ?? false,
+        notes: validated.notes,
+        dateOfReceipt: validated.dateOfReceipt ? new Date(validated.dateOfReceipt) : null,
+        clientId: validated.clientId,
+        publisherId: validated.publisherId,
+        updatedAt: new Date(),
+      },
+    })
+    return NextResponse.json({ id: title.id }, { status: 201 })
+  } catch (e) {
+    if (e instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: translateZodErrors(e.issues, 'pl') },
+        { status: 400 }
+      )
+    }
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
 }

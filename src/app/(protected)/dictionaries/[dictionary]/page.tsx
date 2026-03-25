@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -41,6 +42,7 @@ function normalizeValue(value: unknown): string | boolean {
 export default function DictionaryCrudPage() {
   const params = useParams<{ dictionary: string }>()
   const dictionary = params?.dictionary || ''
+  const t = useTranslations()
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -66,8 +68,8 @@ export default function DictionaryCrudPage() {
 
     const response = await fetch(`/api/dictionaries/${dictionary}?${qs.toString()}`)
     if (!response.ok) {
-      const payload = await response.json().catch(() => ({ error: 'Nie udalo sie pobrac danych slownika' }))
-      setError(payload.error || 'Nie udalo sie pobrac danych slownika')
+      const payload = await response.json().catch(() => ({ error: t('dictionaries.loadError') }))
+      setError(payload.error || t('dictionaries.loadError'))
       setLoading(false)
       return
     }
@@ -117,8 +119,8 @@ export default function DictionaryCrudPage() {
     })
 
     if (!response.ok) {
-      const payload = await response.json().catch(() => ({ error: 'Nie udalo sie dodac rekordu' }))
-      alert(payload.error || 'Nie udalo sie dodac rekordu')
+      const payload = await response.json().catch(() => ({ error: t('dictionaries.addError') }))
+      alert(payload.error || t('dictionaries.addError'))
       return
     }
 
@@ -137,8 +139,8 @@ export default function DictionaryCrudPage() {
     })
 
     if (!response.ok) {
-      const payload = await response.json().catch(() => ({ error: 'Nie udalo sie zapisac zmian' }))
-      alert(payload.error || 'Nie udalo sie zapisac zmian')
+      const payload = await response.json().catch(() => ({ error: t('dictionaries.saveError') }))
+      alert(payload.error || t('dictionaries.saveError'))
       return
     }
 
@@ -149,15 +151,15 @@ export default function DictionaryCrudPage() {
   const removeRow = async (row: Record<string, unknown>) => {
     if (!data) return
     const id = row[data.primaryKey]
-    if (!confirm(`Usunac rekord ${String(id)}?`)) return
+    if (!confirm(t('dictionaries.confirmDelete', { id: String(id) }))) return
 
     const response = await fetch(`/api/dictionaries/${dictionary}/${encodeURIComponent(String(id))}`, {
       method: 'DELETE',
     })
 
     if (!response.ok) {
-      const payload = await response.json().catch(() => ({ error: 'Nie udalo sie usunac rekordu' }))
-      alert(payload.error || 'Nie udalo sie usunac rekordu')
+      const payload = await response.json().catch(() => ({ error: t('dictionaries.deleteError') }))
+      alert(payload.error || t('dictionaries.deleteError'))
       return
     }
 
@@ -199,41 +201,41 @@ export default function DictionaryCrudPage() {
       <Card className="p-6 space-y-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <Link href="/dictionaries" className="text-sm text-primary hover:underline">Wroc do centrum slownikow</Link>
-            <h1 className="text-2xl font-bold mt-1">{data?.dictionary.label || 'Slownik'}</h1>
-            {data && <p className="text-xs text-muted-foreground">Tabela: {data.dictionary.table}</p>}
+            <Link href="/dictionaries" className="text-sm text-primary hover:underline">{t('dictionaries.backToHub')}</Link>
+            <h1 className="text-2xl font-bold mt-1">{data?.dictionary.label || t('dictionaries.dictionary')}</h1>
+            {data && <p className="text-xs text-muted-foreground">{t('dictionaries.table')}: {data.dictionary.table}</p>}
           </div>
-          <Button onClick={startCreate}>Dodaj rekord</Button>
+          <Button onClick={startCreate}>{t('dictionaries.addRecord')}</Button>
         </div>
 
         <div className="max-w-md">
-          <label className="text-sm font-medium text-muted-foreground">Szukaj</label>
-          <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Szukaj po kolumnach tekstowych" />
+          <label className="text-sm font-medium text-muted-foreground">{t('dictionaries.search')}</label>
+          <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('dictionaries.searchColumns')} />
         </div>
       </Card>
 
       {createMode && data && (
         <Card className="p-6 space-y-4">
-          <h2 className="text-lg font-semibold">Nowy rekord</h2>
+          <h2 className="text-lg font-semibold">{t('dictionaries.newRecord')}</h2>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {editableColumns.map((column) => renderInput(column, createForm, setCreateForm))}
           </div>
           <div className="flex gap-2">
-            <Button onClick={submitCreate}>Zapisz</Button>
-            <Button variant="outline" onClick={() => setCreateMode(false)}>Anuluj</Button>
+            <Button onClick={submitCreate}>{t('dictionaries.save')}</Button>
+            <Button variant="outline" onClick={() => setCreateMode(false)}>{t('dictionaries.cancel')}</Button>
           </div>
         </Card>
       )}
 
       {editingRow && data && (
         <Card className="p-6 space-y-4">
-          <h2 className="text-lg font-semibold">Edycja rekordu {String(editingRow[data.primaryKey])}</h2>
+          <h2 className="text-lg font-semibold">{t('dictionaries.editRecord', { id: String(editingRow[data.primaryKey]) })}</h2>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {editableColumns.map((column) => renderInput(column, editForm, setEditForm))}
           </div>
           <div className="flex gap-2">
-            <Button onClick={submitEdit}>Zapisz zmiany</Button>
-            <Button variant="outline" onClick={() => setEditingRow(null)}>Anuluj</Button>
+            <Button onClick={submitEdit}>{t('dictionaries.saveChanges')}</Button>
+            <Button variant="outline" onClick={() => setEditingRow(null)}>{t('dictionaries.cancel')}</Button>
           </div>
         </Card>
       )}
@@ -242,7 +244,7 @@ export default function DictionaryCrudPage() {
         {error ? (
           <p className="text-sm text-red-600">{error}</p>
         ) : loading ? (
-          <p className="text-sm text-muted-foreground">Ladowanie...</p>
+          <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
         ) : data ? (
           <div className="space-y-4">
             <div className="overflow-x-auto rounded-md border">
@@ -254,7 +256,7 @@ export default function DictionaryCrudPage() {
                         {column.name}
                       </th>
                     ))}
-                    <th className="px-3 py-2 text-left font-semibold whitespace-nowrap">Akcje</th>
+                    <th className="px-3 py-2 text-left font-semibold whitespace-nowrap">{t('common.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -276,8 +278,8 @@ export default function DictionaryCrudPage() {
                         })}
                         <td className="px-3 py-2 whitespace-nowrap align-top">
                           <div className="flex gap-2">
-                            <Button size="sm" variant="outline" onClick={() => startEdit(row)}>Edytuj</Button>
-                            <Button size="sm" variant="destructive" onClick={() => removeRow(row)}>Usun</Button>
+                            <Button size="sm" variant="outline" onClick={() => startEdit(row)}>{t('dictionaries.edit')}</Button>
+                            <Button size="sm" variant="destructive" onClick={() => removeRow(row)}>{t('dictionaries.delete')}</Button>
                           </div>
                         </td>
                       </tr>
@@ -289,7 +291,7 @@ export default function DictionaryCrudPage() {
 
             <div className="flex items-center justify-between">
               <p className="text-xs text-muted-foreground">
-                Strona {data.meta.page} z {data.meta.pages} ({data.meta.total} rekordow)
+                {t('dictionaries.page')} {data.meta.page} {t('common.of')} {data.meta.pages} ({data.meta.total} {t('dictionaries.records')})
               </p>
               <div className="flex gap-2">
                 <Button
@@ -298,7 +300,7 @@ export default function DictionaryCrudPage() {
                   disabled={data.meta.page <= 1}
                   onClick={() => load(data.meta.page - 1)}
                 >
-                  Poprzednia
+                  {t('common.previous')}
                 </Button>
                 <Button
                   size="sm"
@@ -306,7 +308,7 @@ export default function DictionaryCrudPage() {
                   disabled={data.meta.page >= data.meta.pages}
                   onClick={() => load(data.meta.page + 1)}
                 >
-                  Nastepna
+                  {t('common.next')}
                 </Button>
               </div>
             </div>

@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
+import { requireModuleAccess } from '../../../lib/api-permissions'
 
 // GET /api/permissions - get all role permissions
-export async function GET() {
+export async function GET(req: Request) {
+  const auth = await requireModuleAccess(req, 'permissions')
+  if (auth.error) return auth.error
+
   const permissions = await prisma.rolePermissions.findMany({
     orderBy: { module: 'asc' }
   })
@@ -11,6 +15,9 @@ export async function GET() {
 
 // PUT /api/permissions - update role permissions
 export async function PUT(req: Request) {
+  const auth = await requireModuleAccess(req, 'permissions')
+  if (auth.error) return auth.error
+
   try {
     const body = await req.json()
     const { module, userAccess, advancedAccess, adminAccess } = body

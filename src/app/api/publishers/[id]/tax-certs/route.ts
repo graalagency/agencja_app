@@ -1,5 +1,16 @@
 import { prisma } from '../../../../../lib/prisma'
 import { NextResponse } from 'next/server'
+import { z } from 'zod'
+import { requireModuleAccess } from '../../../../../lib/api-permissions'
+import { translateZodErrors } from '../../../../../lib/zod-error-handler'
+
+const CreateTaxCertSchema = z.object({
+  validDate: z.string().min(1, 'Valid date is required'),
+  requestDate: z.string().optional().nullable(),
+  receiveDate: z.string().optional().nullable(),
+  hasCert: z.boolean().optional().default(false),
+  notes: z.string().optional().nullable(),
+})
 
 const sendLogSelect = {
   id: true,
@@ -39,38 +50,64 @@ function mapCert(c: any, hasFile: boolean) {
 }
 
 // GET /api/publishers/[id]/tax-certs
-export async function GET(_: Request, { params }: { params: { id: string } }) {
-  const publisherId = Number(params.id)
-  const certs = await prisma.taxResidenceCert.findMany({
-    where: { publisherId },
-    select: {
-      id: true, validDate: true, requestDate: true, receiveDate: true,
-      hasCert: true, notes: true, fileName: true, createdAt: true, updatedAt: true,
-      SendLog: { select: sendLogSelect, orderBy: { dateSend: 'asc' } },
-    },
-    orderBy: { validDate: 'desc' },
-  })
-  const withFile = await prisma.$queryRaw<{ id: number }[]>`
-    SELECT id FROM "TaxResidenceCert" WHERE "publisherId" = ${publisherId} AND "fileData" IS NOT NULL
-  `
-  const fileSet = new Set(withFile.map((r) => r.id))
-  return NextResponse.json(certs.map((c) => mapCert(c, fileSet.has(c.id))))
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const auth = await requireModuleAccess(req, 'publishers')
+  if (auth.error) return auth.error
+
+  try {
+    const publisherId = Number(params.id)
+    const certs = await prisma.taxResidenceCert.findMany({
+      where: { publisherId },
+      select: {
+        id: true, validDate: true, requestDate: true, receiveDate: true,
+        hasCert: true, notes: true, fileName: true, createdAt: true, updatedAt: true,
+        SendLog: { select: sendLogSelect, orderBy: { dateSend: 'asc' } },
+      },
+      orderBy: { validDate: 'desc' },
+    })
+    const withFile = await prisma.$queryRaw<{ id: number }[]>`
+      SELECT id FROM "TaxResidenceCert" WHERE "publisherId" = ${publisherId} AND "fileData" IS NOT NULL
+    `
+    const fileSet = new Set(withFile.map((r) => r.id))
+    return NextResponse.json(certs.map((c) => mapCert(c, fileSet.has(c.id))))
+  } catch (err: any) {
+    console.error('GET /api/publishers/[id]/tax-certs error:', err)
+    return NextResponse.json({ error: err?.message ?? String(err) }, { status: 500 })
+  }
 }
 
 // POST /api/publishers/[id]/tax-certs
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const publisherId = Number(params.id)
-  const body = await req.json()
-  const cert = await prisma.taxResidenceCert.create({
-    data: {
-      publisherId,
-      validDate: new Date(body.validDate),
-      requestDate: body.requestDate ? new Date(body.requestDate) : null,
-      receiveDate: body.receiveDate ? new Date(body.receiveDate) : null,
-      hasCert: Boolean(body.hasCert),
-      notes: body.notes || null,
-      updatedAt: new Date(),
-    },
-  })
-  return NextResponse.json({ id: cert.id }, { status: 201 })
+  const auth = await requireModuleAccess(req, 'publishers')
+  if (auth.error) return auth.error
+
+  try {
+    const publisherId = Number(params.id)
+    const body = await req.json()
+
+    const validationResult = CreateTaxCertSchema.safeParse(body)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: translateZodErrors(validationResult.error.issues, 'pl') },
+        { status: 400 }
+      )
+    }
+
+    const validated = validationResult.data
+    const cert = await prisma.taxResidenceCert.create({
+      data: {
+        publisherId,
+        validDate: new Date(validated.validDate),
+        requestDate: validated.requestDate ? new Date(validated.requestDate) : null,
+        receiveDate: validated.receiveDate ? new Date(validated.receiveDate) : null,
+        hasCert: validated.hasCert,
+        notes: validated.notes ?? null,
+        updatedAt: new Date(),
+      },
+    })
+    return NextResponse.json({ id: cert.id }, { status: 201 })
+  } catch (err: any) {
+    console.error('POST /api/publishers/[id]/tax-certs error:', err)
+    return NextResponse.json({ error: err?.message ?? String(err) }, { status: 500 })
+  }
 }

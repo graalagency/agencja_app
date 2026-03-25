@@ -47,7 +47,9 @@ export const TitleGroupByResultSchema = z.array(z.object({
     updatedAt: z.number(),
     Client: z.number(),
     Publisher: z.number(),
-    TitleAuthors: z.number()
+    TitleAuthors: z.number(),
+    Agreements: z.number(),
+    Submissions: z.number()
   }).optional(),
   _sum: z.object({
     id: z.number().nullable(),

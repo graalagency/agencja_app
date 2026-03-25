@@ -1,0 +1,10 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { AgreementAdvanceOrderByWithRelationInputObjectSchema as AgreementAdvanceOrderByWithRelationInputObjectSchema } from './objects/AgreementAdvanceOrderByWithRelationInput.schema';
+import { AgreementAdvanceWhereInputObjectSchema as AgreementAdvanceWhereInputObjectSchema } from './objects/AgreementAdvanceWhereInput.schema';
+import { AgreementAdvanceWhereUniqueInputObjectSchema as AgreementAdvanceWhereUniqueInputObjectSchema } from './objects/AgreementAdvanceWhereUniqueInput.schema';
+import { AgreementAdvanceCountAggregateInputObjectSchema as AgreementAdvanceCountAggregateInputObjectSchema } from './objects/AgreementAdvanceCountAggregateInput.schema';
+
+export const AgreementAdvanceCountSchema: z.ZodType<Prisma.AgreementAdvanceCountArgs> = z.object({ orderBy: z.union([AgreementAdvanceOrderByWithRelationInputObjectSchema, AgreementAdvanceOrderByWithRelationInputObjectSchema.array()]).optional(), where: AgreementAdvanceWhereInputObjectSchema.optional(), cursor: AgreementAdvanceWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), AgreementAdvanceCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.AgreementAdvanceCountArgs>;
+
+export const AgreementAdvanceCountZodSchema = z.object({ orderBy: z.union([AgreementAdvanceOrderByWithRelationInputObjectSchema, AgreementAdvanceOrderByWithRelationInputObjectSchema.array()]).optional(), where: AgreementAdvanceWhereInputObjectSchema.optional(), cursor: AgreementAdvanceWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), AgreementAdvanceCountAggregateInputObjectSchema ]).optional() }).strict();

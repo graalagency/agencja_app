@@ -1,7 +1,9 @@
 import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
 import { ClientCreateNestedOneWithoutTitleInputObjectSchema as ClientCreateNestedOneWithoutTitleInputObjectSchema } from './ClientCreateNestedOneWithoutTitleInput.schema';
-import { PublisherCreateNestedOneWithoutTitleInputObjectSchema as PublisherCreateNestedOneWithoutTitleInputObjectSchema } from './PublisherCreateNestedOneWithoutTitleInput.schema'
+import { PublisherCreateNestedOneWithoutTitleInputObjectSchema as PublisherCreateNestedOneWithoutTitleInputObjectSchema } from './PublisherCreateNestedOneWithoutTitleInput.schema';
+import { AgreementCreateNestedManyWithoutTitleInputObjectSchema as AgreementCreateNestedManyWithoutTitleInputObjectSchema } from './AgreementCreateNestedManyWithoutTitleInput.schema';
+import { SubmissionCreateNestedManyWithoutTitleInputObjectSchema as SubmissionCreateNestedManyWithoutTitleInputObjectSchema } from './SubmissionCreateNestedManyWithoutTitleInput.schema'
 
 const makeSchema = () => z.object({
   sourceId: z.number().int().optional().nullable(),
@@ -24,7 +26,9 @@ const makeSchema = () => z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date(),
   Client: z.lazy(() => ClientCreateNestedOneWithoutTitleInputObjectSchema).optional(),
-  Publisher: z.lazy(() => PublisherCreateNestedOneWithoutTitleInputObjectSchema).optional()
+  Publisher: z.lazy(() => PublisherCreateNestedOneWithoutTitleInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementCreateNestedManyWithoutTitleInputObjectSchema).optional(),
+  Submissions: z.lazy(() => SubmissionCreateNestedManyWithoutTitleInputObjectSchema).optional()
 }).strict();
 export const TitleCreateWithoutTitleAuthorsInputObjectSchema: z.ZodType<Prisma.TitleCreateWithoutTitleAuthorsInput> = makeSchema() as unknown as z.ZodType<Prisma.TitleCreateWithoutTitleAuthorsInput>;
 export const TitleCreateWithoutTitleAuthorsInputObjectZodSchema = makeSchema();

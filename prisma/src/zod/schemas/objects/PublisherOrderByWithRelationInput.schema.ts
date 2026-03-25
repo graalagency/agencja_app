@@ -6,7 +6,9 @@ import { PublisherOrderByRelationAggregateInputObjectSchema as PublisherOrderByR
 import { PublisherContactOrderByRelationAggregateInputObjectSchema as PublisherContactOrderByRelationAggregateInputObjectSchema } from './PublisherContactOrderByRelationAggregateInput.schema';
 import { TaxResidenceCertOrderByRelationAggregateInputObjectSchema as TaxResidenceCertOrderByRelationAggregateInputObjectSchema } from './TaxResidenceCertOrderByRelationAggregateInput.schema';
 import { TaxResidenceSendOrderByRelationAggregateInputObjectSchema as TaxResidenceSendOrderByRelationAggregateInputObjectSchema } from './TaxResidenceSendOrderByRelationAggregateInput.schema';
-import { TitleOrderByRelationAggregateInputObjectSchema as TitleOrderByRelationAggregateInputObjectSchema } from './TitleOrderByRelationAggregateInput.schema'
+import { TitleOrderByRelationAggregateInputObjectSchema as TitleOrderByRelationAggregateInputObjectSchema } from './TitleOrderByRelationAggregateInput.schema';
+import { AgreementOrderByRelationAggregateInputObjectSchema as AgreementOrderByRelationAggregateInputObjectSchema } from './AgreementOrderByRelationAggregateInput.schema';
+import { SubmissionOrderByRelationAggregateInputObjectSchema as SubmissionOrderByRelationAggregateInputObjectSchema } from './SubmissionOrderByRelationAggregateInput.schema'
 
 const publisherorderbywithrelationinputSchema = z.object({
   id: SortOrderSchema.optional(),
@@ -48,7 +50,9 @@ const publisherorderbywithrelationinputSchema = z.object({
   PublisherContact: z.lazy(() => PublisherContactOrderByRelationAggregateInputObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertOrderByRelationAggregateInputObjectSchema).optional(),
   TaxResidenceSend: z.lazy(() => TaxResidenceSendOrderByRelationAggregateInputObjectSchema).optional(),
-  Title: z.lazy(() => TitleOrderByRelationAggregateInputObjectSchema).optional()
+  Title: z.lazy(() => TitleOrderByRelationAggregateInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementOrderByRelationAggregateInputObjectSchema).optional(),
+  Submissions: z.lazy(() => SubmissionOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();
 export const PublisherOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.PublisherOrderByWithRelationInput> = publisherorderbywithrelationinputSchema as unknown as z.ZodType<Prisma.PublisherOrderByWithRelationInput>;
 export const PublisherOrderByWithRelationInputObjectZodSchema = publisherorderbywithrelationinputSchema;

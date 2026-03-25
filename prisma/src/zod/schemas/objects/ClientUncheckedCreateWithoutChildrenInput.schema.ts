@@ -3,11 +3,11 @@ import { Prisma } from '@prisma/client';
 import Decimal from 'decimal.js';
 import { AuthorUncheckedCreateNestedManyWithoutClientInputObjectSchema as AuthorUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './AuthorUncheckedCreateNestedManyWithoutClientInput.schema';
 import { ClientContactUncheckedCreateNestedManyWithoutClientInputObjectSchema as ClientContactUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './ClientContactUncheckedCreateNestedManyWithoutClientInput.schema';
-import { DocumentUncheckedCreateNestedManyWithoutClientInputObjectSchema as DocumentUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './DocumentUncheckedCreateNestedManyWithoutClientInput.schema';
 import { InvoiceUncheckedCreateNestedManyWithoutClientInputObjectSchema as InvoiceUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './InvoiceUncheckedCreateNestedManyWithoutClientInput.schema';
 import { TaxResidenceCertUncheckedCreateNestedManyWithoutClientInputObjectSchema as TaxResidenceCertUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './TaxResidenceCertUncheckedCreateNestedManyWithoutClientInput.schema';
 import { TaxResidenceSendUncheckedCreateNestedManyWithoutClientInputObjectSchema as TaxResidenceSendUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './TaxResidenceSendUncheckedCreateNestedManyWithoutClientInput.schema';
-import { TitleUncheckedCreateNestedManyWithoutClientInputObjectSchema as TitleUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './TitleUncheckedCreateNestedManyWithoutClientInput.schema'
+import { TitleUncheckedCreateNestedManyWithoutClientInputObjectSchema as TitleUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './TitleUncheckedCreateNestedManyWithoutClientInput.schema';
+import { AgreementUncheckedCreateNestedManyWithoutClientInputObjectSchema as AgreementUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './AgreementUncheckedCreateNestedManyWithoutClientInput.schema'
 
 import { DecimalJSLikeSchema, isValidDecimalInput } from '../../helpers/decimal-helpers';
 const makeSchema = () => z.object({
@@ -71,11 +71,11 @@ const makeSchema = () => z.object({
   parentId: z.number().int().optional().nullable(),
   Author: z.lazy(() => AuthorUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
   ClientContact: z.lazy(() => ClientContactUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
-  Document: z.lazy(() => DocumentUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
   Invoice: z.lazy(() => InvoiceUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
   TaxResidenceSend: z.lazy(() => TaxResidenceSendUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
-  Title: z.lazy(() => TitleUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional()
+  Title: z.lazy(() => TitleUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional()
 }).strict();
 export const ClientUncheckedCreateWithoutChildrenInputObjectSchema: z.ZodType<Prisma.ClientUncheckedCreateWithoutChildrenInput> = makeSchema() as unknown as z.ZodType<Prisma.ClientUncheckedCreateWithoutChildrenInput>;
 export const ClientUncheckedCreateWithoutChildrenInputObjectZodSchema = makeSchema();

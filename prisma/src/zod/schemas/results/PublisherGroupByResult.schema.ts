@@ -74,7 +74,9 @@ export const PublisherGroupByResultSchema = z.array(z.object({
     PublisherContact: z.number(),
     TaxResidenceCert: z.number(),
     TaxResidenceSend: z.number(),
-    Title: z.number()
+    Title: z.number(),
+    Agreements: z.number(),
+    Submissions: z.number()
   }).optional(),
   _sum: z.object({
     id: z.number().nullable(),

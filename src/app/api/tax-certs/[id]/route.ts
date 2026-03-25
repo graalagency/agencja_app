@@ -1,5 +1,16 @@
 import { prisma } from '../../../../lib/prisma'
 import { NextResponse } from 'next/server'
+import { z } from 'zod'
+import { requireModuleAccess } from '../../../../lib/api-permissions'
+import { translateZodErrors } from '../../../../lib/zod-error-handler'
+
+const UpdateTaxCertSchema = z.object({
+  validDate: z.string().optional(),
+  requestDate: z.string().optional().nullable(),
+  receiveDate: z.string().optional().nullable(),
+  hasCert: z.boolean().optional(),
+  notes: z.string().optional().nullable(),
+})
 
 // GET /api/tax-certs/[id]
 export async function GET(_: Request, { params }: { params: { id: string } }) {
@@ -34,27 +45,52 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
 
 // PUT /api/tax-certs/[id]
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const id = Number(params.id)
-  const body = await req.json()
+  const auth = await requireModuleAccess(req, 'customers')
+  if (auth.error) return auth.error
 
-  const cert = await prisma.taxResidenceCert.update({
-    where: { id },
-    data: {
-      validDate: body.validDate ? new Date(body.validDate) : undefined,
-      requestDate: body.requestDate ? new Date(body.requestDate) : null,
-      receiveDate: body.receiveDate ? new Date(body.receiveDate) : null,
-      hasCert: body.hasCert !== undefined ? Boolean(body.hasCert) : undefined,
-      notes: body.notes !== undefined ? (body.notes || null) : undefined,
-      updatedAt: new Date(),
-    },
-  })
+  try {
+    const id = Number(params.id)
+    const body = await req.json()
 
-  return NextResponse.json({ id: cert.id })
+    const validationResult = UpdateTaxCertSchema.safeParse(body)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: translateZodErrors(validationResult.error.issues, 'pl') },
+        { status: 400 }
+      )
+    }
+
+    const validated = validationResult.data
+    const cert = await prisma.taxResidenceCert.update({
+      where: { id },
+      data: {
+        validDate: validated.validDate ? new Date(validated.validDate) : undefined,
+        requestDate: validated.requestDate ? new Date(validated.requestDate) : null,
+        receiveDate: validated.receiveDate ? new Date(validated.receiveDate) : null,
+        hasCert: validated.hasCert !== undefined ? validated.hasCert : undefined,
+        notes: validated.notes !== undefined ? validated.notes : undefined,
+        updatedAt: new Date(),
+      },
+    })
+
+    return NextResponse.json({ id: cert.id })
+  } catch (err: any) {
+    console.error('PUT /api/tax-certs/[id] error:', err)
+    return NextResponse.json({ error: err?.message ?? String(err) }, { status: 500 })
+  }
 }
 
 // DELETE /api/tax-certs/[id]
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
-  const id = Number(params.id)
-  await prisma.taxResidenceCert.delete({ where: { id } })
-  return NextResponse.json({ ok: true })
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  const auth = await requireModuleAccess(req, 'customers')
+  if (auth.error) return auth.error
+
+  try {
+    const id = Number(params.id)
+    await prisma.taxResidenceCert.delete({ where: { id } })
+    return NextResponse.json({ ok: true })
+  } catch (err: any) {
+    console.error('DELETE /api/tax-certs/[id] error:', err)
+    return NextResponse.json({ error: err?.message ?? String(err) }, { status: 500 })
+  }
 }

@@ -50,6 +50,8 @@ export const PublisherFindManySelectSchema: z.ZodType<Prisma.PublisherSelect> = 
     TaxResidenceCert: z.boolean().optional(),
     TaxResidenceSend: z.boolean().optional(),
     Title: z.boolean().optional(),
+    Agreements: z.boolean().optional(),
+    Submissions: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.PublisherSelect>;
 
@@ -94,6 +96,8 @@ export const PublisherFindManySelectZodSchema = z.object({
     TaxResidenceCert: z.boolean().optional(),
     TaxResidenceSend: z.boolean().optional(),
     Title: z.boolean().optional(),
+    Agreements: z.boolean().optional(),
+    Submissions: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 

@@ -1,5 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useSearchMemory } from '../../../hooks/useSearchMemory'
+import { RememberCheckbox } from '../../../components/ui/RememberCheckbox'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
@@ -30,25 +32,13 @@ export default function AuthorsPage() {
   const [meta, setMeta] = useState<Meta>({ page: 1, pageSize: 10, total: 0, pages: 1 })
   const [loading, setLoading] = useState(true)
 
-  const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState<'id'|'firstName'|'lastName'|'fullName'|'penName'|'dateMod'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('authors_sortBy') as any) || 'id'
-    }
-    return 'id'
+  const { remember, setRemember, initialCriteria, save } = useSearchMemory('authors', {
+    search: '', sortBy: 'id', sortOrder: 'asc', pageSize: 10,
   })
-  const [sortOrder, setSortOrder] = useState<'asc'|'desc'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('authors_sortOrder') as any) || 'asc'
-    }
-    return 'asc'
-  })
-  const [pageSize, setPageSize] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return Number(localStorage.getItem('authors_pageSize')) || 10
-    }
-    return 10
-  })
+  const [search, setSearch]       = useState(initialCriteria.search as string)
+  const [sortBy, setSortBy]       = useState<'id'|'firstName'|'lastName'|'fullName'|'penName'|'dateMod'>(initialCriteria.sortBy as any)
+  const [sortOrder, setSortOrder] = useState<'asc'|'desc'>(initialCriteria.sortOrder as any)
+  const [pageSize, setPageSize]   = useState(Number(initialCriteria.pageSize))
 
   const handlePageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize)
@@ -102,14 +92,7 @@ export default function AuthorsPage() {
 
   useEffect(() => { load(1) }, [search, sortBy, sortOrder, pageSize])
 
-  // Zapisz ustawienia sortowania i rozmiaru strony do localStorage
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('authors_sortBy', sortBy)
-      localStorage.setItem('authors_sortOrder', sortOrder)
-      localStorage.setItem('authors_pageSize', String(pageSize))
-    }
-  }, [sortBy, sortOrder, pageSize])
+  useEffect(() => { save({ search, sortBy, sortOrder, pageSize }) }, [search, sortBy, sortOrder, pageSize])
 
   const addAuthor = async () => {
     if (!form.firstName || !form.lastName) {
@@ -206,7 +189,10 @@ export default function AuthorsPage() {
           </Button>
         </div>
         <div className="max-w-md">
-          <label className="label">{tCommon('search')}</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="label">{tCommon('search')}</label>
+            <RememberCheckbox checked={remember} onChange={setRemember} />
+          </div>
           <Input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Imię/Nazwisko/Pseudonim" />
         </div>
       </Card>

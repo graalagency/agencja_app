@@ -5,11 +5,11 @@ import { SortOrderInputObjectSchema as SortOrderInputObjectSchema } from './Sort
 import { ClientOrderByRelationAggregateInputObjectSchema as ClientOrderByRelationAggregateInputObjectSchema } from './ClientOrderByRelationAggregateInput.schema';
 import { AuthorOrderByRelationAggregateInputObjectSchema as AuthorOrderByRelationAggregateInputObjectSchema } from './AuthorOrderByRelationAggregateInput.schema';
 import { ClientContactOrderByRelationAggregateInputObjectSchema as ClientContactOrderByRelationAggregateInputObjectSchema } from './ClientContactOrderByRelationAggregateInput.schema';
-import { DocumentOrderByRelationAggregateInputObjectSchema as DocumentOrderByRelationAggregateInputObjectSchema } from './DocumentOrderByRelationAggregateInput.schema';
 import { InvoiceOrderByRelationAggregateInputObjectSchema as InvoiceOrderByRelationAggregateInputObjectSchema } from './InvoiceOrderByRelationAggregateInput.schema';
 import { TaxResidenceCertOrderByRelationAggregateInputObjectSchema as TaxResidenceCertOrderByRelationAggregateInputObjectSchema } from './TaxResidenceCertOrderByRelationAggregateInput.schema';
 import { TaxResidenceSendOrderByRelationAggregateInputObjectSchema as TaxResidenceSendOrderByRelationAggregateInputObjectSchema } from './TaxResidenceSendOrderByRelationAggregateInput.schema';
-import { TitleOrderByRelationAggregateInputObjectSchema as TitleOrderByRelationAggregateInputObjectSchema } from './TitleOrderByRelationAggregateInput.schema'
+import { TitleOrderByRelationAggregateInputObjectSchema as TitleOrderByRelationAggregateInputObjectSchema } from './TitleOrderByRelationAggregateInput.schema';
+import { AgreementOrderByRelationAggregateInputObjectSchema as AgreementOrderByRelationAggregateInputObjectSchema } from './AgreementOrderByRelationAggregateInput.schema'
 
 const clientorderbywithrelationinputSchema = z.object({
   id: SortOrderSchema.optional(),
@@ -50,11 +50,11 @@ const clientorderbywithrelationinputSchema = z.object({
   Children: z.lazy(() => ClientOrderByRelationAggregateInputObjectSchema).optional(),
   Author: z.lazy(() => AuthorOrderByRelationAggregateInputObjectSchema).optional(),
   ClientContact: z.lazy(() => ClientContactOrderByRelationAggregateInputObjectSchema).optional(),
-  Document: z.lazy(() => DocumentOrderByRelationAggregateInputObjectSchema).optional(),
   Invoice: z.lazy(() => InvoiceOrderByRelationAggregateInputObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertOrderByRelationAggregateInputObjectSchema).optional(),
   TaxResidenceSend: z.lazy(() => TaxResidenceSendOrderByRelationAggregateInputObjectSchema).optional(),
-  Title: z.lazy(() => TitleOrderByRelationAggregateInputObjectSchema).optional()
+  Title: z.lazy(() => TitleOrderByRelationAggregateInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();
 export const ClientOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.ClientOrderByWithRelationInput> = clientorderbywithrelationinputSchema as unknown as z.ZodType<Prisma.ClientOrderByWithRelationInput>;
 export const ClientOrderByWithRelationInputObjectZodSchema = clientorderbywithrelationinputSchema;

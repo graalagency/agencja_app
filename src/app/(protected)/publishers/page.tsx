@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSearchMemory } from '../../../hooks/useSearchMemory'
+import { RememberCheckbox } from '../../../components/ui/RememberCheckbox'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -36,25 +38,13 @@ export default function PublishersPage() {
   const [meta, setMeta] = useState<Meta>({ page: 1, pageSize: 10, total: 0, pages: 1 })
   const [loading, setLoading] = useState(true)
 
-  const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState<'id' | 'name' | 'email' | 'phone' | 'createdAt'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('publishers_sortBy') as 'id' | 'name' | 'email' | 'phone' | 'createdAt') || 'id'
-    }
-    return 'id'
+  const { remember, setRemember, initialCriteria, save } = useSearchMemory('publishers', {
+    search: '', sortBy: 'id', sortOrder: 'asc', pageSize: 10,
   })
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('publishers_sortOrder') as 'asc' | 'desc') || 'asc'
-    }
-    return 'asc'
-  })
-  const [pageSize, setPageSize] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return Number(localStorage.getItem('publishers_pageSize')) || 10
-    }
-    return 10
-  })
+  const [search, setSearch]       = useState(initialCriteria.search as string)
+  const [sortBy, setSortBy]       = useState<'id'|'name'|'email'|'phone'|'createdAt'>(initialCriteria.sortBy as any)
+  const [sortOrder, setSortOrder] = useState<'asc'|'desc'>(initialCriteria.sortOrder as any)
+  const [pageSize, setPageSize]   = useState(Number(initialCriteria.pageSize))
 
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingPublisher, setEditingPublisher] = useState<Publisher | null>(null)
@@ -109,13 +99,7 @@ export default function PublishersPage() {
     load(1)
   }, [search, sortBy, sortOrder, pageSize])
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('publishers_sortBy', sortBy)
-      localStorage.setItem('publishers_sortOrder', sortOrder)
-      localStorage.setItem('publishers_pageSize', String(pageSize))
-    }
-  }, [sortBy, sortOrder, pageSize])
+  useEffect(() => { save({ search, sortBy, sortOrder, pageSize }) }, [search, sortBy, sortOrder, pageSize])
 
   const addPublisher = async () => {
     const parsed = ClientCreateSchema.safeParse(form)
@@ -291,7 +275,10 @@ export default function PublishersPage() {
         </div>
 
         <div className="max-w-md">
-          <label className="label">{t('common.search')}</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="label">{t('common.search')}</label>
+            <RememberCheckbox checked={remember} onChange={setRemember} />
+          </div>
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Nazwa/Email/Telefon/NIP" />
         </div>
       </Card>

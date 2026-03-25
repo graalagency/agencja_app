@@ -1,0 +1,14 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { AgreementEventOrderByWithRelationInputObjectSchema as AgreementEventOrderByWithRelationInputObjectSchema } from './objects/AgreementEventOrderByWithRelationInput.schema';
+import { AgreementEventWhereInputObjectSchema as AgreementEventWhereInputObjectSchema } from './objects/AgreementEventWhereInput.schema';
+import { AgreementEventWhereUniqueInputObjectSchema as AgreementEventWhereUniqueInputObjectSchema } from './objects/AgreementEventWhereUniqueInput.schema';
+import { AgreementEventCountAggregateInputObjectSchema as AgreementEventCountAggregateInputObjectSchema } from './objects/AgreementEventCountAggregateInput.schema';
+import { AgreementEventMinAggregateInputObjectSchema as AgreementEventMinAggregateInputObjectSchema } from './objects/AgreementEventMinAggregateInput.schema';
+import { AgreementEventMaxAggregateInputObjectSchema as AgreementEventMaxAggregateInputObjectSchema } from './objects/AgreementEventMaxAggregateInput.schema';
+import { AgreementEventAvgAggregateInputObjectSchema as AgreementEventAvgAggregateInputObjectSchema } from './objects/AgreementEventAvgAggregateInput.schema';
+import { AgreementEventSumAggregateInputObjectSchema as AgreementEventSumAggregateInputObjectSchema } from './objects/AgreementEventSumAggregateInput.schema';
+
+export const AgreementEventAggregateSchema: z.ZodType<Prisma.AgreementEventAggregateArgs> = z.object({ orderBy: z.union([AgreementEventOrderByWithRelationInputObjectSchema, AgreementEventOrderByWithRelationInputObjectSchema.array()]).optional(), where: AgreementEventWhereInputObjectSchema.optional(), cursor: AgreementEventWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), AgreementEventCountAggregateInputObjectSchema ]).optional(), _min: AgreementEventMinAggregateInputObjectSchema.optional(), _max: AgreementEventMaxAggregateInputObjectSchema.optional(), _avg: AgreementEventAvgAggregateInputObjectSchema.optional(), _sum: AgreementEventSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.AgreementEventAggregateArgs>;
+
+export const AgreementEventAggregateZodSchema = z.object({ orderBy: z.union([AgreementEventOrderByWithRelationInputObjectSchema, AgreementEventOrderByWithRelationInputObjectSchema.array()]).optional(), where: AgreementEventWhereInputObjectSchema.optional(), cursor: AgreementEventWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), AgreementEventCountAggregateInputObjectSchema ]).optional(), _min: AgreementEventMinAggregateInputObjectSchema.optional(), _max: AgreementEventMaxAggregateInputObjectSchema.optional(), _avg: AgreementEventAvgAggregateInputObjectSchema.optional(), _sum: AgreementEventSumAggregateInputObjectSchema.optional() }).strict();

@@ -19,29 +19,33 @@ export const authOptions: NextAuthOptions = {
           // Sprawdzenie czy Prisma jest dostępna
           if (!prisma) {
             console.error('Auth error: Prisma client not initialized. Check DATABASE_URL environment variable.')
-            return null
+            throw new Error('DatabaseUnavailable')
           }
 
           // Timeout dla zapytania do bazy (10 sekund)
-          const userPromise = prisma.user.findUnique({ 
+          const userPromise = prisma.user.findUnique({
             where: { email: credentials.email },
             select: { id: true, passwordHash: true, email: true, name: true, role: true, permissions: true, locale: true }
           })
-          
+
           const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Database timeout')), 10000)
+            setTimeout(() => reject(new Error('DatabaseUnavailable')), 10000)
           )
-          
+
           const user = await Promise.race([userPromise, timeoutPromise]) as any
           if (!user) return null
-          
+
           const ok = await bcrypt.compare(credentials.password, user.passwordHash)
           if (!ok) return null
-          
+
           return { id: String(user.id), name: user.name ?? user.email, email: user.email, role: user.role, permissions: user.permissions ?? {}, locale: user.locale }
-        } catch (error) {
+        } catch (error: any) {
+          if (error?.message === 'DatabaseUnavailable') {
+            console.error('Auth error: database unavailable')
+            throw new Error('DatabaseUnavailable')
+          }
           console.error('Auth error:', error)
-          return null
+          throw new Error('DatabaseUnavailable')
         }
       }
     })

@@ -11,11 +11,11 @@ import { ClientNullableScalarRelationFilterObjectSchema as ClientNullableScalarR
 import { ClientListRelationFilterObjectSchema as ClientListRelationFilterObjectSchema } from './ClientListRelationFilter.schema';
 import { AuthorListRelationFilterObjectSchema as AuthorListRelationFilterObjectSchema } from './AuthorListRelationFilter.schema';
 import { ClientContactListRelationFilterObjectSchema as ClientContactListRelationFilterObjectSchema } from './ClientContactListRelationFilter.schema';
-import { DocumentListRelationFilterObjectSchema as DocumentListRelationFilterObjectSchema } from './DocumentListRelationFilter.schema';
 import { InvoiceListRelationFilterObjectSchema as InvoiceListRelationFilterObjectSchema } from './InvoiceListRelationFilter.schema';
 import { TaxResidenceCertListRelationFilterObjectSchema as TaxResidenceCertListRelationFilterObjectSchema } from './TaxResidenceCertListRelationFilter.schema';
 import { TaxResidenceSendListRelationFilterObjectSchema as TaxResidenceSendListRelationFilterObjectSchema } from './TaxResidenceSendListRelationFilter.schema';
-import { TitleListRelationFilterObjectSchema as TitleListRelationFilterObjectSchema } from './TitleListRelationFilter.schema'
+import { TitleListRelationFilterObjectSchema as TitleListRelationFilterObjectSchema } from './TitleListRelationFilter.schema';
+import { AgreementListRelationFilterObjectSchema as AgreementListRelationFilterObjectSchema } from './AgreementListRelationFilter.schema'
 
 import { DecimalJSLikeSchema, isValidDecimalInput } from '../../helpers/decimal-helpers';
 const clientwhereinputSchema = z.object({
@@ -84,11 +84,11 @@ const clientwhereinputSchema = z.object({
   Children: z.lazy(() => ClientListRelationFilterObjectSchema).optional(),
   Author: z.lazy(() => AuthorListRelationFilterObjectSchema).optional(),
   ClientContact: z.lazy(() => ClientContactListRelationFilterObjectSchema).optional(),
-  Document: z.lazy(() => DocumentListRelationFilterObjectSchema).optional(),
   Invoice: z.lazy(() => InvoiceListRelationFilterObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertListRelationFilterObjectSchema).optional(),
   TaxResidenceSend: z.lazy(() => TaxResidenceSendListRelationFilterObjectSchema).optional(),
-  Title: z.lazy(() => TitleListRelationFilterObjectSchema).optional()
+  Title: z.lazy(() => TitleListRelationFilterObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementListRelationFilterObjectSchema).optional()
 }).strict();
 export const ClientWhereInputObjectSchema: z.ZodType<Prisma.ClientWhereInput> = clientwhereinputSchema as unknown as z.ZodType<Prisma.ClientWhereInput>;
 export const ClientWhereInputObjectZodSchema = clientwhereinputSchema;

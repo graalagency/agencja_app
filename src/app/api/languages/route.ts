@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../../../lib/auth'
+import { requireModuleAccess } from '../../../lib/api-permissions'
 import fs from 'fs'
 import path from 'path'
 
@@ -9,11 +10,10 @@ const MESSAGES_DIR = path.join(process.cwd(), 'messages')
 
 // GET - pobierz listę dostępnych języków
 export async function GET(req: NextRequest) {
+  const auth = await requireModuleAccess(req, 'languages')
+  if (auth.error) return auth.error
+
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user || (session.user as any).role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
 
     // Odczytaj wszystkie pliki .json z katalogu messages
     const files = fs.readdirSync(MESSAGES_DIR)
@@ -38,11 +38,10 @@ export async function GET(req: NextRequest) {
 
 // POST - dodaj nowy język
 export async function POST(req: NextRequest) {
+  const auth = await requireModuleAccess(req, 'languages')
+  if (auth.error) return auth.error
+
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user || (session.user as any).role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
 
     const { code, name } = await req.json()
 

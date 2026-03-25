@@ -1,0 +1,14 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { AgreementRightOrderByWithRelationInputObjectSchema as AgreementRightOrderByWithRelationInputObjectSchema } from './objects/AgreementRightOrderByWithRelationInput.schema';
+import { AgreementRightWhereInputObjectSchema as AgreementRightWhereInputObjectSchema } from './objects/AgreementRightWhereInput.schema';
+import { AgreementRightWhereUniqueInputObjectSchema as AgreementRightWhereUniqueInputObjectSchema } from './objects/AgreementRightWhereUniqueInput.schema';
+import { AgreementRightCountAggregateInputObjectSchema as AgreementRightCountAggregateInputObjectSchema } from './objects/AgreementRightCountAggregateInput.schema';
+import { AgreementRightMinAggregateInputObjectSchema as AgreementRightMinAggregateInputObjectSchema } from './objects/AgreementRightMinAggregateInput.schema';
+import { AgreementRightMaxAggregateInputObjectSchema as AgreementRightMaxAggregateInputObjectSchema } from './objects/AgreementRightMaxAggregateInput.schema';
+import { AgreementRightAvgAggregateInputObjectSchema as AgreementRightAvgAggregateInputObjectSchema } from './objects/AgreementRightAvgAggregateInput.schema';
+import { AgreementRightSumAggregateInputObjectSchema as AgreementRightSumAggregateInputObjectSchema } from './objects/AgreementRightSumAggregateInput.schema';
+
+export const AgreementRightAggregateSchema: z.ZodType<Prisma.AgreementRightAggregateArgs> = z.object({ orderBy: z.union([AgreementRightOrderByWithRelationInputObjectSchema, AgreementRightOrderByWithRelationInputObjectSchema.array()]).optional(), where: AgreementRightWhereInputObjectSchema.optional(), cursor: AgreementRightWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), AgreementRightCountAggregateInputObjectSchema ]).optional(), _min: AgreementRightMinAggregateInputObjectSchema.optional(), _max: AgreementRightMaxAggregateInputObjectSchema.optional(), _avg: AgreementRightAvgAggregateInputObjectSchema.optional(), _sum: AgreementRightSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.AgreementRightAggregateArgs>;
+
+export const AgreementRightAggregateZodSchema = z.object({ orderBy: z.union([AgreementRightOrderByWithRelationInputObjectSchema, AgreementRightOrderByWithRelationInputObjectSchema.array()]).optional(), where: AgreementRightWhereInputObjectSchema.optional(), cursor: AgreementRightWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), AgreementRightCountAggregateInputObjectSchema ]).optional(), _min: AgreementRightMinAggregateInputObjectSchema.optional(), _max: AgreementRightMaxAggregateInputObjectSchema.optional(), _avg: AgreementRightAvgAggregateInputObjectSchema.optional(), _sum: AgreementRightSumAggregateInputObjectSchema.optional() }).strict();

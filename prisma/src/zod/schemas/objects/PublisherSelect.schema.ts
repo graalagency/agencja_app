@@ -6,6 +6,8 @@ import { PublisherContactFindManySchema as PublisherContactFindManySchema } from
 import { TaxResidenceCertFindManySchema as TaxResidenceCertFindManySchema } from '../findManyTaxResidenceCert.schema';
 import { TaxResidenceSendFindManySchema as TaxResidenceSendFindManySchema } from '../findManyTaxResidenceSend.schema';
 import { TitleFindManySchema as TitleFindManySchema } from '../findManyTitle.schema';
+import { AgreementFindManySchema as AgreementFindManySchema } from '../findManyAgreement.schema';
+import { SubmissionFindManySchema as SubmissionFindManySchema } from '../findManySubmission.schema';
 import { PublisherCountOutputTypeArgsObjectSchema as PublisherCountOutputTypeArgsObjectSchema } from './PublisherCountOutputTypeArgs.schema'
 
 const makeSchema = () => z.object({
@@ -49,6 +51,8 @@ const makeSchema = () => z.object({
   TaxResidenceCert: z.union([z.boolean(), z.lazy(() => TaxResidenceCertFindManySchema)]).optional(),
   TaxResidenceSend: z.union([z.boolean(), z.lazy(() => TaxResidenceSendFindManySchema)]).optional(),
   Title: z.union([z.boolean(), z.lazy(() => TitleFindManySchema)]).optional(),
+  Agreements: z.union([z.boolean(), z.lazy(() => AgreementFindManySchema)]).optional(),
+  Submissions: z.union([z.boolean(), z.lazy(() => SubmissionFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => PublisherCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
 export const PublisherSelectObjectSchema: z.ZodType<Prisma.PublisherSelect> = makeSchema() as unknown as z.ZodType<Prisma.PublisherSelect>;

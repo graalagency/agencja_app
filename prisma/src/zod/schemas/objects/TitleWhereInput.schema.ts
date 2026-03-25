@@ -11,7 +11,9 @@ import { ClientNullableScalarRelationFilterObjectSchema as ClientNullableScalarR
 import { ClientWhereInputObjectSchema as ClientWhereInputObjectSchema } from './ClientWhereInput.schema';
 import { PublisherNullableScalarRelationFilterObjectSchema as PublisherNullableScalarRelationFilterObjectSchema } from './PublisherNullableScalarRelationFilter.schema';
 import { PublisherWhereInputObjectSchema as PublisherWhereInputObjectSchema } from './PublisherWhereInput.schema';
-import { TitleAuthorListRelationFilterObjectSchema as TitleAuthorListRelationFilterObjectSchema } from './TitleAuthorListRelationFilter.schema'
+import { TitleAuthorListRelationFilterObjectSchema as TitleAuthorListRelationFilterObjectSchema } from './TitleAuthorListRelationFilter.schema';
+import { AgreementListRelationFilterObjectSchema as AgreementListRelationFilterObjectSchema } from './AgreementListRelationFilter.schema';
+import { SubmissionListRelationFilterObjectSchema as SubmissionListRelationFilterObjectSchema } from './SubmissionListRelationFilter.schema'
 
 const titlewhereinputSchema = z.object({
   AND: z.union([z.lazy(() => TitleWhereInputObjectSchema), z.lazy(() => TitleWhereInputObjectSchema).array()]).optional(),
@@ -41,7 +43,9 @@ const titlewhereinputSchema = z.object({
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   Client: z.union([z.lazy(() => ClientNullableScalarRelationFilterObjectSchema), z.lazy(() => ClientWhereInputObjectSchema)]).optional(),
   Publisher: z.union([z.lazy(() => PublisherNullableScalarRelationFilterObjectSchema), z.lazy(() => PublisherWhereInputObjectSchema)]).optional(),
-  TitleAuthors: z.lazy(() => TitleAuthorListRelationFilterObjectSchema).optional()
+  TitleAuthors: z.lazy(() => TitleAuthorListRelationFilterObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementListRelationFilterObjectSchema).optional(),
+  Submissions: z.lazy(() => SubmissionListRelationFilterObjectSchema).optional()
 }).strict();
 export const TitleWhereInputObjectSchema: z.ZodType<Prisma.TitleWhereInput> = titlewhereinputSchema as unknown as z.ZodType<Prisma.TitleWhereInput>;
 export const TitleWhereInputObjectZodSchema = titlewhereinputSchema;

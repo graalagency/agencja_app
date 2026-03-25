@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
+import { requireModuleAccess } from '../../../lib/api-permissions'
 
 export async function GET(req: Request) {
+  const auth = await requireModuleAccess(req, 'simple-invoices')
+  if (auth.error) return auth.error
+
   try {
     const url = new URL(req.url)
     const page = Number(url.searchParams.get('page') || '1')
@@ -89,6 +93,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const auth = await requireModuleAccess(req, 'simple-invoices')
+  if (auth.error) return auth.error
+
   try {
     const body = await req.json()
 

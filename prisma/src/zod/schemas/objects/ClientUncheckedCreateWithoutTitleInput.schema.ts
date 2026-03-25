@@ -4,10 +4,10 @@ import Decimal from 'decimal.js';
 import { ClientUncheckedCreateNestedManyWithoutParentInputObjectSchema as ClientUncheckedCreateNestedManyWithoutParentInputObjectSchema } from './ClientUncheckedCreateNestedManyWithoutParentInput.schema';
 import { AuthorUncheckedCreateNestedManyWithoutClientInputObjectSchema as AuthorUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './AuthorUncheckedCreateNestedManyWithoutClientInput.schema';
 import { ClientContactUncheckedCreateNestedManyWithoutClientInputObjectSchema as ClientContactUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './ClientContactUncheckedCreateNestedManyWithoutClientInput.schema';
-import { DocumentUncheckedCreateNestedManyWithoutClientInputObjectSchema as DocumentUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './DocumentUncheckedCreateNestedManyWithoutClientInput.schema';
 import { InvoiceUncheckedCreateNestedManyWithoutClientInputObjectSchema as InvoiceUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './InvoiceUncheckedCreateNestedManyWithoutClientInput.schema';
 import { TaxResidenceCertUncheckedCreateNestedManyWithoutClientInputObjectSchema as TaxResidenceCertUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './TaxResidenceCertUncheckedCreateNestedManyWithoutClientInput.schema';
-import { TaxResidenceSendUncheckedCreateNestedManyWithoutClientInputObjectSchema as TaxResidenceSendUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './TaxResidenceSendUncheckedCreateNestedManyWithoutClientInput.schema'
+import { TaxResidenceSendUncheckedCreateNestedManyWithoutClientInputObjectSchema as TaxResidenceSendUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './TaxResidenceSendUncheckedCreateNestedManyWithoutClientInput.schema';
+import { AgreementUncheckedCreateNestedManyWithoutClientInputObjectSchema as AgreementUncheckedCreateNestedManyWithoutClientInputObjectSchema } from './AgreementUncheckedCreateNestedManyWithoutClientInput.schema'
 
 import { DecimalJSLikeSchema, isValidDecimalInput } from '../../helpers/decimal-helpers';
 const makeSchema = () => z.object({
@@ -72,10 +72,10 @@ const makeSchema = () => z.object({
   Children: z.lazy(() => ClientUncheckedCreateNestedManyWithoutParentInputObjectSchema).optional(),
   Author: z.lazy(() => AuthorUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
   ClientContact: z.lazy(() => ClientContactUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
-  Document: z.lazy(() => DocumentUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
   Invoice: z.lazy(() => InvoiceUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
-  TaxResidenceSend: z.lazy(() => TaxResidenceSendUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional()
+  TaxResidenceSend: z.lazy(() => TaxResidenceSendUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementUncheckedCreateNestedManyWithoutClientInputObjectSchema).optional()
 }).strict();
 export const ClientUncheckedCreateWithoutTitleInputObjectSchema: z.ZodType<Prisma.ClientUncheckedCreateWithoutTitleInput> = makeSchema() as unknown as z.ZodType<Prisma.ClientUncheckedCreateWithoutTitleInput>;
 export const ClientUncheckedCreateWithoutTitleInputObjectZodSchema = makeSchema();

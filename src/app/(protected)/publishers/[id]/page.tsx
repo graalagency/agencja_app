@@ -52,6 +52,8 @@ type LinkedContact = {
   contactPosition?: string | null
 }
 
+type Tab = 'info' | 'contacts' | 'taxcerts' | 'titles'
+
 export default function PublisherDetailPage() {
   const t = useTranslations()
   const params = useParams()
@@ -60,7 +62,8 @@ export default function PublisherDetailPage() {
   const [publisher, setPublisher] = useState<Publisher | null>(null)
   const [editMode, setEditMode] = useState(false)
   const [formErrors, setFormErrors] = useState<string[]>([])
-  const [activeTab, setActiveTab] = useState<'contacts' | 'taxcerts' | 'titles'>('contacts')
+  const [activeTab, setActiveTab] = useState<Tab>('info')
+  const [titleCount, setTitleCount] = useState<number | null>(null)
 
   const [contacts, setContacts] = useState<LinkedContact[]>([])
   const [contactsLoading, setContactsLoading] = useState(false)
@@ -251,246 +254,267 @@ export default function PublisherDetailPage() {
     return <p className="text-center text-muted-foreground py-8">{t('common.loading')}</p>
   }
 
+  const tabDef: { key: Tab; label: string; count?: number | null }[] = [
+    { key: 'info',     label: 'Dane' },
+    { key: 'contacts', label: 'Kontakty',               count: contacts.length },
+    { key: 'taxcerts', label: 'Certyfikaty rezydencji',  count: taxCerts.length },
+    { key: 'titles',   label: 'Tytuły',                 count: titleCount },
+  ]
+
   return (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">{t('publishers.publisherDetails')}</h1>
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => window.history.back()}>
-              {t('common.back')}
-            </Button>
-            {!editMode ? (
-              <Button variant="primary" onClick={() => setEditMode(true)}>
-                {t('common.edit')}
-              </Button>
-            ) : (
-              <>
-                <Button variant="secondary" onClick={() => { setEditMode(false); loadPublisher() }}>
-                  {t('common.cancel')}
-                </Button>
-                <Button variant="primary" onClick={updatePublisher}>
-                  {t('common.save')}
-                </Button>
-              </>
+    <div className="space-y-4">
+      {/* ── Header ──────────────────────────────────────────────────────────── */}
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={() => window.history.back()} className="gap-1">
+            ← {t('publisherDetail.back')}
+          </Button>
+          <div>
+            <h1 className="text-xl font-bold leading-tight">{publisher.name}</h1>
+            {(publisher.abbreviation || publisher.status) && (
+              <p className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                {publisher.abbreviation && <span className="font-mono">{publisher.abbreviation}</span>}
+                {publisher.status === 'A' && <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">Aktywny</span>}
+                {publisher.status === 'I' && <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400">Nieaktywny</span>}
+              </p>
             )}
           </div>
         </div>
-
-        {formErrors.length > 0 && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded">
-            <ul className="list-disc list-inside text-sm text-red-600 dark:text-red-400">
-              {formErrors.map((e, i) => <li key={i}>{e}</li>)}
-            </ul>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{t('publishers.basicData')}</h3>
-            <div>
-              <label className="label text-xs">{t('publishers.name')}</label>
-              {editMode ? (
-                <Input value={publisher.name} onChange={(e) => setPublisher({ ...publisher, name: e.target.value })} />
-              ) : (
-                <p className="text-base font-medium">{publisher.name}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">{t('publishers.email')}</label>
-              {editMode ? (
-                <Input value={publisher.email ?? ''} onChange={(e) => setPublisher({ ...publisher, email: e.target.value })} />
-              ) : (
-                <p className="text-base">{publisher.email || '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">{t('publishers.phone')}</label>
-              {editMode ? (
-                <Input value={publisher.phone ?? ''} onChange={(e) => setPublisher({ ...publisher, phone: e.target.value })} />
-              ) : (
-                <p className="text-base">{publisher.phone || '-'}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{t('publishers.addressSection')}</h3>
-            <div>
-              <label className="label text-xs">{t('publishers.address')}</label>
-              {editMode ? (
-                <Input value={publisher.address ?? ''} onChange={(e) => setPublisher({ ...publisher, address: e.target.value })} />
-              ) : (
-                <p className="text-base">{publisher.address || '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">{t('publishers.city')}</label>
-              {editMode ? (
-                <Input value={publisher.city ?? ''} onChange={(e) => setPublisher({ ...publisher, city: e.target.value })} />
-              ) : (
-                <p className="text-base">{publisher.city || '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">{t('publishers.postalCode')}</label>
-              {editMode ? (
-                <Input value={publisher.postalCode ?? ''} onChange={(e) => setPublisher({ ...publisher, postalCode: e.target.value })} />
-              ) : (
-                <p className="text-base">{publisher.postalCode || '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">{t('publishers.country')}</label>
-              {editMode ? (
-                <DictSelect
-                  dictKey="countries"
-                  valueField="CountryPL"
-                  labelField="CountryPL"
-                  format="label-only"
-                  value={publisher.country}
-                  onChange={v => setPublisher({ ...publisher, country: v || null })}
-                />
-              ) : (
-                <p className="text-base">{publisher.country || '-'}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{t('publishers.companyData')}</h3>
-            <div>
-              <label className="label text-xs">{t('publishers.nip')}</label>
-              {editMode ? (
-                <Input value={publisher.nip ?? ''} onChange={(e) => setPublisher({ ...publisher, nip: e.target.value })} />
-              ) : (
-                <p className="text-base">{publisher.nip || '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">{t('publishers.regon')}</label>
-              {editMode ? (
-                <Input value={publisher.regon ?? ''} onChange={(e) => setPublisher({ ...publisher, regon: e.target.value })} />
-              ) : (
-                <p className="text-base">{publisher.regon || '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">{t('publishers.legalForm')}</label>
-              {editMode ? (
-                <Input value={publisher.legalForm ?? ''} onChange={(e) => setPublisher({ ...publisher, legalForm: e.target.value })} />
-              ) : (
-                <p className="text-base">{publisher.legalForm || '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">{t('publishers.bankAccount')}</label>
-              {editMode ? (
-                <Input value={publisher.bankAccount ?? ''} onChange={(e) => setPublisher({ ...publisher, bankAccount: e.target.value })} />
-              ) : (
-                <p className="text-sm font-mono">{publisher.bankAccount || '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">Status</label>
-              {editMode ? (
-                <select
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  value={publisher.status ?? ''}
-                  onChange={e => setPublisher({ ...publisher, status: e.target.value || null })}
-                >
-                  <option value="">— wybierz —</option>
-                  <option value="A">A — Aktywny</option>
-                  <option value="I">I — Nieaktywny</option>
-                </select>
-              ) : (
-                <p className="text-base">{publisher.status === 'A' ? 'Aktywny' : publisher.status === 'I' ? 'Nieaktywny' : '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">Język</label>
-              {editMode ? (
-                <DictSelect
-                  dictKey="languages"
-                  valueField="LangAbb"
-                  labelField="LangPL"
-                  format="code-label"
-                  value={publisher.language}
-                  onChange={v => setPublisher({ ...publisher, language: v || null })}
-                />
-              ) : (
-                <p className="text-base">{publisher.language || '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="label text-xs">Tryb reprezentacji</label>
-              {editMode ? (
-                <DictSelect
-                  dictKey="report-modes"
-                  valueField="RepModeID"
-                  labelField="RepModeDesc"
-                  format="label-only"
-                  value={publisher.repModeId}
-                  onChange={v => setPublisher({ ...publisher, repModeId: v ? Number(v) : null })}
-                />
-              ) : (
-                <p className="text-base">{publisher.repModeId ?? '-'}</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 pt-6 border-t border-border">
-          <label className="label text-xs">{t('publishers.notes')}</label>
-          {editMode ? (
-            <textarea className="input w-full min-h-[80px]" value={publisher.notes ?? ''} onChange={(e) => setPublisher({ ...publisher, notes: e.target.value })} />
+        <div className="flex items-center gap-2">
+          {!editMode ? (
+            <Button variant="outline" size="sm" onClick={() => { setEditMode(true); setActiveTab('info') }}>
+              {t('common.edit')}
+            </Button>
           ) : (
-            <p className="text-base whitespace-pre-wrap">{publisher.notes || '-'}</p>
+            <>
+              <Button variant="outline" size="sm" onClick={() => { setEditMode(false); loadPublisher() }}>
+                {t('common.cancel')}
+              </Button>
+              <Button size="sm" onClick={updatePublisher}>
+                {t('common.save')}
+              </Button>
+            </>
           )}
         </div>
+      </div>
 
-        <div className="mt-6 pt-6 border-t border-border grid grid-cols-2 gap-4 text-sm text-muted-foreground">
-          <div>
-            <span className="font-medium">{t('common.createdAt')}:</span>{' '}
-            {publisher.createdAt ? new Intl.DateTimeFormat('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(publisher.createdAt)) : '-'}
-          </div>
-          <div>
-            <span className="font-medium">{t('common.updatedAt')}:</span>{' '}
-            {publisher.updatedAt ? new Intl.DateTimeFormat('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(publisher.updatedAt)) : '-'}
-          </div>
-        </div>
-      </Card>
-
-      {/* Tabs */}
-      <Card className="p-6">
-        <div className="border-b border-gray-200 dark:border-gray-700 -mx-6 px-6">
-          <nav className="flex -mb-px">
-            {([
-              { key: 'contacts', label: `Kontakty (${contacts.length})` },
-              { key: 'taxcerts', label: `Certyfikaty rezydencji (${taxCerts.length})` },
-              { key: 'titles', label: 'Tytuły' },
-            ] as const).map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => setActiveTab(key)}
-                className={`px-6 py-3 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === key
-                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-muted-foreground hover:text-card-foreground hover:border-border'
-                }`}
-              >
-                {label}
+      {/* ── Tabs card ───────────────────────────────────────────────────────── */}
+      <Card className="p-0 overflow-hidden">
+        {/* Tab nav */}
+        <div className="border-b border-border px-4">
+          <nav className="flex -mb-px gap-1">
+            {tabDef.map(t => (
+              <button key={t.key} onClick={() => setActiveTab(t.key)}
+                className={`px-4 py-3 border-b-2 text-sm font-medium transition-colors whitespace-nowrap ${
+                  activeTab === t.key ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}>
+                {t.label}
+                {t.count != null && (
+                  <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-xs ${activeTab === t.key ? 'bg-primary/10' : 'bg-muted'}`}>{t.count}</span>
+                )}
               </button>
             ))}
           </nav>
         </div>
 
-        <div className="mt-6">
+        <div className="p-6">
+
+          {/* ── Dane ────────────────────────────────────────────────────────── */}
+          {activeTab === 'info' && (
+            <div className="space-y-6">
+              {formErrors.length > 0 && (
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded">
+                  <ul className="list-disc list-inside text-sm text-red-600 dark:text-red-400">
+                    {formErrors.map((e, i) => <li key={i}>{e}</li>)}
+                  </ul>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{t('publishers.basicData')}</h3>
+                  <div>
+                    <label className="label text-xs">{t('publishers.name')}</label>
+                    {editMode ? (
+                      <Input value={publisher.name} onChange={(e) => setPublisher({ ...publisher, name: e.target.value })} />
+                    ) : (
+                      <p className="text-base font-medium">{publisher.name}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">{t('publishers.email')}</label>
+                    {editMode ? (
+                      <Input value={publisher.email ?? ''} onChange={(e) => setPublisher({ ...publisher, email: e.target.value })} />
+                    ) : (
+                      <p className="text-base">{publisher.email || '-'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">{t('publishers.phone')}</label>
+                    {editMode ? (
+                      <Input value={publisher.phone ?? ''} onChange={(e) => setPublisher({ ...publisher, phone: e.target.value })} />
+                    ) : (
+                      <p className="text-base">{publisher.phone || '-'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{t('publishers.addressSection')}</h3>
+                  <div>
+                    <label className="label text-xs">{t('publishers.address')}</label>
+                    {editMode ? (
+                      <Input value={publisher.address ?? ''} onChange={(e) => setPublisher({ ...publisher, address: e.target.value })} />
+                    ) : (
+                      <p className="text-base">{publisher.address || '-'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">{t('publishers.city')}</label>
+                    {editMode ? (
+                      <Input value={publisher.city ?? ''} onChange={(e) => setPublisher({ ...publisher, city: e.target.value })} />
+                    ) : (
+                      <p className="text-base">{publisher.city || '-'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">{t('publishers.postalCode')}</label>
+                    {editMode ? (
+                      <Input value={publisher.postalCode ?? ''} onChange={(e) => setPublisher({ ...publisher, postalCode: e.target.value })} />
+                    ) : (
+                      <p className="text-base">{publisher.postalCode || '-'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">{t('publishers.country')}</label>
+                    {editMode ? (
+                      <DictSelect
+                        dictKey="countries"
+                        valueField="CountryPL"
+                        labelField="CountryPL"
+                        format="label-only"
+                        value={publisher.country}
+                        onChange={v => setPublisher({ ...publisher, country: v || null })}
+                      />
+                    ) : (
+                      <p className="text-base">{publisher.country || '-'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{t('publishers.companyData')}</h3>
+                  <div>
+                    <label className="label text-xs">{t('publishers.nip')}</label>
+                    {editMode ? (
+                      <Input value={publisher.nip ?? ''} onChange={(e) => setPublisher({ ...publisher, nip: e.target.value })} />
+                    ) : (
+                      <p className="text-base">{publisher.nip || '-'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">{t('publishers.regon')}</label>
+                    {editMode ? (
+                      <Input value={publisher.regon ?? ''} onChange={(e) => setPublisher({ ...publisher, regon: e.target.value })} />
+                    ) : (
+                      <p className="text-base">{publisher.regon || '-'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">{t('publishers.legalForm')}</label>
+                    {editMode ? (
+                      <Input value={publisher.legalForm ?? ''} onChange={(e) => setPublisher({ ...publisher, legalForm: e.target.value })} />
+                    ) : (
+                      <p className="text-base">{publisher.legalForm || '-'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">{t('publishers.bankAccount')}</label>
+                    {editMode ? (
+                      <Input value={publisher.bankAccount ?? ''} onChange={(e) => setPublisher({ ...publisher, bankAccount: e.target.value })} />
+                    ) : (
+                      <p className="text-sm font-mono">{publisher.bankAccount || '-'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">Status</label>
+                    {editMode ? (
+                      <select
+                        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        value={publisher.status ?? ''}
+                        onChange={e => setPublisher({ ...publisher, status: e.target.value || null })}
+                      >
+                        <option value="">— wybierz —</option>
+                        <option value="A">A — Aktywny</option>
+                        <option value="I">I — Nieaktywny</option>
+                      </select>
+                    ) : (
+                      <p className="text-base">{publisher.status === 'A' ? 'Aktywny' : publisher.status === 'I' ? 'Nieaktywny' : '-'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">Język</label>
+                    {editMode ? (
+                      <DictSelect
+                        dictKey="languages"
+                        valueField="LangAbb"
+                        labelField="LangPL"
+                        format="code-label"
+                        value={publisher.language}
+                        onChange={v => setPublisher({ ...publisher, language: v || null })}
+                      />
+                    ) : (
+                      <p className="text-base">{publisher.language || '-'}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="label text-xs">Tryb reprezentacji</label>
+                    {editMode ? (
+                      <DictSelect
+                        dictKey="report-modes"
+                        valueField="RepModeID"
+                        labelField="RepModeDesc"
+                        format="label-only"
+                        value={publisher.repModeId}
+                        onChange={v => setPublisher({ ...publisher, repModeId: v ? Number(v) : null })}
+                      />
+                    ) : (
+                      <p className="text-base">{publisher.repModeId ?? '-'}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* {t('publisherDetail.notes')} */}
+              <div className="pt-4 border-t border-border">
+                <label className="label text-xs">{t('publisherDetail.notes')}</label>
+                {editMode ? (
+                  <textarea className="input w-full min-h-[80px]" value={publisher.notes ?? ''} onChange={(e) => setPublisher({ ...publisher, notes: e.target.value })} />
+                ) : (
+                  <p className="text-base whitespace-pre-wrap">{publisher.notes || '-'}</p>
+                )}
+              </div>
+
+              {/* Meta */}
+              <div className="pt-4 border-t border-border grid grid-cols-2 gap-4 text-sm text-muted-foreground">
+                <div>
+                  <span className="font-medium">{t('common.createdAt')}:</span>{' '}
+                  {publisher.createdAt ? new Intl.DateTimeFormat('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(publisher.createdAt)) : '-'}
+                </div>
+                <div>
+                  <span className="font-medium">{t('common.updatedAt')}:</span>{' '}
+                  {publisher.updatedAt ? new Intl.DateTimeFormat('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(publisher.updatedAt)) : '-'}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Kontakty ────────────────────────────────────────────────────── */}
           {activeTab === 'contacts' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Kontakty wydawcy</h2>
-                <Button variant="primary" onClick={() => setShowContactSearch(!showContactSearch)}>
+                <Button variant="outline" onClick={() => setShowContactSearch(!showContactSearch)}>
                   {showContactSearch ? 'Anuluj' : '+ Dodaj kontakt'}
                 </Button>
               </div>
@@ -547,7 +571,7 @@ export default function PublisherDetailPage() {
                     {contacts.map((c) => (
                       <tr key={c.linkId}>
                         <Td>
-                          <Link href={`/contacts/${c.id}`} className="text-primary-600 hover:underline font-medium">
+                          <Link href={`/contacts/${c.id}`} className="text-primary hover:underline font-medium">
                             {c.isDefault && <span title="Kontakt domyślny" className="mr-1">★</span>}
                             {c.firstName} {c.middleName} {c.lastName}
                           </Link>
@@ -566,17 +590,18 @@ export default function PublisherDetailPage() {
             </div>
           )}
 
+          {/* ── Certyfikaty rezydencji ───────────────────────────────────────── */}
           {activeTab === 'taxcerts' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Certyfikaty rezydencji podatkowej</h2>
-                <Button variant="primary" onClick={() => { setShowAddCert(!showAddCert); setExpandedCertId(null) }}>
+                <Button variant="outline" onClick={() => { setShowAddCert(!showAddCert); setExpandedCertId(null) }}>
                   {showAddCert ? 'Anuluj' : '+ Nowy certyfikat'}
                 </Button>
               </div>
 
               {showAddCert && (
-                <div className="p-4 border-2 border-primary-200 dark:border-primary-800 rounded-lg space-y-4 bg-primary-50/30 dark:bg-primary-900/10">
+                <div className="p-4 border-2 border-primary/30 rounded-lg space-y-4 bg-muted/20">
                   <h3 className="text-sm font-semibold">Nowy certyfikat rezydencji</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
@@ -602,8 +627,8 @@ export default function PublisherDetailPage() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="primary" onClick={addTaxCert}>Zapisz certyfikat</Button>
-                    <Button variant="secondary" onClick={() => setShowAddCert(false)}>Anuluj</Button>
+                    <Button onClick={addTaxCert}>Zapisz certyfikat</Button>
+                    <Button variant="outline" onClick={() => setShowAddCert(false)}>Anuluj</Button>
                   </div>
                 </div>
               )}
@@ -615,8 +640,8 @@ export default function PublisherDetailPage() {
               ) : (
                 <div className="border border-border rounded-lg overflow-hidden">
                   {taxCerts.map((cert, idx) => {
-                    const isExpanded = expandedCertId === cert.id
-                    const isAddingSend = addSendCertId === cert.id
+                    const isExpanded   = expandedCertId === cert.id
+                    const isAddingSend = addSendCertId  === cert.id
                     return (
                       <div key={cert.id} className={idx > 0 ? 'border-t border-border' : ''}>
                         <div
@@ -643,7 +668,7 @@ export default function PublisherDetailPage() {
                               {cert.sendLog.length} wysyłek
                             </span>
                             {cert.hasFile && (
-                              <a href={`/api/tax-certs/${cert.id}/file`} target="_blank" rel="noreferrer" className="text-xs text-primary-600 hover:underline">PDF</a>
+                              <a href={`/api/tax-certs/${cert.id}/file`} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">PDF</a>
                             )}
                             <button className="text-xs text-red-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20" onClick={() => deleteTaxCert(cert.id)}>Usuń</button>
                           </div>
@@ -694,14 +719,12 @@ export default function PublisherDetailPage() {
                             </div>
 
                             {!isAddingSend ? (
-                              <Button variant="secondary" onClick={() => {
+                              <Button variant="outline" size="sm" onClick={() => {
                                 setAddSendCertId(cert.id)
                                 setNewSend({ dateSend: '', sendOrig: false, sendCopy: false, recipientId: 0, recipientType: '', recipientName: '' })
                                 setSendSearch('')
                                 setSendSearchResults([])
-                              }}>
-                                + Dodaj wysyłkę
-                              </Button>
+                              }}>+ Dodaj wysyłkę</Button>
                             ) : (
                               <div className="border border-border rounded-lg p-4 space-y-3 bg-card">
                                 <h4 className="text-sm font-medium">Nowa wysyłka</h4>
@@ -747,8 +770,8 @@ export default function PublisherDetailPage() {
                                   </label>
                                 </div>
                                 <div className="flex gap-2">
-                                  <Button variant="primary" onClick={() => addSend(cert.id)} disabled={!newSend.recipientId}>Zapisz wysyłkę</Button>
-                                  <Button variant="secondary" onClick={() => { setAddSendCertId(null); setSendSearch(''); setSendSearchResults([]) }}>Anuluj</Button>
+                                  <Button onClick={() => addSend(cert.id)} disabled={!newSend.recipientId}>Zapisz wysyłkę</Button>
+                                  <Button variant="outline" onClick={() => { setAddSendCertId(null); setSendSearch(''); setSendSearchResults([]) }}>Anuluj</Button>
                                 </div>
                               </div>
                             )}
@@ -761,8 +784,14 @@ export default function PublisherDetailPage() {
               )}
             </div>
           )}
+
+          {/* ── Tytuły ──────────────────────────────────────────────────────── */}
           {activeTab === 'titles' && (
-            <TitlesTab ownerId={id} ownerType="publisher" />
+            <TitlesTab
+              ownerId={id}
+              ownerType="publisher"
+              onCountLoaded={n => setTitleCount(n)}
+            />
           )}
         </div>
       </Card>

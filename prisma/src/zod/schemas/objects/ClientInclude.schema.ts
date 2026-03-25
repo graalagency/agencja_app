@@ -4,11 +4,11 @@ import { ClientArgsObjectSchema as ClientArgsObjectSchema } from './ClientArgs.s
 import { ClientFindManySchema as ClientFindManySchema } from '../findManyClient.schema';
 import { AuthorFindManySchema as AuthorFindManySchema } from '../findManyAuthor.schema';
 import { ClientContactFindManySchema as ClientContactFindManySchema } from '../findManyClientContact.schema';
-import { DocumentFindManySchema as DocumentFindManySchema } from '../findManyDocument.schema';
 import { InvoiceFindManySchema as InvoiceFindManySchema } from '../findManyInvoice.schema';
 import { TaxResidenceCertFindManySchema as TaxResidenceCertFindManySchema } from '../findManyTaxResidenceCert.schema';
 import { TaxResidenceSendFindManySchema as TaxResidenceSendFindManySchema } from '../findManyTaxResidenceSend.schema';
 import { TitleFindManySchema as TitleFindManySchema } from '../findManyTitle.schema';
+import { AgreementFindManySchema as AgreementFindManySchema } from '../findManyAgreement.schema';
 import { ClientCountOutputTypeArgsObjectSchema as ClientCountOutputTypeArgsObjectSchema } from './ClientCountOutputTypeArgs.schema'
 
 const makeSchema = () => z.object({
@@ -16,11 +16,11 @@ const makeSchema = () => z.object({
   Children: z.union([z.boolean(), z.lazy(() => ClientFindManySchema)]).optional(),
   Author: z.union([z.boolean(), z.lazy(() => AuthorFindManySchema)]).optional(),
   ClientContact: z.union([z.boolean(), z.lazy(() => ClientContactFindManySchema)]).optional(),
-  Document: z.union([z.boolean(), z.lazy(() => DocumentFindManySchema)]).optional(),
   Invoice: z.union([z.boolean(), z.lazy(() => InvoiceFindManySchema)]).optional(),
   TaxResidenceCert: z.union([z.boolean(), z.lazy(() => TaxResidenceCertFindManySchema)]).optional(),
   TaxResidenceSend: z.union([z.boolean(), z.lazy(() => TaxResidenceSendFindManySchema)]).optional(),
   Title: z.union([z.boolean(), z.lazy(() => TitleFindManySchema)]).optional(),
+  Agreements: z.union([z.boolean(), z.lazy(() => AgreementFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => ClientCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
 export const ClientIncludeObjectSchema: z.ZodType<Prisma.ClientInclude> = makeSchema() as unknown as z.ZodType<Prisma.ClientInclude>;

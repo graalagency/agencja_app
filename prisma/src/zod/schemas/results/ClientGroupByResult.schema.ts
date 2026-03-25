@@ -73,11 +73,11 @@ export const ClientGroupByResultSchema = z.array(z.object({
     Children: z.number(),
     Author: z.number(),
     ClientContact: z.number(),
-    Document: z.number(),
     Invoice: z.number(),
     TaxResidenceCert: z.number(),
     TaxResidenceSend: z.number(),
-    Title: z.number()
+    Title: z.number(),
+    Agreements: z.number()
   }).optional(),
   _sum: z.object({
     id: z.number().nullable(),

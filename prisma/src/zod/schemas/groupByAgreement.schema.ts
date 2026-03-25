@@ -1,0 +1,15 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { AgreementWhereInputObjectSchema as AgreementWhereInputObjectSchema } from './objects/AgreementWhereInput.schema';
+import { AgreementOrderByWithAggregationInputObjectSchema as AgreementOrderByWithAggregationInputObjectSchema } from './objects/AgreementOrderByWithAggregationInput.schema';
+import { AgreementScalarWhereWithAggregatesInputObjectSchema as AgreementScalarWhereWithAggregatesInputObjectSchema } from './objects/AgreementScalarWhereWithAggregatesInput.schema';
+import { AgreementScalarFieldEnumSchema } from './enums/AgreementScalarFieldEnum.schema';
+import { AgreementCountAggregateInputObjectSchema as AgreementCountAggregateInputObjectSchema } from './objects/AgreementCountAggregateInput.schema';
+import { AgreementMinAggregateInputObjectSchema as AgreementMinAggregateInputObjectSchema } from './objects/AgreementMinAggregateInput.schema';
+import { AgreementMaxAggregateInputObjectSchema as AgreementMaxAggregateInputObjectSchema } from './objects/AgreementMaxAggregateInput.schema';
+import { AgreementAvgAggregateInputObjectSchema as AgreementAvgAggregateInputObjectSchema } from './objects/AgreementAvgAggregateInput.schema';
+import { AgreementSumAggregateInputObjectSchema as AgreementSumAggregateInputObjectSchema } from './objects/AgreementSumAggregateInput.schema';
+
+export const AgreementGroupBySchema: z.ZodType<Prisma.AgreementGroupByArgs> = z.object({ where: AgreementWhereInputObjectSchema.optional(), orderBy: z.union([AgreementOrderByWithAggregationInputObjectSchema, AgreementOrderByWithAggregationInputObjectSchema.array()]).optional(), having: AgreementScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(AgreementScalarFieldEnumSchema), _count: z.union([ z.literal(true), AgreementCountAggregateInputObjectSchema ]).optional(), _min: AgreementMinAggregateInputObjectSchema.optional(), _max: AgreementMaxAggregateInputObjectSchema.optional(), _avg: AgreementAvgAggregateInputObjectSchema.optional(), _sum: AgreementSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.AgreementGroupByArgs>;
+
+export const AgreementGroupByZodSchema = z.object({ where: AgreementWhereInputObjectSchema.optional(), orderBy: z.union([AgreementOrderByWithAggregationInputObjectSchema, AgreementOrderByWithAggregationInputObjectSchema.array()]).optional(), having: AgreementScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(AgreementScalarFieldEnumSchema), _count: z.union([ z.literal(true), AgreementCountAggregateInputObjectSchema ]).optional(), _min: AgreementMinAggregateInputObjectSchema.optional(), _max: AgreementMaxAggregateInputObjectSchema.optional(), _avg: AgreementAvgAggregateInputObjectSchema.optional(), _sum: AgreementSumAggregateInputObjectSchema.optional() }).strict();

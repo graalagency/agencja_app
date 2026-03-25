@@ -5,10 +5,10 @@ import { ClientCreateNestedOneWithoutChildrenInputObjectSchema as ClientCreateNe
 import { ClientCreateNestedManyWithoutParentInputObjectSchema as ClientCreateNestedManyWithoutParentInputObjectSchema } from './ClientCreateNestedManyWithoutParentInput.schema';
 import { AuthorCreateNestedManyWithoutClientInputObjectSchema as AuthorCreateNestedManyWithoutClientInputObjectSchema } from './AuthorCreateNestedManyWithoutClientInput.schema';
 import { ClientContactCreateNestedManyWithoutClientInputObjectSchema as ClientContactCreateNestedManyWithoutClientInputObjectSchema } from './ClientContactCreateNestedManyWithoutClientInput.schema';
-import { DocumentCreateNestedManyWithoutClientInputObjectSchema as DocumentCreateNestedManyWithoutClientInputObjectSchema } from './DocumentCreateNestedManyWithoutClientInput.schema';
 import { InvoiceCreateNestedManyWithoutClientInputObjectSchema as InvoiceCreateNestedManyWithoutClientInputObjectSchema } from './InvoiceCreateNestedManyWithoutClientInput.schema';
 import { TaxResidenceCertCreateNestedManyWithoutClientInputObjectSchema as TaxResidenceCertCreateNestedManyWithoutClientInputObjectSchema } from './TaxResidenceCertCreateNestedManyWithoutClientInput.schema';
-import { TaxResidenceSendCreateNestedManyWithoutClientInputObjectSchema as TaxResidenceSendCreateNestedManyWithoutClientInputObjectSchema } from './TaxResidenceSendCreateNestedManyWithoutClientInput.schema'
+import { TaxResidenceSendCreateNestedManyWithoutClientInputObjectSchema as TaxResidenceSendCreateNestedManyWithoutClientInputObjectSchema } from './TaxResidenceSendCreateNestedManyWithoutClientInput.schema';
+import { AgreementCreateNestedManyWithoutClientInputObjectSchema as AgreementCreateNestedManyWithoutClientInputObjectSchema } from './AgreementCreateNestedManyWithoutClientInput.schema'
 
 import { DecimalJSLikeSchema, isValidDecimalInput } from '../../helpers/decimal-helpers';
 const makeSchema = () => z.object({
@@ -72,10 +72,10 @@ const makeSchema = () => z.object({
   Children: z.lazy(() => ClientCreateNestedManyWithoutParentInputObjectSchema).optional(),
   Author: z.lazy(() => AuthorCreateNestedManyWithoutClientInputObjectSchema).optional(),
   ClientContact: z.lazy(() => ClientContactCreateNestedManyWithoutClientInputObjectSchema).optional(),
-  Document: z.lazy(() => DocumentCreateNestedManyWithoutClientInputObjectSchema).optional(),
   Invoice: z.lazy(() => InvoiceCreateNestedManyWithoutClientInputObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertCreateNestedManyWithoutClientInputObjectSchema).optional(),
-  TaxResidenceSend: z.lazy(() => TaxResidenceSendCreateNestedManyWithoutClientInputObjectSchema).optional()
+  TaxResidenceSend: z.lazy(() => TaxResidenceSendCreateNestedManyWithoutClientInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementCreateNestedManyWithoutClientInputObjectSchema).optional()
 }).strict();
 export const ClientCreateWithoutTitleInputObjectSchema: z.ZodType<Prisma.ClientCreateWithoutTitleInput> = makeSchema() as unknown as z.ZodType<Prisma.ClientCreateWithoutTitleInput>;
 export const ClientCreateWithoutTitleInputObjectZodSchema = makeSchema();

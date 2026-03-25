@@ -4,11 +4,11 @@ import Decimal from 'decimal.js';
 import { ClientCreateNestedOneWithoutChildrenInputObjectSchema as ClientCreateNestedOneWithoutChildrenInputObjectSchema } from './ClientCreateNestedOneWithoutChildrenInput.schema';
 import { ClientCreateNestedManyWithoutParentInputObjectSchema as ClientCreateNestedManyWithoutParentInputObjectSchema } from './ClientCreateNestedManyWithoutParentInput.schema';
 import { AuthorCreateNestedManyWithoutClientInputObjectSchema as AuthorCreateNestedManyWithoutClientInputObjectSchema } from './AuthorCreateNestedManyWithoutClientInput.schema';
-import { DocumentCreateNestedManyWithoutClientInputObjectSchema as DocumentCreateNestedManyWithoutClientInputObjectSchema } from './DocumentCreateNestedManyWithoutClientInput.schema';
 import { InvoiceCreateNestedManyWithoutClientInputObjectSchema as InvoiceCreateNestedManyWithoutClientInputObjectSchema } from './InvoiceCreateNestedManyWithoutClientInput.schema';
 import { TaxResidenceCertCreateNestedManyWithoutClientInputObjectSchema as TaxResidenceCertCreateNestedManyWithoutClientInputObjectSchema } from './TaxResidenceCertCreateNestedManyWithoutClientInput.schema';
 import { TaxResidenceSendCreateNestedManyWithoutClientInputObjectSchema as TaxResidenceSendCreateNestedManyWithoutClientInputObjectSchema } from './TaxResidenceSendCreateNestedManyWithoutClientInput.schema';
-import { TitleCreateNestedManyWithoutClientInputObjectSchema as TitleCreateNestedManyWithoutClientInputObjectSchema } from './TitleCreateNestedManyWithoutClientInput.schema'
+import { TitleCreateNestedManyWithoutClientInputObjectSchema as TitleCreateNestedManyWithoutClientInputObjectSchema } from './TitleCreateNestedManyWithoutClientInput.schema';
+import { AgreementCreateNestedManyWithoutClientInputObjectSchema as AgreementCreateNestedManyWithoutClientInputObjectSchema } from './AgreementCreateNestedManyWithoutClientInput.schema'
 
 import { DecimalJSLikeSchema, isValidDecimalInput } from '../../helpers/decimal-helpers';
 const makeSchema = () => z.object({
@@ -71,11 +71,11 @@ const makeSchema = () => z.object({
   Parent: z.lazy(() => ClientCreateNestedOneWithoutChildrenInputObjectSchema).optional(),
   Children: z.lazy(() => ClientCreateNestedManyWithoutParentInputObjectSchema).optional(),
   Author: z.lazy(() => AuthorCreateNestedManyWithoutClientInputObjectSchema).optional(),
-  Document: z.lazy(() => DocumentCreateNestedManyWithoutClientInputObjectSchema).optional(),
   Invoice: z.lazy(() => InvoiceCreateNestedManyWithoutClientInputObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertCreateNestedManyWithoutClientInputObjectSchema).optional(),
   TaxResidenceSend: z.lazy(() => TaxResidenceSendCreateNestedManyWithoutClientInputObjectSchema).optional(),
-  Title: z.lazy(() => TitleCreateNestedManyWithoutClientInputObjectSchema).optional()
+  Title: z.lazy(() => TitleCreateNestedManyWithoutClientInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementCreateNestedManyWithoutClientInputObjectSchema).optional()
 }).strict();
 export const ClientCreateWithoutClientContactInputObjectSchema: z.ZodType<Prisma.ClientCreateWithoutClientContactInput> = makeSchema() as unknown as z.ZodType<Prisma.ClientCreateWithoutClientContactInput>;
 export const ClientCreateWithoutClientContactInputObjectZodSchema = makeSchema();

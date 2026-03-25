@@ -40,7 +40,9 @@ export const PublisherFindManyResultSchema = z.object({
   PublisherContact: z.array(z.unknown()),
   TaxResidenceCert: z.array(z.unknown()),
   TaxResidenceSend: z.array(z.unknown()),
-  Title: z.array(z.unknown())
+  Title: z.array(z.unknown()),
+  Agreements: z.array(z.unknown()),
+  Submissions: z.array(z.unknown())
 })),
   pagination: z.object({
   page: z.number().int().min(1),

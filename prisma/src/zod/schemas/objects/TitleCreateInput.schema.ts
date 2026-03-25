@@ -2,7 +2,9 @@ import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
 import { ClientCreateNestedOneWithoutTitleInputObjectSchema as ClientCreateNestedOneWithoutTitleInputObjectSchema } from './ClientCreateNestedOneWithoutTitleInput.schema';
 import { PublisherCreateNestedOneWithoutTitleInputObjectSchema as PublisherCreateNestedOneWithoutTitleInputObjectSchema } from './PublisherCreateNestedOneWithoutTitleInput.schema';
-import { TitleAuthorCreateNestedManyWithoutTitleInputObjectSchema as TitleAuthorCreateNestedManyWithoutTitleInputObjectSchema } from './TitleAuthorCreateNestedManyWithoutTitleInput.schema'
+import { TitleAuthorCreateNestedManyWithoutTitleInputObjectSchema as TitleAuthorCreateNestedManyWithoutTitleInputObjectSchema } from './TitleAuthorCreateNestedManyWithoutTitleInput.schema';
+import { AgreementCreateNestedManyWithoutTitleInputObjectSchema as AgreementCreateNestedManyWithoutTitleInputObjectSchema } from './AgreementCreateNestedManyWithoutTitleInput.schema';
+import { SubmissionCreateNestedManyWithoutTitleInputObjectSchema as SubmissionCreateNestedManyWithoutTitleInputObjectSchema } from './SubmissionCreateNestedManyWithoutTitleInput.schema'
 
 const makeSchema = () => z.object({
   sourceId: z.number().int().optional().nullable(),
@@ -26,7 +28,9 @@ const makeSchema = () => z.object({
   updatedAt: z.coerce.date(),
   Client: z.lazy(() => ClientCreateNestedOneWithoutTitleInputObjectSchema).optional(),
   Publisher: z.lazy(() => PublisherCreateNestedOneWithoutTitleInputObjectSchema).optional(),
-  TitleAuthors: z.lazy(() => TitleAuthorCreateNestedManyWithoutTitleInputObjectSchema).optional()
+  TitleAuthors: z.lazy(() => TitleAuthorCreateNestedManyWithoutTitleInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementCreateNestedManyWithoutTitleInputObjectSchema).optional(),
+  Submissions: z.lazy(() => SubmissionCreateNestedManyWithoutTitleInputObjectSchema).optional()
 }).strict();
 export const TitleCreateInputObjectSchema: z.ZodType<Prisma.TitleCreateInput> = makeSchema() as unknown as z.ZodType<Prisma.TitleCreateInput>;
 export const TitleCreateInputObjectZodSchema = makeSchema();

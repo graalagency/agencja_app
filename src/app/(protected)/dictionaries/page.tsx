@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useSession } from 'next-auth/react'
+import { useTranslations } from 'next-intl'
 import { Database, Search, Star } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -17,6 +18,7 @@ function iconForDictionary() {
 
 export default function DictionariesHubPage() {
   const { data: session } = useSession()
+  const t = useTranslations()
   const role = (session as any)?.user?.role as 'USER' | 'ADVANCED' | 'ADMIN' | undefined
   const [search, setSearch] = useState('')
   const [favorites, setFavorites] = useState<string[]>([])
@@ -107,15 +109,15 @@ export default function DictionariesHubPage() {
   return (
     <div className="space-y-6">
       {permissionsLoading ? (
-        <Card className="p-6 text-sm text-muted-foreground">Ladowanie uprawnien...</Card>
+        <Card className="p-6 text-sm text-muted-foreground">{t('dictionaries.loadingPermissions')}</Card>
       ) : !canViewDictionaries ? (
-        <Card className="p-6 text-sm text-muted-foreground">Brak dostepu do modulu slownikow.</Card>
+        <Card className="p-6 text-sm text-muted-foreground">{t('dictionaries.noAccess')}</Card>
       ) : (
         <>
           <Card className="p-6">
             <div className="space-y-3">
-              <h1 className="text-2xl font-bold">Centrum slownikowe</h1>
-              <p className="text-sm text-muted-foreground">Wszystkie slowniki sa pogrupowane i kazdy prowadzi do ekranu edycji.</p>
+              <h1 className="text-2xl font-bold">{t('dictionaries.dictionaryHub')}</h1>
+              <p className="text-sm text-muted-foreground">{t('dictionaries.hubSubtitle')}</p>
             </div>
 
             <div className="mt-5 relative max-w-xl">
@@ -124,7 +126,7 @@ export default function DictionariesHubPage() {
                 className="pl-9"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Szukaj slownika po nazwie lub opisie"
+                placeholder={t('dictionaries.searchPlaceholder')}
               />
             </div>
           </Card>
@@ -133,7 +135,7 @@ export default function DictionariesHubPage() {
             <Card className="p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-amber-500" />
-                <h2 className="text-lg font-semibold">Ulubione</h2>
+                <h2 className="text-lg font-semibold">{t('dictionaries.favorites')}</h2>
               </div>
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 {favoriteItems.map((item) => (
@@ -149,7 +151,7 @@ export default function DictionariesHubPage() {
                       <button
                         type="button"
                         onClick={() => toggleFavorite(item.key)}
-                        aria-label="Usun z ulubionych"
+                        aria-label={t('dictionaries.removeFavorite')}
                         className="text-amber-500"
                       >
                         <Star className="h-4 w-4 fill-current" />
@@ -157,7 +159,7 @@ export default function DictionariesHubPage() {
                     </div>
                     <div className="mt-4">
                       <Button asChild size="sm" className="w-full">
-                        <Link href={`/dictionaries/${item.key}`}>Otworz</Link>
+                        <Link href={`/dictionaries/${item.key}`}>{t('dictionaries.openDictionary')}</Link>
                       </Button>
                     </div>
                   </div>
@@ -168,7 +170,7 @@ export default function DictionariesHubPage() {
 
           {groupedItems.length === 0 ? (
             <Card className="p-6 text-sm text-muted-foreground">
-              Brak slownikow pasujacych do wyszukiwania.
+              {t('dictionaries.noMatches')}
             </Card>
           ) : (
             groupedItems.map((group) => (
@@ -190,7 +192,7 @@ export default function DictionariesHubPage() {
                           <button
                             type="button"
                             onClick={() => toggleFavorite(item.key)}
-                            aria-label={isFavorite ? 'Usun z ulubionych' : 'Przypnij do ulubionych'}
+                            aria-label={isFavorite ? t('dictionaries.removeFavorite') : t('common.add')}
                             className={isFavorite ? 'text-amber-500' : 'text-muted-foreground'}
                           >
                             <Star className={isFavorite ? 'h-4 w-4 fill-current' : 'h-4 w-4'} />
@@ -198,7 +200,7 @@ export default function DictionariesHubPage() {
                         </div>
                         <div className="mt-4">
                           <Button asChild size="sm" variant="outline" className="w-full">
-                            <Link href={`/dictionaries/${item.key}`}>Otworz slownik</Link>
+                            <Link href={`/dictionaries/${item.key}`}>{t('dictionaries.openDictionary')}</Link>
                           </Button>
                         </div>
                       </div>

@@ -9,11 +9,11 @@ import { DateTimeFieldUpdateOperationsInputObjectSchema as DateTimeFieldUpdateOp
 import { NullableDecimalFieldUpdateOperationsInputObjectSchema as NullableDecimalFieldUpdateOperationsInputObjectSchema } from './NullableDecimalFieldUpdateOperationsInput.schema';
 import { ClientUncheckedUpdateManyWithoutParentNestedInputObjectSchema as ClientUncheckedUpdateManyWithoutParentNestedInputObjectSchema } from './ClientUncheckedUpdateManyWithoutParentNestedInput.schema';
 import { ClientContactUncheckedUpdateManyWithoutClientNestedInputObjectSchema as ClientContactUncheckedUpdateManyWithoutClientNestedInputObjectSchema } from './ClientContactUncheckedUpdateManyWithoutClientNestedInput.schema';
-import { DocumentUncheckedUpdateManyWithoutClientNestedInputObjectSchema as DocumentUncheckedUpdateManyWithoutClientNestedInputObjectSchema } from './DocumentUncheckedUpdateManyWithoutClientNestedInput.schema';
 import { InvoiceUncheckedUpdateManyWithoutClientNestedInputObjectSchema as InvoiceUncheckedUpdateManyWithoutClientNestedInputObjectSchema } from './InvoiceUncheckedUpdateManyWithoutClientNestedInput.schema';
 import { TaxResidenceCertUncheckedUpdateManyWithoutClientNestedInputObjectSchema as TaxResidenceCertUncheckedUpdateManyWithoutClientNestedInputObjectSchema } from './TaxResidenceCertUncheckedUpdateManyWithoutClientNestedInput.schema';
 import { TaxResidenceSendUncheckedUpdateManyWithoutClientNestedInputObjectSchema as TaxResidenceSendUncheckedUpdateManyWithoutClientNestedInputObjectSchema } from './TaxResidenceSendUncheckedUpdateManyWithoutClientNestedInput.schema';
-import { TitleUncheckedUpdateManyWithoutClientNestedInputObjectSchema as TitleUncheckedUpdateManyWithoutClientNestedInputObjectSchema } from './TitleUncheckedUpdateManyWithoutClientNestedInput.schema'
+import { TitleUncheckedUpdateManyWithoutClientNestedInputObjectSchema as TitleUncheckedUpdateManyWithoutClientNestedInputObjectSchema } from './TitleUncheckedUpdateManyWithoutClientNestedInput.schema';
+import { AgreementUncheckedUpdateManyWithoutClientNestedInputObjectSchema as AgreementUncheckedUpdateManyWithoutClientNestedInputObjectSchema } from './AgreementUncheckedUpdateManyWithoutClientNestedInput.schema'
 
 import { DecimalJSLikeSchema, isValidDecimalInput } from '../../helpers/decimal-helpers';
 const makeSchema = () => z.object({
@@ -77,11 +77,11 @@ const makeSchema = () => z.object({
   parentId: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   Children: z.lazy(() => ClientUncheckedUpdateManyWithoutParentNestedInputObjectSchema).optional(),
   ClientContact: z.lazy(() => ClientContactUncheckedUpdateManyWithoutClientNestedInputObjectSchema).optional(),
-  Document: z.lazy(() => DocumentUncheckedUpdateManyWithoutClientNestedInputObjectSchema).optional(),
   Invoice: z.lazy(() => InvoiceUncheckedUpdateManyWithoutClientNestedInputObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertUncheckedUpdateManyWithoutClientNestedInputObjectSchema).optional(),
   TaxResidenceSend: z.lazy(() => TaxResidenceSendUncheckedUpdateManyWithoutClientNestedInputObjectSchema).optional(),
-  Title: z.lazy(() => TitleUncheckedUpdateManyWithoutClientNestedInputObjectSchema).optional()
+  Title: z.lazy(() => TitleUncheckedUpdateManyWithoutClientNestedInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementUncheckedUpdateManyWithoutClientNestedInputObjectSchema).optional()
 }).strict();
 export const ClientUncheckedUpdateWithoutAuthorInputObjectSchema: z.ZodType<Prisma.ClientUncheckedUpdateWithoutAuthorInput> = makeSchema() as unknown as z.ZodType<Prisma.ClientUncheckedUpdateWithoutAuthorInput>;
 export const ClientUncheckedUpdateWithoutAuthorInputObjectZodSchema = makeSchema();

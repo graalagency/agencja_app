@@ -10,10 +10,10 @@ import { ClientUpdateOneWithoutChildrenNestedInputObjectSchema as ClientUpdateOn
 import { ClientUpdateManyWithoutParentNestedInputObjectSchema as ClientUpdateManyWithoutParentNestedInputObjectSchema } from './ClientUpdateManyWithoutParentNestedInput.schema';
 import { AuthorUpdateManyWithoutClientNestedInputObjectSchema as AuthorUpdateManyWithoutClientNestedInputObjectSchema } from './AuthorUpdateManyWithoutClientNestedInput.schema';
 import { ClientContactUpdateManyWithoutClientNestedInputObjectSchema as ClientContactUpdateManyWithoutClientNestedInputObjectSchema } from './ClientContactUpdateManyWithoutClientNestedInput.schema';
-import { DocumentUpdateManyWithoutClientNestedInputObjectSchema as DocumentUpdateManyWithoutClientNestedInputObjectSchema } from './DocumentUpdateManyWithoutClientNestedInput.schema';
 import { InvoiceUpdateManyWithoutClientNestedInputObjectSchema as InvoiceUpdateManyWithoutClientNestedInputObjectSchema } from './InvoiceUpdateManyWithoutClientNestedInput.schema';
 import { TaxResidenceSendUpdateManyWithoutClientNestedInputObjectSchema as TaxResidenceSendUpdateManyWithoutClientNestedInputObjectSchema } from './TaxResidenceSendUpdateManyWithoutClientNestedInput.schema';
-import { TitleUpdateManyWithoutClientNestedInputObjectSchema as TitleUpdateManyWithoutClientNestedInputObjectSchema } from './TitleUpdateManyWithoutClientNestedInput.schema'
+import { TitleUpdateManyWithoutClientNestedInputObjectSchema as TitleUpdateManyWithoutClientNestedInputObjectSchema } from './TitleUpdateManyWithoutClientNestedInput.schema';
+import { AgreementUpdateManyWithoutClientNestedInputObjectSchema as AgreementUpdateManyWithoutClientNestedInputObjectSchema } from './AgreementUpdateManyWithoutClientNestedInput.schema'
 
 import { DecimalJSLikeSchema, isValidDecimalInput } from '../../helpers/decimal-helpers';
 const makeSchema = () => z.object({
@@ -77,10 +77,10 @@ const makeSchema = () => z.object({
   Children: z.lazy(() => ClientUpdateManyWithoutParentNestedInputObjectSchema).optional(),
   Author: z.lazy(() => AuthorUpdateManyWithoutClientNestedInputObjectSchema).optional(),
   ClientContact: z.lazy(() => ClientContactUpdateManyWithoutClientNestedInputObjectSchema).optional(),
-  Document: z.lazy(() => DocumentUpdateManyWithoutClientNestedInputObjectSchema).optional(),
   Invoice: z.lazy(() => InvoiceUpdateManyWithoutClientNestedInputObjectSchema).optional(),
   TaxResidenceSend: z.lazy(() => TaxResidenceSendUpdateManyWithoutClientNestedInputObjectSchema).optional(),
-  Title: z.lazy(() => TitleUpdateManyWithoutClientNestedInputObjectSchema).optional()
+  Title: z.lazy(() => TitleUpdateManyWithoutClientNestedInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementUpdateManyWithoutClientNestedInputObjectSchema).optional()
 }).strict();
 export const ClientUpdateWithoutTaxResidenceCertInputObjectSchema: z.ZodType<Prisma.ClientUpdateWithoutTaxResidenceCertInput> = makeSchema() as unknown as z.ZodType<Prisma.ClientUpdateWithoutTaxResidenceCertInput>;
 export const ClientUpdateWithoutTaxResidenceCertInputObjectZodSchema = makeSchema();

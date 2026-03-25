@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
+import { requireModuleAccess } from '../../../lib/api-permissions'
 
 export async function GET(req: Request) {
+  const auth = await requireModuleAccess(req, 'currencies')
+  if (auth.error) return auth.error
+
   const p = prisma as any
   const { searchParams } = new URL(req.url)
   const search = searchParams.get('search') || ''
@@ -44,6 +48,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const auth = await requireModuleAccess(req, 'currencies')
+  if (auth.error) return auth.error
+
   try {
     const p = prisma as any
     const body = await req.json()

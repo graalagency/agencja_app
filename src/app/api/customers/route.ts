@@ -1,7 +1,25 @@
 import { prisma } from '../../../lib/prisma'
 import { NextResponse } from 'next/server'
+import { z } from 'zod'
+import { requireModuleAccess } from '../../../lib/api-permissions'
+import { translateZodErrors } from '../../../lib/zod-error-handler'
+
+const CreateClientSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  address: z.string().optional().nullable(),
+  city: z.string().optional().nullable(),
+  postalCode: z.string().optional().nullable(),
+  nip: z.string().optional().nullable(),
+  regon: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+})
 
 export async function GET(req: Request) {
+  const auth = await requireModuleAccess(req, 'customers')
+  if (auth.error) return auth.error
+
   const { searchParams } = new URL(req.url)
   const search = searchParams.get('search') || ''
   const page = parseInt(searchParams.get('page') || '1')
@@ -65,21 +83,33 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json()
-  const client = await prisma.client.create({
-    data: {
-      name: body.name || null,
-      email: body.email || null,
-      phone: body.phone || null,
-      address: body.address || null,
-      city: body.city || null,
-      postalCode: body.postalCode || null,
-      nip: body.nip || null,
-      regon: body.regon || null,
-      notes: body.notes || null,
-      updatedAt: new Date(),
-    }
-  })
+  const auth = await requireModuleAccess(req, 'customers')
+  if (auth.error) return auth.error
 
-  return NextResponse.json({ id: client.id }, { status: 201 })
+  try {
+    const body = await req.json()
+    const validated = CreateClientSchema.parse(body)
+
+    const client = await prisma.client.create({
+      data: {
+        name: validated.name,
+        email: validated.email,
+        phone: validated.phone,
+        address: validated.address,
+        city: validated.city,
+        postalCode: validated.postalCode,
+        nip: validated.nip,
+        regon: validated.regon,
+        notes: validated.notes,
+        updatedAt: new Date(),
+      }
+    })
+
+    return NextResponse.json({ id: client.id }, { status: 201 })
+  } catch (e) {
+    if (e instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Validation failed', details: translateZodErrors(e.issues, 'pl') }, { status: 400 })
+    }
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
 }

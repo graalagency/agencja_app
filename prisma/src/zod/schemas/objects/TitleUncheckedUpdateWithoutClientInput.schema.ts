@@ -7,7 +7,9 @@ import { NullableStringFieldUpdateOperationsInputObjectSchema as NullableStringF
 import { BoolFieldUpdateOperationsInputObjectSchema as BoolFieldUpdateOperationsInputObjectSchema } from './BoolFieldUpdateOperationsInput.schema';
 import { NullableDateTimeFieldUpdateOperationsInputObjectSchema as NullableDateTimeFieldUpdateOperationsInputObjectSchema } from './NullableDateTimeFieldUpdateOperationsInput.schema';
 import { DateTimeFieldUpdateOperationsInputObjectSchema as DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
-import { TitleAuthorUncheckedUpdateManyWithoutTitleNestedInputObjectSchema as TitleAuthorUncheckedUpdateManyWithoutTitleNestedInputObjectSchema } from './TitleAuthorUncheckedUpdateManyWithoutTitleNestedInput.schema'
+import { TitleAuthorUncheckedUpdateManyWithoutTitleNestedInputObjectSchema as TitleAuthorUncheckedUpdateManyWithoutTitleNestedInputObjectSchema } from './TitleAuthorUncheckedUpdateManyWithoutTitleNestedInput.schema';
+import { AgreementUncheckedUpdateManyWithoutTitleNestedInputObjectSchema as AgreementUncheckedUpdateManyWithoutTitleNestedInputObjectSchema } from './AgreementUncheckedUpdateManyWithoutTitleNestedInput.schema';
+import { SubmissionUncheckedUpdateManyWithoutTitleNestedInputObjectSchema as SubmissionUncheckedUpdateManyWithoutTitleNestedInputObjectSchema } from './SubmissionUncheckedUpdateManyWithoutTitleNestedInput.schema'
 
 const makeSchema = () => z.object({
   id: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -31,7 +33,9 @@ const makeSchema = () => z.object({
   dateOfReceipt: z.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-  TitleAuthors: z.lazy(() => TitleAuthorUncheckedUpdateManyWithoutTitleNestedInputObjectSchema).optional()
+  TitleAuthors: z.lazy(() => TitleAuthorUncheckedUpdateManyWithoutTitleNestedInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementUncheckedUpdateManyWithoutTitleNestedInputObjectSchema).optional(),
+  Submissions: z.lazy(() => SubmissionUncheckedUpdateManyWithoutTitleNestedInputObjectSchema).optional()
 }).strict();
 export const TitleUncheckedUpdateWithoutClientInputObjectSchema: z.ZodType<Prisma.TitleUncheckedUpdateWithoutClientInput> = makeSchema() as unknown as z.ZodType<Prisma.TitleUncheckedUpdateWithoutClientInput>;
 export const TitleUncheckedUpdateWithoutClientInputObjectZodSchema = makeSchema();

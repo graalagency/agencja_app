@@ -40,7 +40,9 @@ export const PublisherInputSchema = z.object({
     PublisherContact: z.array(z.unknown()),
     TaxResidenceCert: z.array(z.unknown()),
     TaxResidenceSend: z.array(z.unknown()),
-    Title: z.array(z.unknown())
+    Title: z.array(z.unknown()),
+    Agreements: z.array(z.unknown()),
+    Submissions: z.array(z.unknown())
 }).strict();
 
 export type PublisherInputType = z.infer<typeof PublisherInputSchema>;

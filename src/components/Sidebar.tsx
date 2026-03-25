@@ -67,6 +67,7 @@ export function Sidebar({ collapsed = false }: Props) {
           countries: { userAccess: false, advancedAccess: false, adminAccess: true },
           currencies: { userAccess: false, advancedAccess: false, adminAccess: true },
           administration: { userAccess: false, advancedAccess: false, adminAccess: true },
+          submissions: { userAccess: false, advancedAccess: false, adminAccess: true },
           documents: { userAccess: false, advancedAccess: false, adminAccess: true },
         }
         
@@ -231,6 +232,10 @@ export function Sidebar({ collapsed = false }: Props) {
 
             {canAccess('invoices') && (
               renderCollapsedItem('/finances/agreements', 'Umowy', pathname.startsWith('/finances/agreements'), <Wallet className="h-4 w-4" />)
+            )}
+
+            {canAccess('submissions') && (
+              renderCollapsedItem('/finances/submissions', 'Wysyłki', pathname.startsWith('/finances/submissions'), <BookOpen className="h-4 w-4" />)
             )}
 
             {canAccess('cashflow') && (
@@ -424,7 +429,7 @@ export function Sidebar({ collapsed = false }: Props) {
               </button>
               <div className={cn(
                 "overflow-hidden transition-all duration-200 space-y-1",
-                open.finance ? "max-h-60 mt-1" : "max-h-0"
+                open.finance ? "max-h-80 mt-1" : "max-h-0"
               )}>
                 {canAccess('invoices') && (
                   <Link 
@@ -469,17 +474,31 @@ export function Sidebar({ collapsed = false }: Props) {
                   </Link>
                 )}
                 {canAccess('invoices') && (
-                  <Link 
-                    href="/finances/agreements" 
+                  <Link
+                    href="/finances/agreements"
                     className={cn(
                       "flex items-center gap-3 pl-10 pr-3 py-2 rounded-md text-sm transition-colors",
                       pathname.startsWith('/finances/agreements')
-                        ? "bg-primary/10 text-primary font-medium" 
+                        ? "bg-primary/10 text-primary font-medium"
                         : "hover:bg-accent hover:text-accent-foreground"
                     )}
                   >
                     <Receipt className="h-3.5 w-3.5" />
                     <span>Umowy</span>
+                  </Link>
+                )}
+                {canAccess('submissions') && (
+                  <Link
+                    href="/finances/submissions"
+                    className={cn(
+                      "flex items-center gap-3 pl-10 pr-3 py-2 rounded-md text-sm transition-colors",
+                      pathname.startsWith('/finances/submissions')
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "hover:bg-accent hover:text-accent-foreground"
+                    )}
+                  >
+                    <BookOpen className="h-3.5 w-3.5" />
+                    <span>Wysyłki</span>
                   </Link>
                 )}
               </div>

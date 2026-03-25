@@ -25,7 +25,9 @@ export const TitleFindManyResultSchema = z.object({
   updatedAt: z.date(),
   Client: z.unknown().optional(),
   Publisher: z.unknown().optional(),
-  TitleAuthors: z.array(z.unknown())
+  TitleAuthors: z.array(z.unknown()),
+  Agreements: z.array(z.unknown()),
+  Submissions: z.array(z.unknown())
 })),
   pagination: z.object({
   page: z.number().int().min(1),

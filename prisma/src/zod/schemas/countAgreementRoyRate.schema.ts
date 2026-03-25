@@ -1,0 +1,10 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { AgreementRoyRateOrderByWithRelationInputObjectSchema as AgreementRoyRateOrderByWithRelationInputObjectSchema } from './objects/AgreementRoyRateOrderByWithRelationInput.schema';
+import { AgreementRoyRateWhereInputObjectSchema as AgreementRoyRateWhereInputObjectSchema } from './objects/AgreementRoyRateWhereInput.schema';
+import { AgreementRoyRateWhereUniqueInputObjectSchema as AgreementRoyRateWhereUniqueInputObjectSchema } from './objects/AgreementRoyRateWhereUniqueInput.schema';
+import { AgreementRoyRateCountAggregateInputObjectSchema as AgreementRoyRateCountAggregateInputObjectSchema } from './objects/AgreementRoyRateCountAggregateInput.schema';
+
+export const AgreementRoyRateCountSchema: z.ZodType<Prisma.AgreementRoyRateCountArgs> = z.object({ orderBy: z.union([AgreementRoyRateOrderByWithRelationInputObjectSchema, AgreementRoyRateOrderByWithRelationInputObjectSchema.array()]).optional(), where: AgreementRoyRateWhereInputObjectSchema.optional(), cursor: AgreementRoyRateWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), AgreementRoyRateCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.AgreementRoyRateCountArgs>;
+
+export const AgreementRoyRateCountZodSchema = z.object({ orderBy: z.union([AgreementRoyRateOrderByWithRelationInputObjectSchema, AgreementRoyRateOrderByWithRelationInputObjectSchema.array()]).optional(), where: AgreementRoyRateWhereInputObjectSchema.optional(), cursor: AgreementRoyRateWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), AgreementRoyRateCountAggregateInputObjectSchema ]).optional() }).strict();

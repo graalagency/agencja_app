@@ -20,6 +20,7 @@ export type ModuleKey =
   | 'countries'
   | 'currencies'
   | 'administration'
+  | 'submissions'
 
 export type RolePermissionsMap = Record<ModuleKey, {
   userAccess: boolean

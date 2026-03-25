@@ -1,7 +1,26 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
+import { requireModuleAccess } from '../../../../lib/api-permissions'
+import { z } from 'zod'
+import { translateZodErrors } from '../../../../lib/zod-error-handler'
+
+const UpdateSimpleInvoiceSchema = z.object({
+  status: z.string().optional(),
+  remarks: z.string().optional(),
+  descr: z.string().optional(),
+  totalInvNET: z.number().optional(),
+  vatPerc: z.number().optional(),
+  taxValue: z.number().optional(),
+  balance: z.number().optional(),
+  dateDue: z.string().optional().nullable(),
+  currId: z.string().optional(),
+  termDD: z.number().optional(),
+})
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const auth = await requireModuleAccess(req, 'finances')
+  if (auth.error) return auth.error
+
   try {
     const invNum = Number(params.id)
     if (isNaN(invNum)) {
@@ -51,6 +70,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 }
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+  const auth = await requireModuleAccess(req, 'finances')
+  if (auth.error) return auth.error
+
   try {
     const invNum = Number(params.id)
     if (isNaN(invNum)) {
@@ -58,18 +80,27 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     const body = await req.json()
+    const validationResult = UpdateSimpleInvoiceSchema.safeParse(body)
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: translateZodErrors(validationResult.error.issues, 'pl') },
+        { status: 400 }
+      )
+    }
+
+    const validated = validationResult.data
     const updateData: any = {}
 
-    if (body.status !== undefined) updateData.Status = body.status
-    if (body.remarks !== undefined) updateData.Remarks = body.remarks
-    if (body.descr !== undefined) updateData.Descr = body.descr
-    if (body.totalInvNET !== undefined) updateData.TotalInvNET = Number(body.totalInvNET)
-    if (body.vatPerc !== undefined) updateData.VATPerc = Number(body.vatPerc)
-    if (body.taxValue !== undefined) updateData.TaxValue = Number(body.taxValue)
-    if (body.balance !== undefined) updateData.Balance = Number(body.balance)
-    if (body.dateDue !== undefined) updateData.DateDue = body.dateDue ? new Date(body.dateDue) : null
-    if (body.currId !== undefined) updateData.CurrId = body.currId
-    if (body.termDD !== undefined) updateData.TermDD = Number(body.termDD)
+    if (validated.status !== undefined) updateData.Status = validated.status
+    if (validated.remarks !== undefined) updateData.Remarks = validated.remarks
+    if (validated.descr !== undefined) updateData.Descr = validated.descr
+    if (validated.totalInvNET !== undefined) updateData.TotalInvNET = validated.totalInvNET
+    if (validated.vatPerc !== undefined) updateData.VATPerc = validated.vatPerc
+    if (validated.taxValue !== undefined) updateData.TaxValue = validated.taxValue
+    if (validated.balance !== undefined) updateData.Balance = validated.balance
+    if (validated.dateDue !== undefined) updateData.DateDue = validated.dateDue ? new Date(validated.dateDue) : null
+    if (validated.currId !== undefined) updateData.CurrId = validated.currId
+    if (validated.termDD !== undefined) updateData.TermDD = validated.termDD
 
     const p = prisma as any
     const invoice = await p.tblInvoice.update({
@@ -85,6 +116,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  const auth = await requireModuleAccess(req, 'finances')
+  if (auth.error) return auth.error
+
   try {
     const invNum = Number(params.id)
     if (isNaN(invNum)) {

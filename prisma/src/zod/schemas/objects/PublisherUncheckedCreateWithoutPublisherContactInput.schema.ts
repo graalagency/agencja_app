@@ -4,7 +4,9 @@ import Decimal from 'decimal.js';
 import { PublisherUncheckedCreateNestedManyWithoutParentInputObjectSchema as PublisherUncheckedCreateNestedManyWithoutParentInputObjectSchema } from './PublisherUncheckedCreateNestedManyWithoutParentInput.schema';
 import { TaxResidenceCertUncheckedCreateNestedManyWithoutPublisherInputObjectSchema as TaxResidenceCertUncheckedCreateNestedManyWithoutPublisherInputObjectSchema } from './TaxResidenceCertUncheckedCreateNestedManyWithoutPublisherInput.schema';
 import { TaxResidenceSendUncheckedCreateNestedManyWithoutPublisherInputObjectSchema as TaxResidenceSendUncheckedCreateNestedManyWithoutPublisherInputObjectSchema } from './TaxResidenceSendUncheckedCreateNestedManyWithoutPublisherInput.schema';
-import { TitleUncheckedCreateNestedManyWithoutPublisherInputObjectSchema as TitleUncheckedCreateNestedManyWithoutPublisherInputObjectSchema } from './TitleUncheckedCreateNestedManyWithoutPublisherInput.schema'
+import { TitleUncheckedCreateNestedManyWithoutPublisherInputObjectSchema as TitleUncheckedCreateNestedManyWithoutPublisherInputObjectSchema } from './TitleUncheckedCreateNestedManyWithoutPublisherInput.schema';
+import { AgreementUncheckedCreateNestedManyWithoutPublisherInputObjectSchema as AgreementUncheckedCreateNestedManyWithoutPublisherInputObjectSchema } from './AgreementUncheckedCreateNestedManyWithoutPublisherInput.schema';
+import { SubmissionUncheckedCreateNestedManyWithoutPublisherInputObjectSchema as SubmissionUncheckedCreateNestedManyWithoutPublisherInputObjectSchema } from './SubmissionUncheckedCreateNestedManyWithoutPublisherInput.schema'
 
 import { DecimalJSLikeSchema, isValidDecimalInput } from '../../helpers/decimal-helpers';
 const makeSchema = () => z.object({
@@ -69,7 +71,9 @@ const makeSchema = () => z.object({
   Children: z.lazy(() => PublisherUncheckedCreateNestedManyWithoutParentInputObjectSchema).optional(),
   TaxResidenceCert: z.lazy(() => TaxResidenceCertUncheckedCreateNestedManyWithoutPublisherInputObjectSchema).optional(),
   TaxResidenceSend: z.lazy(() => TaxResidenceSendUncheckedCreateNestedManyWithoutPublisherInputObjectSchema).optional(),
-  Title: z.lazy(() => TitleUncheckedCreateNestedManyWithoutPublisherInputObjectSchema).optional()
+  Title: z.lazy(() => TitleUncheckedCreateNestedManyWithoutPublisherInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementUncheckedCreateNestedManyWithoutPublisherInputObjectSchema).optional(),
+  Submissions: z.lazy(() => SubmissionUncheckedCreateNestedManyWithoutPublisherInputObjectSchema).optional()
 }).strict();
 export const PublisherUncheckedCreateWithoutPublisherContactInputObjectSchema: z.ZodType<Prisma.PublisherUncheckedCreateWithoutPublisherContactInput> = makeSchema() as unknown as z.ZodType<Prisma.PublisherUncheckedCreateWithoutPublisherContactInput>;
 export const PublisherUncheckedCreateWithoutPublisherContactInputObjectZodSchema = makeSchema();

@@ -91,11 +91,11 @@ model Client {
   Children             Client[]   @relation("ClientHierarchy")
   Author               Author[]
   ClientContact        ClientContact[]
-  Document             Document[]
   Invoice              Invoice[]
   TaxResidenceCert     TaxResidenceCert[]
   TaxResidenceSend     TaxResidenceSend[]
   Title                Title[]
+  Agreements           Agreement[]        // umowy gdzie klient jest właścicielem praw
 }
 
 model Contact {
@@ -181,6 +181,8 @@ model Publisher {
   TaxResidenceCert     TaxResidenceCert[]
   TaxResidenceSend     TaxResidenceSend[]
   Title                Title[]
+  Agreements           Agreement[]        // umowy gdzie wydawca kupuje prawa
+  Submissions          Submission[]       // wysyłki oryginałów do wydawcy
 }
 
 // Tytuł (książka/utwór) — właścicielem praw jest Client lub Publisher
@@ -211,6 +213,8 @@ model Title {
   Client       Client?       @relation(fields: [clientId],    references: [id], onDelete: SetNull)
   Publisher    Publisher?    @relation(fields: [publisherId], references: [id], onDelete: SetNull)
   TitleAuthors TitleAuthor[]
+  Agreements   Agreement[]
+  Submissions  Submission[]
 }
 
 // Certyfikat rezydencji podatkowej (dla klienta lub wydawcy)
@@ -248,17 +252,6 @@ model TaxResidenceSend {
   Cert      TaxResidenceCert @relation(fields: [certId], references: [id], onDelete: Cascade)
   Client    Client?          @relation(fields: [clientId], references: [id], onDelete: SetNull)
   Publisher Publisher?       @relation(fields: [publisherId], references: [id], onDelete: SetNull)
-}
-
-model Document {
-  id          Int       @id @default(autoincrement())
-  title       String
-  description String?
-  status      DocStatus @default(DRAFT)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime
-  clientId    Int
-  Client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
 model Invoice {
@@ -331,9 +324,176 @@ model User {
   locale       String   @default("pl")
 }
 
-enum DocStatus {
-  DRAFT
-  SIGNED
+// ─── Umowy ───────────────────────────────────────────────────────────────────
+
+// Umowa licencyjna (z tblAgreements)
+model Agreement {
+  id                  Int       @id @default(autoincrement())
+  sourceId            Int?      @unique                     // AgrID z tblAgreements
+
+  // Strony umowy
+  publisherId         Int?                                  // CustID → Publisher (kupujący prawa)
+  clientId            Int?                                  // ClientID → Client (właściciel praw)
+  titleId             Int?                                  // TitleID → Title
+
+  // Warunki ogólne
+  agrDate             DateTime                              // AgrDate
+  validYY             Int?                                  // ValidYY — ważność w latach
+  pubTermMM           Int?                                  // PubTermMM — termin publikacji w mies.
+  maxCopies           Int?                                  // MaxNoOfCopies
+  minCopies           Int?                                  // MinNoOfCopies
+  copiesToOwner       Int?                                  // CopiesToOwner
+  copiesToGraal       Int?                                  // CopiesToGraal
+
+  // Warunki finansowe
+  currencyCode        String?   @db.Char(3)                // CurrID
+  commission          Decimal?  @db.Decimal(10, 4)         // Commission (%)
+  commissionMaterials Decimal?  @db.Decimal(10, 4)         // CommissionMaterials (%)
+  estimatedCopyPrice  Decimal?  @db.Decimal(18, 2)         // EstimatedCopyPrice
+  graalShare          Decimal?  @db.Decimal(10, 4)         // GraalShare (%)
+  graalRepresent      Boolean   @default(true)             // GraalRepresent
+
+  // Język i terytorium
+  languageCode        String?   @db.Char(3)                // LangAbbr
+  countryId           Int?                                  // CountryID → dictCountries
+
+  // Lokalna edycja (dane od wydawcy)
+  localTitle          String?   @db.VarChar(150)           // LocalTitle
+  localIsbn           String?   @db.VarChar(16)            // LocalISBN
+  localPubDate        DateTime?                             // LocalPubDate
+
+  // Metadane
+  clientReference     String?   @db.VarChar(50)            // ClientReference
+  agrDoc              String?   @db.VarChar(250)           // AgrDoc — ścieżka do pliku umowy
+  status              String?   @db.Char(1)                // Status: 1=w toku, 2=aktywna, 3=wygasła, 4=zakończona
+  remarks             String?   @db.VarChar(1000)          // Remarks
+  agentId             Int?                                  // AgentID
+  dateMod             DateTime?                             // DateMod
+  userMod             String?   @db.VarChar(30)            // UserMod
+
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  Publisher      Publisher?       @relation(fields: [publisherId], references: [id], onDelete: SetNull)
+  Client         Client?          @relation(fields: [clientId],    references: [id], onDelete: SetNull)
+  Title          Title?           @relation(fields: [titleId],     references: [id], onDelete: SetNull)
+  Rights         AgreementRight[]
+  Events         AgreementEvent[]
+  Advances       AgreementAdvance[]
+  RoyRates       AgreementRoyRate[]
+}
+
+// Prawa przyznane w umowie (z tblAgrRights)
+model AgreementRight {
+  id                   Int     @id @default(autoincrement())
+  sourceId             Int?    @unique                      // AgrRightID z tblAgrRights
+  agreementId          Int                                  // AgrID
+  rightFormId          Int?                                 // RightID → dictRightsForm.RightFormID
+  priceTypeId          Int?                                 // PriceTypeID → dictPriceType.PriceTypeID
+  royPriceTypeId       Int?                                 // RoyPriceTypeID → dictRoyPriceType
+  royAccountIntervalId Int?                                 // RoyAccountIntervalID → dictRoyAccountInterval
+  distributionTypeId   Int?                                 // DistID → dictDistributionType
+
+  Agreement  Agreement          @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  RoyRates   AgreementRoyRate[]
+}
+
+// Progi stawek royalty dla prawa w umowie (z tblRoyRates)
+model AgreementRoyRate {
+  id          Int     @id @default(autoincrement())
+  agreementId Int                                           // AgrID
+  rightId     Int                                           // AgrRightID → AgreementRight
+  step        Int                                           // Step — numer progu (1, 2, 3…)
+  copiesMax   Int?                                          // CpsMax — max egz. dla progu (0 = bez limitu)
+  rate        Decimal @db.Decimal(10, 4)                   // Rate — stawka royalty (%)
+
+  Agreement Agreement      @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  Right     AgreementRight @relation(fields: [rightId],     references: [id], onDelete: Cascade)
+
+  @@unique([rightId, step])
+}
+
+// Zdarzenia/workflow umowy (z tblAgrEvents)
+model AgreementEvent {
+  id          Int       @id @default(autoincrement())
+  sourceId    Int?      @unique                             // AgrEventID z tblAgrEvents
+  agreementId Int                                          // AgrID
+  eventCode   Int                                          // AgrEventCode → dictAgrEvents.AgrEventCode
+  eventDate   DateTime?                                    // EventDate
+  endDate     DateTime?                                    // EndDate
+  noOfCopies  Int?                                         // NoOfCopies
+  dateMod     DateTime?
+  userMod     String?   @db.VarChar(30)
+  createdAt   DateTime  @default(now())
+
+  Agreement Agreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+
+  @@index([agreementId, eventDate(sort: Desc), eventCode(sort: Desc)])
+}
+
+// Zaliczki i płatności ryczałtowe (z tblAdvance)
+model AgreementAdvance {
+  id          Int       @id @default(autoincrement())
+  sourceId    Int?      @unique                             // AdvID z tblAdvance
+  agreementId Int                                          // AgrID
+  instalment  Int?                                         // Inst — numer raty
+  advTermId   Int?                                         // AdvTermId → dictAdvTerm.AdvTermId
+  advTypeId   Int?                                         // AdvTypeId → dictAdvType.AdvTypeId
+  amount      Decimal   @db.Decimal(18, 2)                 // Amount
+  termDate    DateTime?                                    // AdvTermDate
+  royaltyId   Int?                                         // RoyID — powiązanie z rozliczeniem
+  createdAt   DateTime  @default(now())
+
+  Agreement Agreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+}
+
+// ─── Wysyłki oryginałów do wydawców ──────────────────────────────────────────
+
+model Submission {
+  id             Int       @id @default(autoincrement())
+  sourceId       Int?      @unique                        // SubmID z tblSubmissions
+  titleId        Int?                                     // TitleID
+  publisherId    Int?                                     // CustID → Publisher
+  contactId      Int?                                     // ContactID (raw, bez relacji)
+  copyTypeId     Int?                                     // FK → dictCopyType (raw SQL)
+  submSentTypeId Int?                                     // FK → dictSubmSentType (raw SQL)
+  submDate       DateTime                                 // SubmDate
+  sentDate       DateTime?                                // SentDate
+  endDate        DateTime?                                // EndDate
+  returnDate     DateTime?                                // ReturnDate
+  noOfCopies     Int?                                     // NoOfCopies
+  trackingNo     String?   @db.VarChar(30)               // TrackingNo
+  exclusive      Boolean   @default(false)               // Exclusive
+  submNr         Int?                                     // SubmNr
+  status         String?   @db.Char(1)                   // Status
+  remarks        String?   @db.VarChar(1000)             // Remarks
+  userMod        String?   @db.VarChar(30)               // UserMod
+  dateMod        DateTime?                                // DateMod
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  Title     Title?     @relation(fields: [titleId],     references: [id], onDelete: SetNull)
+  Publisher Publisher? @relation(fields: [publisherId], references: [id], onDelete: SetNull)
+  Events    SubmissionEvent[]
+
+  @@index([titleId])
+  @@index([publisherId])
+  @@index([submDate])
+}
+
+model SubmissionEvent {
+  id           Int       @id @default(autoincrement())
+  sourceId     Int?      @unique                          // SubmEventID z tblSubmEvents
+  submissionId Int
+  eventCode    Int                                        // EventCode → dictEvents (raw SQL)
+  eventDate    DateTime
+  noOfCopies   Int?
+  endDate      DateTime?
+  createdAt    DateTime  @default(now())
+
+  Submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId, eventDate(sort: Desc), eventCode(sort: Desc)])
 }
 
 enum Role {

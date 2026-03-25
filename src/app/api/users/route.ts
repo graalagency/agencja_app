@@ -1,10 +1,12 @@
 import { prisma } from '../../../lib/prisma'
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '../../../lib/auth'
+import { requireModuleAccess } from '../../../lib/api-permissions'
 
 export async function GET(req: Request) {
+  const auth = await requireModuleAccess(req, 'users')
+  if (auth.error) return auth.error
+
   const url = new URL(req.url)
   const search = url.searchParams.get('search') || ''
   const page = Number(url.searchParams.get('page') || '1')
@@ -23,9 +25,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  // only ADMIN can create users
-  const session = await getServerSession(authOptions)
-  if (!session || (session as any).user?.role !== 'ADMIN') return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+  const auth = await requireModuleAccess(req, 'users')
+  if (auth.error) return auth.error
 
   try {
     const body = await req.json()

@@ -1,0 +1,14 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { AgreementOrderByWithRelationInputObjectSchema as AgreementOrderByWithRelationInputObjectSchema } from './objects/AgreementOrderByWithRelationInput.schema';
+import { AgreementWhereInputObjectSchema as AgreementWhereInputObjectSchema } from './objects/AgreementWhereInput.schema';
+import { AgreementWhereUniqueInputObjectSchema as AgreementWhereUniqueInputObjectSchema } from './objects/AgreementWhereUniqueInput.schema';
+import { AgreementCountAggregateInputObjectSchema as AgreementCountAggregateInputObjectSchema } from './objects/AgreementCountAggregateInput.schema';
+import { AgreementMinAggregateInputObjectSchema as AgreementMinAggregateInputObjectSchema } from './objects/AgreementMinAggregateInput.schema';
+import { AgreementMaxAggregateInputObjectSchema as AgreementMaxAggregateInputObjectSchema } from './objects/AgreementMaxAggregateInput.schema';
+import { AgreementAvgAggregateInputObjectSchema as AgreementAvgAggregateInputObjectSchema } from './objects/AgreementAvgAggregateInput.schema';
+import { AgreementSumAggregateInputObjectSchema as AgreementSumAggregateInputObjectSchema } from './objects/AgreementSumAggregateInput.schema';
+
+export const AgreementAggregateSchema: z.ZodType<Prisma.AgreementAggregateArgs> = z.object({ orderBy: z.union([AgreementOrderByWithRelationInputObjectSchema, AgreementOrderByWithRelationInputObjectSchema.array()]).optional(), where: AgreementWhereInputObjectSchema.optional(), cursor: AgreementWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), AgreementCountAggregateInputObjectSchema ]).optional(), _min: AgreementMinAggregateInputObjectSchema.optional(), _max: AgreementMaxAggregateInputObjectSchema.optional(), _avg: AgreementAvgAggregateInputObjectSchema.optional(), _sum: AgreementSumAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.AgreementAggregateArgs>;
+
+export const AgreementAggregateZodSchema = z.object({ orderBy: z.union([AgreementOrderByWithRelationInputObjectSchema, AgreementOrderByWithRelationInputObjectSchema.array()]).optional(), where: AgreementWhereInputObjectSchema.optional(), cursor: AgreementWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), AgreementCountAggregateInputObjectSchema ]).optional(), _min: AgreementMinAggregateInputObjectSchema.optional(), _max: AgreementMaxAggregateInputObjectSchema.optional(), _avg: AgreementAvgAggregateInputObjectSchema.optional(), _sum: AgreementSumAggregateInputObjectSchema.optional() }).strict();

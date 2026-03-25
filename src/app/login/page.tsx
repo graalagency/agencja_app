@@ -22,6 +22,8 @@ export default function LoginPage() {
       } catch (e) {}
       // użyj replace aby nie zostawiać starej strony w historii
       router.replace('/dashboard')
+    } else if (res?.error === 'DatabaseUnavailable') {
+      setError(t('auth.databaseUnavailable'))
     } else {
       setError(t('auth.invalidCredentials'))
     }

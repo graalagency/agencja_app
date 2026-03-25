@@ -4,7 +4,9 @@ import { SortOrderSchema } from '../enums/SortOrder.schema';
 import { SortOrderInputObjectSchema as SortOrderInputObjectSchema } from './SortOrderInput.schema';
 import { ClientOrderByWithRelationInputObjectSchema as ClientOrderByWithRelationInputObjectSchema } from './ClientOrderByWithRelationInput.schema';
 import { PublisherOrderByWithRelationInputObjectSchema as PublisherOrderByWithRelationInputObjectSchema } from './PublisherOrderByWithRelationInput.schema';
-import { TitleAuthorOrderByRelationAggregateInputObjectSchema as TitleAuthorOrderByRelationAggregateInputObjectSchema } from './TitleAuthorOrderByRelationAggregateInput.schema'
+import { TitleAuthorOrderByRelationAggregateInputObjectSchema as TitleAuthorOrderByRelationAggregateInputObjectSchema } from './TitleAuthorOrderByRelationAggregateInput.schema';
+import { AgreementOrderByRelationAggregateInputObjectSchema as AgreementOrderByRelationAggregateInputObjectSchema } from './AgreementOrderByRelationAggregateInput.schema';
+import { SubmissionOrderByRelationAggregateInputObjectSchema as SubmissionOrderByRelationAggregateInputObjectSchema } from './SubmissionOrderByRelationAggregateInput.schema'
 
 const makeSchema = () => z.object({
   id: SortOrderSchema.optional(),
@@ -31,7 +33,9 @@ const makeSchema = () => z.object({
   updatedAt: SortOrderSchema.optional(),
   Client: z.lazy(() => ClientOrderByWithRelationInputObjectSchema).optional(),
   Publisher: z.lazy(() => PublisherOrderByWithRelationInputObjectSchema).optional(),
-  TitleAuthors: z.lazy(() => TitleAuthorOrderByRelationAggregateInputObjectSchema).optional()
+  TitleAuthors: z.lazy(() => TitleAuthorOrderByRelationAggregateInputObjectSchema).optional(),
+  Agreements: z.lazy(() => AgreementOrderByRelationAggregateInputObjectSchema).optional(),
+  Submissions: z.lazy(() => SubmissionOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();
 export const TitleOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.TitleOrderByWithRelationInput> = makeSchema() as unknown as z.ZodType<Prisma.TitleOrderByWithRelationInput>;
 export const TitleOrderByWithRelationInputObjectZodSchema = makeSchema();

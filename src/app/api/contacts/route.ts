@@ -1,8 +1,26 @@
 import { prisma } from '../../../lib/prisma'
 import { NextResponse } from 'next/server'
 import { Prisma } from '@prisma/client'
+import { z } from 'zod'
+import { requireModuleAccess } from '../../../lib/api-permissions'
+import { translateZodErrors } from '../../../lib/zod-error-handler'
+
+const CreateContactSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  middleName: z.string().optional().nullable(),
+  email: z.string().email().optional().nullable(),
+  phoneNumber: z.string().optional().nullable(),
+  fax: z.string().optional().nullable(),
+  contactPosition: z.string().optional().nullable(),
+  informal: z.number().optional(),
+  accountant: z.number().optional().nullable(),
+})
 
 export async function GET(req: Request) {
+  const auth = await requireModuleAccess(req, 'contacts')
+  if (auth.error) return auth.error
+
   try {
     const { searchParams } = new URL(req.url)
     const search = searchParams.get('search') || ''
@@ -85,27 +103,33 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json()
-  const contact = await prisma.contact.create({
-    data: {
-      phoneNumber: body.phoneNumber || null,
-      firstName: body.firstName,
-      middleName: body.middleName || null,
-      lastName: body.lastName,
-      informal: body.informal ?? 0,
-      fax: body.fax || null,
-      email: body.email || null,
-      contactPosition: body.contactPosition || null,
-      accountant: body.accountant || null,
-    }
-  })
+  const auth = await requireModuleAccess(req, 'contacts')
+  if (auth.error) return auth.error
 
-  return NextResponse.json({
-    id: contact.id,
-    phoneNumber: contact.phoneNumber,
-    firstName: contact.firstName,
-    middleName: contact.middleName,
-    lastName: contact.lastName,
+  try {
+    const body = await req.json()
+    const validated = CreateContactSchema.parse(body)
+
+    const contact = await prisma.contact.create({
+      data: {
+        phoneNumber: validated.phoneNumber,
+        firstName: validated.firstName,
+        middleName: validated.middleName,
+        lastName: validated.lastName,
+        informal: validated.informal ?? 0,
+        fax: validated.fax,
+        email: validated.email,
+        contactPosition: validated.contactPosition,
+        accountant: validated.accountant,
+      }
+    })
+
+    return NextResponse.json({
+      id: contact.id,
+      phoneNumber: contact.phoneNumber,
+      firstName: contact.firstName,
+      middleName: contact.middleName,
+      lastName: contact.lastName,
     informal: contact.informal,
     fax: contact.fax,
     email: contact.email,
@@ -116,5 +140,11 @@ export async function POST(req: Request) {
     publishers: [],
     createdAt: contact.createdAt,
     updatedAt: contact.updatedAt,
-  }, { status: 201 })
+    }, { status: 201 })
+  } catch (e) {
+    if (e instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Validation failed', details: translateZodErrors(e.issues, 'pl') }, { status: 400 })
+    }
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
 }

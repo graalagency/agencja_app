@@ -1,578 +1,294 @@
-"use client"
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
+'use client'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useSearchMemory } from '../../../../hooks/useSearchMemory'
+import { RememberCheckbox } from '../../../../components/ui/RememberCheckbox'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
 import { Table, Th, Td } from '@/components/ui/Table'
 import { Pagination } from '@/components/ui/Pagination'
-import { Modal } from '@/components/ui/Modal'
-import { Search, Plus, ArrowUpDown } from 'lucide-react'
+import { MultiSelect } from '@/components/ui/MultiSelect'
+import { EVENT_LABELS, AgreementEventBadge as EventBadge } from '@/components/AgreementEventBadge'
 
-interface Agreement {
-  id: string
-  customerId: string
-  customerName: string
-  titleName?: string
-  date: string
-  currency?: string
-  commission: number
-  status: string
+type Agreement = {
+  id: number; sourceId: number | null
+  publisherId: number | null; publisherName: string | null; publisherAbb: string | null
+  clientId: number | null; clientName: string | null
+  titleId: number | null; titleName: string | null
+  agrDate: string; status: string | null; lastEventCode: number | null
+  currencyCode: string | null; languageCode: string | null
+  commission: number | null; validYY: number | null; localTitle: string | null
+}
+type Meta = { page: number; pageSize: number; total: number; pages: number }
+type SortField = 'agrDate' | 'id' | 'commission' | 'status' | 'currencyCode'
+
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
+const CACHE = {
+  filters: 'agr_filters_v2',
+  sort: 'agr_sort_v2',
+  pageSize: 'agr_pageSize_v2',
 }
 
-interface Customer {
-  id: string
-  name: string
-}
-
-interface Currency {
-  id: string
-  desc: string
-}
-
-interface FiltersState {
-  customerName: string
-  currency: string
-  dateFrom: string
-  dateTo: string
-  status: string
-}
-
-interface PaginationMeta {
-  page: number
-  pages: number
-  total: number
-  limit: number
-}
-
-const CACHE_FILTERS_KEY = 'agreements_filters_cache'
-const CACHE_PAGE_SIZE_KEY = 'agreements_page_size_cache'
-const CACHE_CUSTOMER_SEARCH_KEY = 'agreements_customer_search_cache'
-const CACHE_CURRENCY_SEARCH_KEY = 'agreements_currency_search_cache'
-
-// Helper to safely access localStorage
-const isLocalStorageAvailable = () => {
-  try {
-    if (typeof window === 'undefined') return false
-    const test = '__test__'
-    localStorage.setItem(test, test)
-    localStorage.removeItem(test)
-    return true
-  } catch (e) {
-    return false
-  }
-}
-
-const getCachedItem = (key: string) => {
-  if (!isLocalStorageAvailable()) return null
-  try {
-    return localStorage.getItem(key)
-  } catch (e) {
-    console.error(`Error reading ${key} from cache:`, e)
-    return null
-  }
-}
-
-const setCachedItem = (key: string, value: string) => {
-  if (!isLocalStorageAvailable()) return
-  try {
-    localStorage.setItem(key, value)
-  } catch (e) {
-    console.error(`Error writing ${key} to cache:`, e)
-  }
-}
+type DictItem = { code: string; desc?: string; descPL?: string }
 
 export default function AgreementsPage() {
-  const t = useTranslations('finances')
-  const tCommon = useTranslations('common')
-  const [agreements, setAgreements] = useState<Agreement[]>([])
-  const [customers, setCustomers] = useState<Customer[]>([])
-  const [currencies, setCurrencies] = useState<Currency[]>([])
-  const [loading, setLoading] = useState(false)
-  const [showForm, setShowForm] = useState(false)
-  const [meta, setMeta] = useState<PaginationMeta>({ page: 1, pages: 1, total: 0, limit: 10 })
-  const [sortBy, setSortBy] = useState('AgrDate')
-  const [sortDirection, setSortDirection] = useState('DESC')
-  const [pageSize, setPageSize] = useState(() => {
-    const cached = getCachedItem(CACHE_PAGE_SIZE_KEY)
-    return cached ? Number(cached) : 10
-  })
-  const [customerSearch, setCustomerSearch] = useState(() => {
-    return getCachedItem(CACHE_CUSTOMER_SEARCH_KEY) || ''
-  })
-  const [currencySearch, setCurrencySearch] = useState(() => {
-    return getCachedItem(CACHE_CURRENCY_SEARCH_KEY) || ''
-  })
-  const [filters, setFilters] = useState<FiltersState>(() => {
-    const cached = getCachedItem(CACHE_FILTERS_KEY)
-    if (cached) {
-      try {
-        return JSON.parse(cached)
-      } catch (e) {
-        console.error('Error parsing cached filters:', e)
-      }
-    }
-    return {
-      customerName: '',
-      currency: '',
-      dateFrom: '',
-      dateTo: '',
-      status: ''
-    }
-  })
-  const [form, setForm] = useState({
-    custId: '',
-    titleId: '',
-    agrDate: new Date().toISOString().split('T')[0],
-    commission: '',
-    status: 'A',
-    currId: 'USD'
-  })
+  const router = useRouter()
+  const t = useTranslations()
+  const [items, setItems]       = useState<Agreement[]>([])
+  const [meta, setMeta]         = useState<Meta>({ page: 1, pageSize: 20, total: 0, pages: 1 })
+  const [loading, setLoading]   = useState(false)
+  const [dictCurrencies, setDictCurrencies] = useState<DictItem[]>([])
+  const [dictLanguages,  setDictLanguages]  = useState<DictItem[]>([])
 
-  const load = (page = 1) => {
-    applyFilters(page)
-  }
+  const { remember, setRemember, initialCriteria, save } = useSearchMemory('agreements', {
+    search: '', publisherSearch: '', clientSearch: '', currencies: '', languages: '',
+    eventCodes: '', dateFrom: '', dateTo: '', sortBy: 'agrDate', sortDir: 'desc', pageSize: 20,
+  })
+  const [pageSize, setPageSize] = useState(Number(initialCriteria.pageSize))
+  const [sortBy, setSortBy]     = useState<SortField>(initialCriteria.sortBy as SortField)
+  const [sortDir, setSortDir]   = useState<'asc' | 'desc'>(initialCriteria.sortDir as any)
 
-  const handlePageSizeChange = (newPageSize: number) => {
-    setPageSize(newPageSize)
-  }
+  const [search,          setSearch]          = useState(initialCriteria.search as string)
+  const [publisherSearch, setPublisherSearch] = useState(initialCriteria.publisherSearch as string)
+  const [clientSearch,    setClientSearch]    = useState(initialCriteria.clientSearch as string)
+  // comma-sep strings for reliable useEffect deps
+  const [currenciesStr, setCurrenciesStr] = useState<string>(initialCriteria.currencies as string)
+  const [languagesStr,  setLanguagesStr]  = useState<string>(initialCriteria.languages  as string)
+  const [eventCodesStr, setEventCodesStr] = useState<string>(initialCriteria.eventCodes as string)
+  const [dateFrom,        setDateFrom]        = useState(initialCriteria.dateFrom as string)
+  const [dateTo,          setDateTo]          = useState(initialCriteria.dateTo as string)
 
-  const applyFilters = async (pageNum = 1) => {
+  const currenciesSet = new Set(currenciesStr.split(',').filter(Boolean))
+  const languagesSet  = new Set(languagesStr.split(',').filter(Boolean))
+  const eventCodesSet = new Set(eventCodesStr.split(',').map(Number).filter(Boolean))
+
+  const toStr = (s: Set<string | number>) => [...s].map(String).sort().join(',')
+
+  useEffect(() => {
+    fetch('/api/agreements/dicts')
+      .then(r => r.json())
+      .then(d => {
+        setDictCurrencies(d.currencies ?? [])
+        setDictLanguages(d.languages  ?? [])
+      })
+  }, [])
+
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+
+  const fetchData = async (page = 1) => {
     setLoading(true)
     try {
-      const params = new URLSearchParams({
-        page: pageNum.toString(),
-        pageSize: pageSize.toString(),
-        sort: sortBy,
-        order: sortDirection,
-        ...(filters.customerName && { customerName: filters.customerName }),
-        ...(filters.currency && { currency: filters.currency }),
-        ...(filters.dateFrom && { dateFrom: filters.dateFrom }),
-        ...(filters.dateTo && { dateTo: filters.dateTo }),
-        ...(filters.status && { status: filters.status })
-      })
+      const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize), sort: sortBy, order: sortDir })
+      if (search)          params.set('search',        search)
+      if (publisherSearch) params.set('publisherName', publisherSearch)
+      if (clientSearch)    params.set('clientName',    clientSearch)
+      if (currenciesStr)   params.set('currency',      currenciesStr)
+      if (languagesStr)    params.set('language',      languagesStr)
+      if (eventCodesStr)   params.set('lastEventCode', eventCodesStr)
+      if (dateFrom)        params.set('dateFrom',      dateFrom)
+      if (dateTo)          params.set('dateTo',        dateTo)
 
-      const response = await fetch(`/api/agreements?${params}`)
-      const data = await response.json()
-      setAgreements(data.data || [])
-      setMeta(data.meta)
-    } catch (error) {
-      console.error('Error loading agreements:', error)
+      const res  = await fetch(`/api/agreements?${params}`)
+      const json = await res.json()
+      setItems(json.data || [])
+      setMeta(json.meta)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleCustomerInput = (value: string) => {
-    setCustomerSearch(value)
-    
-    if (!value) {
-      setFilters(prev => ({ ...prev, customerName: '' }))
-      return
-    }
-    
-    const selected = customers.find(c => c.name.toLowerCase() === value.toLowerCase())
-    if (selected) {
-      setFilters(prev => ({ ...prev, customerName: selected.name }))
-    } else {
-      setFilters(prev => ({ ...prev, customerName: value }))
-    }
+  // debounced fetch on filter changes
+  useEffect(() => {
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => fetchData(1), 300)
+    return () => clearTimeout(debounceRef.current)
+  }, [search, publisherSearch, clientSearch, currenciesStr, languagesStr, eventCodesStr, dateFrom, dateTo, pageSize, sortBy, sortDir])
+
+  useEffect(() => {
+    save({ search, publisherSearch, clientSearch, currencies: currenciesStr, languages: languagesStr, eventCodes: eventCodesStr, dateFrom, dateTo, sortBy, sortDir, pageSize })
+  }, [search, publisherSearch, clientSearch, currenciesStr, languagesStr, eventCodesStr, dateFrom, dateTo, sortBy, sortDir, pageSize])
+
+  const toggleSort = (field: SortField) => {
+    if (sortBy === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortBy(field); setSortDir('desc') }
   }
-
-  const handleCurrencyInput = (value: string) => {
-    setCurrencySearch(value)
-    
-    if (!value) {
-      setFilters(prev => ({ ...prev, currency: '' }))
-      return
-    }
-    
-    const selected = currencies.find(c => c.desc.toLowerCase() === value.toLowerCase() || c.id.toLowerCase() === value.toLowerCase())
-    if (selected) {
-      setFilters(prev => ({ ...prev, currency: selected.id }))
-    } else {
-      setFilters(prev => ({ ...prev, currency: value }))
-    }
-  }
-
-  const fetchCustomers = async (search?: string) => {
-    try {
-      const params = search ? `?search=${search}` : ''
-      const response = await fetch(`/api/customers${params}`)
-      const json = await response.json()
-      const customerList = Array.isArray(json.data) ? json.data : (Array.isArray(json) ? json : [])
-      setCustomers(customerList)
-    } catch (error) {
-      console.error('Error fetching customers:', error)
-    }
-  }
-
-  const fetchFilters = async (currencySearch?: string) => {
-    try {
-      const params = currencySearch ? `?currencySearch=${currencySearch}` : ''
-      const response = await fetch(`/api/invoices/filters${params}`)
-      const data = await response.json()
-      setCurrencies(data.currencies || [])
-    } catch (error) {
-      console.error('Error fetching filters:', error)
-    }
-  }
-
-  useEffect(() => {
-    fetchCustomers()
-    fetchFilters()
-    applyFilters(1)
-  }, [])
-
-  useEffect(() => {
-    applyFilters(1)
-  }, [pageSize])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      applyFilters(1)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [filters])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      applyFilters(1)
-    }, 50)
-    return () => clearTimeout(timer)
-  }, [sortBy, sortDirection])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchCustomers(customerSearch)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [customerSearch])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchFilters(currencySearch)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [currencySearch])
-
-  useEffect(() => {
-    setCachedItem(CACHE_FILTERS_KEY, JSON.stringify(filters))
-  }, [filters])
-
-  useEffect(() => {
-    setCachedItem(CACHE_PAGE_SIZE_KEY, pageSize.toString())
-  }, [pageSize])
-
-  useEffect(() => {
-    setCachedItem(CACHE_CUSTOMER_SEARCH_KEY, customerSearch)
-  }, [customerSearch])
-
-  useEffect(() => {
-    setCachedItem(CACHE_CURRENCY_SEARCH_KEY, currencySearch)
-  }, [currencySearch])
 
   const resetFilters = () => {
-    setFilters({ customerName: '', currency: '', dateFrom: '', dateTo: '', status: '' })
-    setCustomerSearch('')
-    setCurrencySearch('')
-    setSortBy('AgrDate')
-    setSortDirection('DESC')
+    setSearch(''); setPublisherSearch(''); setClientSearch('')
+    setCurrenciesStr(''); setLanguagesStr(''); setEventCodesStr(''); setDateFrom(''); setDateTo('')
   }
 
-  const toggleSort = (field: string) => {
-    if (sortBy === field) {
-      setSortDirection(sortDirection === 'ASC' ? 'DESC' : 'ASC')
-    } else {
-      setSortBy(field)
-      setSortDirection('ASC')
-    }
-  }
+  const fmtDate = (iso: string) =>
+    new Intl.DateTimeFormat('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso))
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      const response = await fetch('/api/agreements', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      })
-      if (response.ok) {
-        setShowForm(false)
-        setForm({
-          custId: '',
-          titleId: '',
-          agrDate: new Date().toISOString().split('T')[0],
-          commission: '',
-          status: 'A',
-          currId: 'USD'
-        })
-        load(1)
-      }
-    } catch (error) {
-      console.error('Error creating agreement:', error)
-    }
-  }
+  const SortTh = ({ field, children, className = '' }: { field: SortField; children: React.ReactNode; className?: string }) => (
+    <Th className={`cursor-pointer select-none whitespace-nowrap ${className}`} onClick={() => toggleSort(field)}>
+      <span className="flex items-center gap-1">
+        {children}
+        {sortBy === field ? (sortDir === 'asc' ? ' ↑' : ' ↓') : <span className="text-muted-foreground/40"> ↕</span>}
+      </span>
+    </Th>
+  )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Umowy</h1>
-        <Button onClick={() => setShowForm(true)} variant="primary" className="gap-2">
-          <Plus className="h-4 w-4" />
-          Nowa umowa
-        </Button>
+        <h1 className="text-2xl font-bold">{t('agreementsPage.title')}</h1>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            {t('agreementsPage.total')} <strong>{meta.total.toLocaleString('pl-PL')}</strong>
+          </span>
+          <Button size="sm" onClick={() => router.push('/finances/agreements/new')}>{t('agreementsPage.newAgreement')}</Button>
+        </div>
       </div>
 
-      {/* Filters Card */}
-      <Card className="p-6">
-        <div className="space-y-4">
-          {/* Filters - first row: Klient, Waluta, Data od, Data do, Status */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('client')}</label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  list="customers-datalist"
-                  placeholder={tCommon('search')}
-                  value={customerSearch}
-                  onChange={e => handleCustomerInput(e.target.value)}
-                  className="pl-9"
-                />
-                <datalist id="customers-datalist">
-                  {(Array.isArray(customers) ? customers : []).map(c => (
-                    <option key={c.id} value={c.name || ''} />
-                  ))}
-                </datalist>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('currency')}</label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  list="currencies-datalist"
-                  placeholder={tCommon('search')}
-                  value={currencySearch}
-                  onChange={e => handleCurrencyInput(e.target.value)}
-                  className="pl-9"
-                />
-                <datalist id="currencies-datalist">
-                  {(Array.isArray(currencies) ? currencies : []).map(c => (
-                    <option key={c.id} value={c.desc || c.id} />
-                  ))}
-                </datalist>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{tCommon('dateFrom')}</label>
-              <input
-                type="date"
-                value={filters.dateFrom}
-                onChange={e => setFilters({ ...filters, dateFrom: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground h-9"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{tCommon('dateTo')}</label>
-              <input
-                type="date"
-                value={filters.dateTo}
-                onChange={e => setFilters({ ...filters, dateTo: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground h-9"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">Status</label>
-              <select
-                value={filters.status}
-                onChange={e => setFilters({ ...filters, status: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground h-9"
-              >
-                <option value="">Wszystkie</option>
-                <option value="A">Aktywna</option>
-                <option value="I">Nieaktywna</option>
-              </select>
-            </div>
+      {/* Filters */}
+      <Card className="p-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <label className="label text-xs">{t('agreementsPage.searchLabel')}</label>
+            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('agreementsPage.searchPlaceholder')} />
           </div>
-
-          {/* Second row: Buttons */}
-          <div className="grid gap-4 md:grid-cols-5 items-end">
-            <div className="md:col-start-4">
-              <Button type="button" variant="primary" className="w-full h-9" onClick={() => applyFilters(1)}>{tCommon('search')}</Button>
-            </div>
-            <div>
-              <Button type="button" onClick={resetFilters} variant="outline" className="w-full h-9">{tCommon('cancel')}</Button>
-            </div>
+          <div>
+            <label className="label text-xs">{t('agreementsPage.publisherLabel')}</label>
+            <Input value={publisherSearch} onChange={e => setPublisherSearch(e.target.value)} placeholder={t('agreementsPage.publisherPlaceholder')} />
+          </div>
+          <div>
+            <label className="label text-xs">{t('agreementsPage.clientLabel')}</label>
+            <Input value={clientSearch} onChange={e => setClientSearch(e.target.value)} placeholder={t('agreementsPage.clientPlaceholder')} />
+          </div>
+          <div>
+            <label className="label text-xs">{t('agreementsPage.statusLabel')}</label>
+            <MultiSelect
+              placeholder={t('agreementsPage.statusAll')}
+              options={Object.entries(EVENT_LABELS).map(([k, v]) => ({ value: Number(k), label: v.label, cls: v.cls }))}
+              value={eventCodesSet}
+              onChange={next => setEventCodesStr([...next].sort((a, b) => Number(a) - Number(b)).join(','))}
+            />
+          </div>
+          <div>
+            <label className="label text-xs">{t('agreementsPage.currencyLabel')}</label>
+            <MultiSelect
+              placeholder={t('agreementsPage.statusAll')}
+              searchable
+              options={dictCurrencies.map(c => ({ value: c.code, label: `${c.code} – ${c.desc}` }))}
+              value={currenciesSet}
+              onChange={next => setCurrenciesStr(toStr(next))}
+            />
+          </div>
+          <div>
+            <label className="label text-xs">{t('agreementsPage.languageLabel')}</label>
+            <MultiSelect
+              placeholder={t('agreementsPage.statusAll')}
+              searchable
+              options={dictLanguages.map(l => ({ value: l.code, label: `${l.code} – ${l.descPL}` }))}
+              value={languagesSet}
+              onChange={next => setLanguagesStr(toStr(next))}
+            />
+          </div>
+          <div>
+            <label className="label text-xs">{t('agreementsPage.dateFromLabel')}</label>
+            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+          </div>
+          <div>
+            <label className="label text-xs">{t('agreementsPage.dateToLabel')}</label>
+            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
+              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+          </div>
+        </div>
+        <div className="mt-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button variant="outline" onClick={resetFilters} className="h-8 text-xs">{t('agreementsPage.clearFilters')}</Button>
+            <RememberCheckbox checked={remember} onChange={setRemember} />
+          </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>{t('agreementsPage.perPage')}</span>
+            <select
+              value={pageSize}
+              onChange={e => setPageSize(Number(e.target.value))}
+              className="h-8 rounded border border-input bg-transparent px-2 text-xs"
+            >
+              {PAGE_SIZE_OPTIONS.map(n => <option key={n} value={n}>{n}</option>)}
+            </select>
           </div>
         </div>
       </Card>
 
-      {/* Modal */}
-      <Modal isOpen={showForm} onClose={() => setShowForm(false)} title="Nowa umowa">
-        <form onSubmit={handleCreate} className="space-y-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted-foreground">{t('client')}</label>
-            <select
-              value={form.custId}
-              onChange={e => setForm({ ...form, custId: e.target.value })}
-              required
-              className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-            >
-              <option value="">{tCommon('selectClient')}</option>
-              {(Array.isArray(customers) ? customers : []).map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-muted-foreground">Tytuł</label>
-            <input
-              placeholder="ID lub nazwa tytułu"
-              value={form.titleId}
-              onChange={e => setForm({ ...form, titleId: e.target.value })}
-              className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">Data umowy</label>
-              <input
-                type="date"
-                value={form.agrDate}
-                onChange={e => setForm({ ...form, agrDate: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">{t('currency')}</label>
-              <select
-                value={form.currId}
-                onChange={e => setForm({ ...form, currId: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-              >
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="PLN">PLN</option>
-                <option value="GBP">GBP</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">Prowizja</label>
-              <input
-                placeholder="0.00"
-                type="number"
-                step="0.01"
-                value={form.commission}
-                onChange={e => setForm({ ...form, commission: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-muted-foreground">Status</label>
-              <select
-                value={form.status}
-                onChange={e => setForm({ ...form, status: e.target.value })}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:ring-2 focus:ring-ring"
-              >
-                <option value="A">Aktywna</option>
-                <option value="I">Nieaktywna</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="flex gap-2 pt-4 border-t border-border">
-            <Button variant="primary" type="submit" className="flex-1">Utwórz umowę</Button>
-            <Button type="button" onClick={() => setShowForm(false)} className="flex-1">{tCommon('cancel')}</Button>
-          </div>
-        </form>
-      </Modal>
-
-      {/* Table Card */}
-      <Card className="p-6">
+      {/* Table */}
+      <Card className="p-0 overflow-hidden">
         {loading ? (
-          <p className="text-center text-muted-foreground py-8">{tCommon('loading')}</p>
-        ) : agreements.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">Brak umów do wyświetlenia</p>
+          <p className="p-8 text-center text-muted-foreground">{t('agreementsPage.loading')}</p>
+        ) : items.length === 0 ? (
+          <p className="p-8 text-center text-muted-foreground">{t('agreementsPage.noAgreements')}</p>
         ) : (
-          <>
-            <div className="overflow-x-auto">
-              <Table>
-                <thead>
-                  <tr>
-                    <Th className="cursor-pointer hover:bg-muted" onClick={() => toggleSort('AgrID')}>
-                      <div className="flex items-center gap-2">
-                        ID {sortBy === 'AgrID' && <ArrowUpDown className="h-3 w-3" />}
-                      </div>
-                    </Th>
-                    <Th>{t('client')}</Th>
-                    <Th>Tytuł</Th>
-                    <Th className="cursor-pointer hover:bg-muted" onClick={() => toggleSort('AgrDate')}>
-                      <div className="flex items-center gap-2">
-                        Data {sortBy === 'AgrDate' && <ArrowUpDown className="h-3 w-3" />}
-                      </div>
-                    </Th>
-                    <Th>{t('currency')}</Th>
-                    <Th className="text-right cursor-pointer hover:bg-muted" onClick={() => toggleSort('Commission')}>
-                      <div className="flex items-center justify-end gap-2">
-                        Prowizja {sortBy === 'Commission' && <ArrowUpDown className="h-3 w-3" />}
-                      </div>
-                    </Th>
-                    <Th>Status</Th>
+          <div className="overflow-x-auto">
+            <Table>
+              <thead>
+                <tr>
+                  <SortTh field="id">ID</SortTh>
+                  <Th>{t('agreementsPage.columnPublisher')}</Th>
+                  <Th>{t('agreementsPage.columnClient')}</Th>
+                  <Th>{t('agreementsPage.columnTitle')}</Th>
+                  <SortTh field="agrDate">{t('agreementsPage.columnDate')}</SortTh>
+                  <SortTh field="currencyCode">{t('agreementsPage.columnCurrency')}</SortTh>
+                  <Th>{t('agreementsPage.columnLanguage')}</Th>
+                  <SortTh field="commission" className="text-right">{t('agreementsPage.columnCommission')}</SortTh>
+                  <SortTh field="status">{t('agreementsPage.columnStatus')}</SortTh>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map(a => (
+                  <tr key={a.id} className="hover:bg-muted/40 transition-colors">
+                    <Td className="font-mono text-xs text-muted-foreground">
+                      <Link href={`/finances/agreements/${a.id}`} className="text-primary hover:underline font-medium">
+                        {a.sourceId ?? a.id}
+                      </Link>
+                    </Td>
+                    <Td className="max-w-[200px]">
+                      {a.publisherId ? (
+                        <Link href={`/publishers/${a.publisherId}`} className="hover:underline text-sm font-medium" title={a.publisherName ?? ''}>
+                          {a.publisherAbb ?? a.publisherName ?? '—'}
+                        </Link>
+                      ) : <span className="text-muted-foreground">—</span>}
+                    </Td>
+                    <Td className="max-w-[180px]">
+                      {a.clientId ? (
+                        <Link href={`/customers/${a.clientId}`} className="hover:underline text-sm" title={a.clientName ?? ''}>
+                          <span className="truncate block max-w-[170px]">{a.clientName ?? '—'}</span>
+                        </Link>
+                      ) : <span className="text-muted-foreground">—</span>}
+                    </Td>
+                    <Td className="max-w-[200px]">
+                      <span className="truncate block max-w-[190px] text-sm" title={a.titleName ?? ''}>
+                        {a.titleName ?? a.localTitle ?? <span className="text-muted-foreground">—</span>}
+                      </span>
+                    </Td>
+                    <Td className="whitespace-nowrap text-sm">{fmtDate(a.agrDate)}</Td>
+                    <Td className="font-mono text-xs">{a.currencyCode ?? '—'}</Td>
+                    <Td className="font-mono text-xs">{a.languageCode ?? '—'}</Td>
+                    <Td className="text-right tabular-nums text-sm">
+                      {a.commission != null ? `${Number(a.commission).toFixed(1)} %` : '—'}
+                    </Td>
+                    <Td><EventBadge code={a.lastEventCode} /></Td>
                   </tr>
-                </thead>
-                <tbody>
-                  {agreements.map(a => {
-                    return (
-                      <tr key={a.id}>
-                        <Td><Link href={`/finances/agreements/${a.id}`} className="text-primary hover:underline">{a.id}</Link></Td>
-                        <Td className="text-sm">{a.customerName}</Td>
-                        <Td><Link href={`/finances/agreements/${a.id}`} className="text-primary hover:underline">{a.titleName || '-'}</Link></Td>
-                        <Td className="text-sm">{new Intl.DateTimeFormat('pl-PL').format(new Date(a.date))}</Td>
-                        <Td className="text-sm">{a.currency || '-'}</Td>
-                        <Td className="text-right font-medium">{(a.commission ?? 0).toFixed(2)}</Td>
-                        <Td className="text-sm">{a.status === 'A' ? '✓ Aktywna' : '✗ Nieaktywna'}</Td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </Table>
-            </div>
-            {meta.pages > 1 && (
-              <div className="mt-6 flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                  Razem: <span className="font-semibold">{meta.total}</span> rekordów
-                </div>
-                <div className="flex items-center gap-4">
-                  <Pagination page={meta.page} pages={meta.pages} onPage={load} />
-                  <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">{tCommon('perPage')}:</label>
-                    <select
-                      value={pageSize}
-                      onChange={e => handlePageSizeChange(Number(e.target.value))}
-                      className="px-3 py-2 border border-input rounded-md bg-background text-foreground h-9 text-sm"
-                    >
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="20">20</option>
-                      <option value="50">50</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            )}
-          </>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        )}
+
+        {meta.pages > 1 && (
+          <div className="border-t border-border px-4 py-3 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {t('agreementsPage.page')} {meta.page} {t('common.of')} {meta.pages} ({meta.total.toLocaleString('pl-PL')} {t('agreementsPage.records')})
+            </span>
+            <Pagination page={meta.page} pages={meta.pages} onPage={fetchData} />
+          </div>
         )}
       </Card>
     </div>
