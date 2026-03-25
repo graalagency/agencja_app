@@ -90,7 +90,17 @@
     "status": "Status",
     "online": "Online",
     "recentInvoices": "Ostatnie faktury",
-    "customers": "Kontrahenci"
+    "customers": "Kontrahenci",
+    "submissionsInSubmissionsStatus": "Wysyłki: status Submissions",
+    "agreementsFinalOut": "Umowy: status Final out",
+    "agreementsNewAgreement": "Umowy: status New agreement",
+    "agreementsWidgetTitle": "Umowy - statusy",
+    "submissionsWidgetTitle": "Wysyłki - statusy",
+    "totalWithLastStatus": "Łącznie: {count}",
+    "topAuthorsWidgetTitle": "Top 10 Autorzy",
+    "topPublishersWidgetTitle": "Top 10 Wydawcy",
+    "topByAgreements": "Ranking wg liczby umow",
+    "noRankingData": "Brak danych do rankingu"
   },
   "customers": {
     "title": "Kontrahenci",
@@ -380,7 +390,7 @@
     "confirmDelete": "Czy na pewno chcesz usunąć ten tytuł?"
   },
   "agreements": {
-    "title": "Umowy",
+    "title": "Tytuł",
     "listTitle": "Lista Umów",
     "createAgreement": "Dodaj umowę",
     "editAgreement": "Edytuj umowę",
@@ -388,7 +398,6 @@
     "agreementDetails": "Szczegóły umowy",
     "publisher": "Wydawca",
     "client": "Klient",
-    "title": "Tytuł",
     "date": "Data umowy",
     "validYears": "Ważna (lata)",
     "pubTermMonths": "Termin pub. (m-ce)",
@@ -406,7 +415,7 @@
     "confirmDelete": "Czy na pewno chcesz usunąć tę umowę?"
   },
   "submissions": {
-    "title": "Wysyłki",
+    "title": "Tytuł",
     "listTitle": "Lista Wysyłek",
     "createSubmission": "Dodaj wysyłkę",
     "editSubmission": "Edytuj wysyłkę",
@@ -414,7 +423,6 @@
     "submissionDetails": "Szczegóły wysyłki",
     "publisher": "Wydawca",
     "client": "Klient",
-    "title": "Tytuł",
     "submissionDate": "Data wysyłki",
     "format": "Format",
     "quantity": "Ilość",
@@ -744,7 +752,7 @@
     "add": "Dodaj"
   },
   "submissionDetail": {
-    "title": "Wysyłka",
+    "title": "Tytuł",
     "back": "Powrót",
     "loading": "Ładowanie…",
     "notFound": "Nie znaleziono wysyłki",
@@ -758,7 +766,6 @@
     "eventsTab": "Zdarzenia",
     "sectionSubmissionParties": "Strony wysyłki",
     "publisher": "Wydawca",
-    "title": "Tytuł",
     "sectionSubmissionDetails": "Szczegóły wysyłki",
     "submissionDate": "Data wysyłki",
     "sentDate": "Data wysłania",
@@ -791,7 +798,7 @@
     "addEvent": "Dodaj zdarzenie"
   },
   "agreementDetail": {
-    "title": "Umowa",
+    "title": "Tytuł",
     "back": "Powrót",
     "loading": "Ładowanie…",
     "notFound": "Nie znaleziono umowy",
@@ -806,7 +813,6 @@
     "sectionAgreementParties": "Strony umowy",
     "publisher": "Wydawca",
     "client": "Klient",
-    "title": "Tytuł",
     "sectionAgreementDetails": "Szczegóły umowy",
     "agreementDate": "Data umowy",
     "currency": "Waluta",

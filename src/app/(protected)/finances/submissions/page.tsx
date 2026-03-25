@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { useSearchMemory } from '../../../../hooks/useSearchMemory'
 import { RememberCheckbox } from '../../../../components/ui/RememberCheckbox'
@@ -31,6 +31,7 @@ const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
 
 export default function SubmissionsPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const t = useTranslations()
   const [items, setItems]   = useState<Submission[]>([])
   const [meta, setMeta]     = useState<Meta>({ page: 1, pageSize: 20, total: 0, pages: 1 })
@@ -99,6 +100,22 @@ export default function SubmissionsPage() {
   useEffect(() => {
     save({ search, publisherSearch, eventCodes: eventCodesStr, exclusive: exclusiveFilter, dateFrom, dateTo, sortBy, sortDir, pageSize })
   }, [search, publisherSearch, eventCodesStr, exclusiveFilter, dateFrom, dateTo, sortBy, sortDir, pageSize])
+
+  useEffect(() => {
+    const fromUrl = searchParams.get('lastEventCode')
+    if (!fromUrl) return
+
+    const normalized = fromUrl
+      .split(',')
+      .map((value) => Number(value.trim()))
+      .filter((value) => Number.isInteger(value) && value > 0)
+      .sort((a, b) => a - b)
+      .join(',')
+
+    if (normalized && normalized !== eventCodesStr) {
+      setEventCodesStr(normalized)
+    }
+  }, [searchParams, eventCodesStr])
 
   const toggleSort = (field: SortField) => {
     if (sortBy === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc')

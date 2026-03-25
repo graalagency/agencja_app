@@ -5,6 +5,7 @@ import { useSearchMemory } from '../../../../hooks/useSearchMemory'
 import { RememberCheckbox } from '../../../../components/ui/RememberCheckbox'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -36,6 +37,7 @@ type DictItem = { code: string; desc?: string; descPL?: string }
 
 export default function AgreementsPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const t = useTranslations()
   const [items, setItems]       = useState<Agreement[]>([])
   const [meta, setMeta]         = useState<Meta>({ page: 1, pageSize: 20, total: 0, pages: 1 })
@@ -110,6 +112,22 @@ export default function AgreementsPage() {
   useEffect(() => {
     save({ search, publisherSearch, clientSearch, currencies: currenciesStr, languages: languagesStr, eventCodes: eventCodesStr, dateFrom, dateTo, sortBy, sortDir, pageSize })
   }, [search, publisherSearch, clientSearch, currenciesStr, languagesStr, eventCodesStr, dateFrom, dateTo, sortBy, sortDir, pageSize])
+
+  useEffect(() => {
+    const fromUrl = searchParams.get('lastEventCode')
+    if (!fromUrl) return
+
+    const normalized = fromUrl
+      .split(',')
+      .map((value) => Number(value.trim()))
+      .filter((value) => Number.isInteger(value) && value > 0)
+      .sort((a, b) => a - b)
+      .join(',')
+
+    if (normalized && normalized !== eventCodesStr) {
+      setEventCodesStr(normalized)
+    }
+  }, [searchParams, eventCodesStr])
 
   const toggleSort = (field: SortField) => {
     if (sortBy === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc')

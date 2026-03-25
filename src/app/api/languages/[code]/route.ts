@@ -8,7 +8,7 @@ import { translateZodErrors } from '../../../../lib/zod-error-handler'
 const MESSAGES_DIR = path.join(process.cwd(), 'messages')
 
 const UpdateTranslationsSchema = z.object({
-  translations: z.record(z.any()).strict(),
+  translations: z.record(z.any()),
 })
 
 // GET - pobierz tłumaczenia dla konkretnego języka
