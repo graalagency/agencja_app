@@ -52,6 +52,22 @@
 ### Migracja legacy
 - SQL Server (legacy) ma osobne połączenie w `sqlserver.ts` — nie mieszaj z głównym Prisma client.
 
+### Zasady dotyczące projektowania formularzy list i szczegółów
+- Lista:
+  - stosuj wszędzie wzór listy: http://localhost:3000/finances/submissions (wyglad, layout, kolorystyka, etc)
+  - Kazda lista musi mieć w kolumach kluczowe pola oraz przycisk Usuń
+  - Na liscie musi byc link do szczegółów na jednym z pól (np. Nazwa klienta, Pełna nazwa autora, etc)
+  - w nagłówku listy, obok przycisku Nowy powinna być liczba rekodrów wg danej selekcji
+  - w sekcji wyszukiwania muszą być opcje Wyczyść filrty, zapamiętaj kryteria oraz Na stronie (liczba wierszy)
+  - na dole pod listą powinna być informacja Strona x z y oraz przyciski wstecz dalej
+- Szczegóły:
+  - stosuj wszędzie wzór szczegółów: http://localhost:3000/finances/submissions/373215
+  - w szczegółach musi być Nagłówek, przycisk Wstecz oraz przycisk Edytuj
+  - szczegóły mają pokazywać wszystkie detale danego rekordu z tabeli, pogrupowane tematycznie
+  - na dole mają być dane o ostatniej aktuyalizacji/wprowadzeniu (jeśli takie mamy w bazie)
+  - szczegóły powinny być zawsze podzielone na zakładki, minimum jedną, Informacje ogólne 
+  - kolejne zakładki powinny wiązać dane z tabel powiązanych - np w Autorach - lista tytułów danego autora, w Tytułach - lista umów dla danego tytułu, etc.  
+
 ### Efektywność pracy
 - Czytaj tylko pliki bezpośrednio potrzebne do zadania. Nie skanuj całego projektu.
 - Odpowiadaj zwięźle — bez streszczeń tego co zrobiłeś, bez alternatywnych wersji jeśli nie pytam.

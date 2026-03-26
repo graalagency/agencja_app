@@ -45,9 +45,8 @@ export default function AuthorsPage() {
   }
 
   const [showAddModal, setShowAddModal] = useState(false)
-  const [editingAuthor, setEditingAuthor] = useState<Author | null>(null)
   const [formErrors, setFormErrors] = useState<string[]>([])
-  const [form, setForm] = useState({ 
+  const [form, setForm] = useState({
     fullName: '',
     firstName: '',
     middleName: '',
@@ -118,44 +117,7 @@ export default function AuthorsPage() {
     await load(1)
   }
 
-  const updateAuthor = async () => {
-    if (!editingAuthor) return
-    if (!form.firstName || !form.lastName) {
-      setFormErrors([t('firstLastNameRequired')])
-      return
-    }
-    setFormErrors([])
-    await fetch(`/api/authors/${editingAuthor.id}`, { 
-      method: 'PUT', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify(form) 
-    })
-    setEditingAuthor(null)
-    setForm({ 
-      fullName: '',
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      suffix: '',
-      penName: '',
-      remarks: '',
-    })
-    await load(meta.page)
-  }
 
-  const openEditAuthor = (a: Author) => {
-    setEditingAuthor(a)
-    setForm({
-      fullName: a.fullName || '',
-      firstName: a.firstName || '',
-      middleName: a.middleName || '',
-      lastName: a.lastName || '',
-      suffix: a.suffix || '',
-      penName: a.penName || '',
-      remarks: a.remarks || '',
-    })
-    setFormErrors([])
-  }
 
   const removeAuthor = async (id: number) => {
     if (!confirm(t('confirmDelete'))) return
@@ -206,33 +168,27 @@ export default function AuthorsPage() {
               <thead>
                 <tr>
                   <Th onClick={()=>toggleSort('id')} active={sortBy==='id'} order={sortOrder}>ID</Th>
-                  <Th onClick={()=>toggleSort('firstName')} active={sortBy==='firstName'} order={sortOrder}>{t('firstName')}</Th>
-                  <Th onClick={()=>toggleSort('lastName')} active={sortBy==='lastName'} order={sortOrder}>{t('lastName')}</Th>
                   <Th onClick={()=>toggleSort('fullName')} active={sortBy==='fullName'} order={sortOrder}>{t('fullName')}</Th>
                   <Th onClick={()=>toggleSort('penName')} active={sortBy==='penName'} order={sortOrder}>{t('penName')}</Th>
-                  <Th>{t('remarks')}</Th>
                   <Th onClick={()=>toggleSort('dateMod')} active={sortBy==='dateMod'} order={sortOrder}>{tCommon('dateModified')}</Th>
-                  <th className="px-4 py-2"></th>
+                  <Th>{tCommon('actions')}</Th>
                 </tr>
               </thead>
               <tbody>
                 {(Array.isArray(authors) ? authors : []).map(a => (
-                  <tr key={a.id}>
-                    <Td>{a.id}</Td>
+                  <tr key={a.id} className="hover:bg-muted/40 transition-colors">
+                    <Td className="font-mono text-xs text-muted-foreground">{a.id}</Td>
                     <Td>
-                      <Link className="text-primary-600 hover:underline" href={`/authors/${a.id}`}>
-                        {a.firstName}
+                      <Link className="text-primary hover:underline font-medium" href={`/authors/${a.id}`}>
+                        {a.fullName ?? '-'}
                       </Link>
                     </Td>
-                    <Td>{a.lastName ?? '-'}</Td>
-                    <Td>{a.fullName ?? '-'}</Td>
                     <Td>{a.penName ?? '-'}</Td>
-                    <Td>{a.remarks ?? '-'}</Td>
                     <Td>{a.dateMod ? new Intl.DateTimeFormat('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(a.dateMod)) : '-'}</Td>
                     <Td>
                       <div className="flex gap-2">
-                        <Button onClick={()=>openEditAuthor(a)}>{tCommon('edit')}</Button>
-                        <Button onClick={()=>removeAuthor(a.id)}>{tCommon('delete')}</Button>
+                        <Button variant="outline" size="sm" onClick={() => window.location.href = `/authors/${a.id}`}>{t('details')}</Button>
+                        <Button variant="outline" size="sm" onClick={() => removeAuthor(a.id)} className="text-destructive">{tCommon('delete')}</Button>
                       </div>
                     </Td>
                   </tr>
@@ -313,53 +269,6 @@ export default function AuthorsPage() {
         </div>
       )}
 
-      {/* Edit author modal */}
-      {editingAuthor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 overflow-y-auto">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded shadow w-full max-w-2xl my-8 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">{t('editAuthor')}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <label className="label">{t('firstName')}</label>
-                <Input value={form.firstName} onChange={e=>setForm(prev=>({ ...prev, firstName: e.target.value }))} />
-              </div>
-              <div>
-                <label className="label">{t('middleName')}</label>
-                <Input value={form.middleName} onChange={e=>setForm(prev=>({ ...prev, middleName: e.target.value }))} />
-              </div>
-              <div>
-                <label className="label">{t('lastName')}</label>
-                <Input value={form.lastName} onChange={e=>setForm(prev=>({ ...prev, lastName: e.target.value }))} />
-              </div>
-              <div>
-                <label className="label">{tCommon('suffix')}</label>
-                <Input value={form.suffix} onChange={e=>setForm(prev=>({ ...prev, suffix: e.target.value }))} />
-              </div>
-              <div className="md:col-span-2">
-                <label className="label">{t('fullName')}</label>
-                <Input value={form.fullName} onChange={e=>setForm(prev=>({ ...prev, fullName: e.target.value }))} />
-              </div>
-              <div className="md:col-span-2">
-                <label className="label">{t('penName')}</label>
-                <Input value={form.penName} onChange={e=>setForm(prev=>({ ...prev, penName: e.target.value }))} />
-              </div>
-              <div className="md:col-span-2">
-                <label className="label">{t('remarks')}</label>
-                <Input value={form.remarks} onChange={e=>setForm(prev=>({ ...prev, remarks: e.target.value }))} />
-              </div>
-            </div>
-            {formErrors.length > 0 && (
-              <ul className="mt-2 list-disc list-inside text-sm text-red-600">
-                {formErrors.map((e, i) => (<li key={i}>{e}</li>))}
-              </ul>
-            )}
-            <div className="mt-4 flex justify-end gap-2">
-              <Button onClick={() => { setEditingAuthor(null); setFormErrors([]); }}>{tCommon('cancel')}</Button>
-              <Button variant="primary" onClick={updateAuthor}>{tCommon('save')}</Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

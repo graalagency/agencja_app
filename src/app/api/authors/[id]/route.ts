@@ -10,13 +10,17 @@ const UpdateAuthorSchema = z.object({
   middleName: z.string().optional().nullable(),
   suffix: z.string().optional().nullable(),
   penName: z.string().optional().nullable(),
+  fullName: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   personalEmail: z.string().email().optional().nullable(),
   workEmail: z.string().email().optional().nullable(),
   clientId: z.number().int().optional().nullable(),
 })
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const auth = await requireModuleAccess(req, 'authors')
+  if (auth.error) return auth.error
+
   const id = Number(params.id)
   const author = await prisma.author.findUnique({
     where: { id }
@@ -29,8 +33,8 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
     firstName: author.firstName,
     middleName: author.middleName,
     lastName: author.lastName,
-    suffix: null,
-    penName: null,
+    suffix: author.suffix,
+    penName: author.penName,
     remarks: author.description,
     dateMod: author.updatedAt,
     userMod: null,
@@ -63,6 +67,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         firstName: validated.firstName ?? undefined,
         middleName: validated.middleName ?? undefined,
         lastName: validated.lastName ?? undefined,
+        suffix: validated.suffix ?? undefined,
+        penName: validated.penName ?? undefined,
         description: validated.description ?? undefined,
         personalEmail: validated.personalEmail ?? undefined,
         workEmail: validated.workEmail ?? undefined,
@@ -77,6 +83,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       firstName: author.firstName,
       middleName: author.middleName,
       lastName: author.lastName,
+      suffix: author.suffix,
+      penName: author.penName,
       remarks: author.description,
       dateMod: author.updatedAt,
       personalEmail: author.personalEmail,
