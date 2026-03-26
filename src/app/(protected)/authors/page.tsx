@@ -130,14 +130,18 @@ export default function AuthorsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">{t('listTitle')}</h1>
-          <Button variant="primary" onClick={() => { 
-            setShowAddModal(true); 
-            setFormErrors([]); 
-            setForm({ 
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">{t('listTitle')}</h1>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            {t('total')} <strong>{meta.total.toLocaleString('pl-PL')}</strong>
+          </span>
+          <Button size="sm" onClick={() => {
+            setShowAddModal(true);
+            setFormErrors([]);
+            setForm({
               fullName: '',
               firstName: '',
               middleName: '',
@@ -145,25 +149,52 @@ export default function AuthorsPage() {
               suffix: '',
               penName: '',
               remarks: '',
-            }); 
+            });
           }}>
             {t('createAuthor')}
           </Button>
         </div>
-        <div className="max-w-md">
-          <div className="flex items-center justify-between mb-1">
-            <label className="label">{tCommon('search')}</label>
-            <RememberCheckbox checked={remember} onChange={setRemember} />
+      </div>
+
+      {/* Filters */}
+      <Card className="p-4">
+        <div className="space-y-3">
+          {/* Search row */}
+          <div>
+            <label className="label text-xs">{tCommon('search')}</label>
+            <Input value={search} onChange={e=>setSearch(e.target.value)} placeholder={t('firstName')} />
           </div>
-          <Input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Imię/Nazwisko/Pseudonim" />
+          {/* Actions row */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button variant="outline" onClick={() => setSearch('')} className="h-8 text-xs">{t('clearFilters')}</Button>
+              <RememberCheckbox checked={remember} onChange={setRemember} />
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>{tCommon('perPage')}</span>
+              <select
+                value={pageSize}
+                onChange={e => handlePageSizeChange(Number(e.target.value))}
+                className="h-8 rounded border border-input bg-transparent px-2 text-xs"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
         </div>
       </Card>
 
-      <Card className="p-6">
+      {/* Table */}
+      <Card className="p-0 overflow-hidden">
         {loading ? (
-          <p className="text-center text-muted-foreground py-8">{tCommon('loading')}</p>
+          <p className="p-8 text-center text-muted-foreground">{tCommon('loading')}</p>
+        ) : authors.length === 0 ? (
+          <p className="p-8 text-center text-muted-foreground">{t('noRecords')}</p>
         ) : (
-          <div className="space-y-4">
+          <div className="overflow-x-auto">
             <Table>
               <thead>
                 <tr>
@@ -186,36 +217,21 @@ export default function AuthorsPage() {
                     <Td>{a.penName ?? '-'}</Td>
                     <Td>{a.dateMod ? new Intl.DateTimeFormat('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(a.dateMod)) : '-'}</Td>
                     <Td>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={() => window.location.href = `/authors/${a.id}`}>{t('details')}</Button>
-                        <Button variant="outline" size="sm" onClick={() => removeAuthor(a.id)} className="text-destructive">{tCommon('delete')}</Button>
-                      </div>
+                      <Button variant="destructive" size="sm" onClick={() => removeAuthor(a.id)}>{tCommon('delete')}</Button>
                     </Td>
                   </tr>
                 ))}
               </tbody>
             </Table>
-            <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-4">
-                <Pagination page={meta.page} pages={meta.pages} onPage={(p)=>load(p)} />
-                <div className="text-sm text-muted-foreground">
-                  {t('total')}: <span className="font-semibold">{meta.total}</span> {t('records')}
-                </div>
-              </div>
-              <div className="flex items-center gap-2 md:justify-end">
-                <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">{tCommon('perPage')}:</label>
-                <select
-                  value={pageSize}
-                  onChange={e => handlePageSizeChange(Number(e.target.value))}
-                  className="px-3 py-2 border border-input rounded-md bg-background text-foreground h-9 text-sm"
-                >
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="50">50</option>
-                </select>
-              </div>
-            </div>
+          </div>
+        )}
+
+        {meta.pages > 1 && (
+          <div className="border-t border-border px-4 py-3 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {t('page')} {meta.page} {tCommon('of')} {meta.pages} ({meta.total.toLocaleString('pl-PL')} {t('records')})
+            </span>
+            <Pagination page={meta.page} pages={meta.pages} onPage={(p)=>load(p)} />
           </div>
         )}
       </Card>

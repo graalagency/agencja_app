@@ -375,7 +375,10 @@
     "colPages": "Pages",
     "colCopyrightYear": "Copyright Year",
     "tabTitles": "Titles",
-    "details": "Details"
+    "details": "Details",
+    "clearFilters": "Clear filters",
+    "noRecords": "No records",
+    "page": "Page"
   },
   "titles": {
     "title": "Titles",

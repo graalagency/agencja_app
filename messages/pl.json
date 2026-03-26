@@ -375,7 +375,10 @@
     "colPages": "Strony",
     "colCopyrightYear": "Rok praw",
     "tabTitles": "Tytuły",
-    "details": "Szczegóły"
+    "details": "Szczegóły",
+    "clearFilters": "Wyczyść filtry",
+    "noRecords": "Brak rekordów",
+    "page": "Strona"
   },
   "titles": {
     "title": "Tytuły",

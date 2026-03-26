@@ -59,6 +59,7 @@
   - Na liscie musi byc link do szczegółów na jednym z pól (np. Nazwa klienta, Pełna nazwa autora, etc)
   - w nagłówku listy, obok przycisku Nowy powinna być liczba rekodrów wg danej selekcji
   - w sekcji wyszukiwania muszą być opcje Wyczyść filrty, zapamiętaj kryteria oraz Na stronie (liczba wierszy)
+  - pola Wyczyść filtry, zapamiętaj i Na stronie powinny być poniżej pola/pól wyszukiwania i Wyczyść filtry, zapamiętaj wyrównaj do lewej a  Na stronie - do prawej
   - na dole pod listą powinna być informacja Strona x z y oraz przyciski wstecz dalej
 - Szczegóły:
   - stosuj wszędzie wzór szczegółów: http://localhost:3000/finances/submissions/373215

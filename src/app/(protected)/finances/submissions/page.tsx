@@ -129,6 +129,12 @@ export default function SubmissionsPage() {
   const fmtDate = (iso: string) =>
     new Intl.DateTimeFormat('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso))
 
+  const deleteSubmission = async (id: number) => {
+    if (!confirm(t('submissionsPage.confirmDelete'))) return
+    await fetch(`/api/submissions/${id}`, { method: 'DELETE' })
+    await fetchData(meta.page)
+  }
+
   const SortTh = ({ field, children, className = '' }: { field: SortField; children: React.ReactNode; className?: string }) => (
     <Th className={`cursor-pointer select-none whitespace-nowrap ${className}`} onClick={() => toggleSort(field)}>
       <span className="flex items-center gap-1">
@@ -233,6 +239,7 @@ export default function SubmissionsPage() {
                   <SortTh field="noOfCopies" className="text-right">{t('submissionsPage.columnCopies')}</SortTh>
                   <Th>{t('submissionsPage.columnExclusive')}</Th>
                   <Th>{t('submissionsPage.columnEvent')}</Th>
+                  <Th>{t('common.actions')}</Th>
                 </tr>
               </thead>
               <tbody>
@@ -272,6 +279,9 @@ export default function SubmissionsPage() {
                     </Td>
                     <Td>
                       <SubmissionEventBadge code={s.lastEventCode} desc={s.lastEventDesc} />
+                    </Td>
+                    <Td>
+                      <Button variant="destructive" size="sm" onClick={() => deleteSubmission(s.id)}>{t('common.delete')}</Button>
                     </Td>
                   </tr>
                 ))}
