@@ -8,9 +8,11 @@ export const UserInputSchema = z.object({
     passwordHash: z.string(),
     role: RoleSchema,
     permissions: z.unknown().optional().nullable(),
+    image: z.string().optional().nullable(),
     createdAt: z.date(),
     updatedAt: z.date(),
-    locale: z.string()
+    locale: z.string(),
+    dashboardConfig: z.unknown().optional().nullable()
 }).strict();
 
 export type UserInputType = z.infer<typeof UserInputSchema>;

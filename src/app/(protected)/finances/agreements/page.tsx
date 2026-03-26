@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useSearchMemory } from '../../../../hooks/useSearchMemory'
+import { useDeleteConfirmation } from '../../../../hooks/useDeleteConfirmation'
 import { RememberCheckbox } from '../../../../components/ui/RememberCheckbox'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -39,6 +40,7 @@ export default function AgreementsPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const t = useTranslations()
+  const { openDeleteConfirmation } = useDeleteConfirmation()
   const [items, setItems]       = useState<Agreement[]>([])
   const [meta, setMeta]         = useState<Meta>({ page: 1, pageSize: 20, total: 0, pages: 1 })
   const [loading, setLoading]   = useState(false)
@@ -151,6 +153,16 @@ export default function AgreementsPage() {
     </Th>
   )
 
+  const deleteAgreement = (id: number) => {
+    openDeleteConfirmation({
+      title: t('agreementsPage.deleteTitle'),
+      message: t('agreementsPage.deleteMessage'),
+      onConfirm: async () => {
+        await fetch(`/api/agreements/${id}`, { method: 'DELETE' })
+        await fetchData(meta.page)
+      },
+    })
+  }
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -257,6 +269,7 @@ export default function AgreementsPage() {
                   <Th>{t('agreementsPage.columnLanguage')}</Th>
                   <SortTh field="commission" className="text-right">{t('agreementsPage.columnCommission')}</SortTh>
                   <SortTh field="status">{t('agreementsPage.columnStatus')}</SortTh>
+                  <Th>{t('common.actions')}</Th>
                 </tr>
               </thead>
               <tbody>
@@ -293,6 +306,9 @@ export default function AgreementsPage() {
                       {a.commission != null ? `${Number(a.commission).toFixed(1)} %` : '—'}
                     </Td>
                     <Td><EventBadge code={a.lastEventCode} /></Td>
+                    <Td className="text-right">
+                      <Button variant="destructive" size="sm" onClick={() => deleteAgreement(a.id)}>{t('common.delete')}</Button>
+                    </Td>
                   </tr>
                 ))}
               </tbody>

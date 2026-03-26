@@ -2,6 +2,9 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import { useSearchMemory } from '../../../hooks/useSearchMemory'
+import { useDeleteConfirmation } from '../../../hooks/useDeleteConfirmation'
+import { RememberCheckbox } from '../../../components/ui/RememberCheckbox'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -33,29 +36,18 @@ type Meta = { page: number; pageSize: number; total: number; pages: number }
 export default function ContactsPage() {
   const t = useTranslations('contacts')
   const tCommon = useTranslations('common')
+  const { openDeleteConfirmation } = useDeleteConfirmation()
   const [contacts, setContacts] = useState<Contact[]>([])
   const [meta, setMeta] = useState<Meta>({ page: 1, pageSize: 10, total: 0, pages: 1 })
   const [loading, setLoading] = useState(true)
 
-  const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState<'id'|'firstName'|'lastName'|'createdAt'|'phoneNumber'|'email'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('contacts_sortBy') as any) || 'id'
-    }
-    return 'id'
+  const { remember, setRemember, initialCriteria, save } = useSearchMemory('contacts', {
+    search: '', sortBy: 'id', sortOrder: 'asc', pageSize: 10,
   })
-  const [sortOrder, setSortOrder] = useState<'asc'|'desc'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('contacts_sortOrder') as any) || 'asc'
-    }
-    return 'asc'
-  })
-  const [pageSize, setPageSize] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return Number(localStorage.getItem('contacts_pageSize')) || 10
-    }
-    return 10
-  })
+  const [search, setSearch] = useState(initialCriteria.search as string)
+  const [sortBy, setSortBy] = useState<'id'|'firstName'|'lastName'|'createdAt'|'phoneNumber'|'email'>(initialCriteria.sortBy as any)
+  const [sortOrder, setSortOrder] = useState<'asc'|'desc'>(initialCriteria.sortOrder as any)
+  const [pageSize, setPageSize] = useState(Number(initialCriteria.pageSize))
 
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
@@ -106,13 +98,7 @@ export default function ContactsPage() {
 
   useEffect(() => { load(1) }, [search, sortBy, sortOrder, pageSize])
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('contacts_sortBy', sortBy)
-      localStorage.setItem('contacts_sortOrder', sortOrder)
-      localStorage.setItem('contacts_pageSize', String(pageSize))
-    }
-  }, [sortBy, sortOrder, pageSize])
+  useEffect(() => { save({ search, sortBy, sortOrder, pageSize }) }, [search, sortBy, sortOrder, pageSize])
 
   const addContact = async () => {
     const parsed = ContactCreateSchema.safeParse(form)
@@ -183,9 +169,15 @@ export default function ContactsPage() {
     setFormErrors([])
   }
 
-  const removeContact = async (id: number) => {
-    await fetch(`/api/contacts/${id}`, { method: 'DELETE' })
-    await load(meta.page)
+  const removeContact = (id: number) => {
+    openDeleteConfirmation({
+      title: t('deleteTitle'),
+      message: t('deleteMessage'),
+      onConfirm: async () => {
+        await fetch(`/api/contacts/${id}`, { method: 'DELETE' })
+        await load(meta.page)
+      },
+    })
   }
 
   const toggleSort = (col: typeof sortBy) => {
@@ -193,25 +185,54 @@ export default function ContactsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">{t('title')}</h1>
-          <Button variant="primary" onClick={() => { 
-            setShowAddModal(true); 
-            setFormErrors([]); 
-            setForm({ phoneNumber: '', firstName: '', middleName: '', lastName: '', informal: 0, fax: '', email: '', contactPosition: '', accountant: null }); 
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            {t('total')} <strong>{meta.total.toLocaleString('pl-PL')}</strong>
+          </span>
+          <Button size="sm" onClick={() => {
+            setShowAddModal(true);
+            setFormErrors([]);
+            setForm({ phoneNumber: '', firstName: '', middleName: '', lastName: '', informal: 0, fax: '', email: '', contactPosition: '', accountant: null });
           }}>
             {t('createContact')}
           </Button>
         </div>
-        <div className="max-w-md">
-          <label className="label">{tCommon('search')}</label>
-          <Input value={search} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setSearch(e.target.value)} placeholder="Imię/Nazwisko/Email" />
+      </div>
+
+      {/* Filtry */}
+      <Card className="p-4">
+        <div className="space-y-3">
+          <div>
+            <label className="label text-xs">{tCommon('search')}</label>
+            <Input value={search} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setSearch(e.target.value)} placeholder="Imię/Nazwisko/Email" />
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button variant="outline" onClick={() => setSearch('')} className="h-8 text-xs">{t('clearFilters')}</Button>
+              <RememberCheckbox checked={remember} onChange={setRemember} />
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>{t('perPage')}</span>
+              <select
+                value={pageSize}
+                onChange={(e)=>setPageSize(Number(e.target.value))}
+                className="h-8 rounded border border-input bg-transparent px-2 text-xs"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+              </select>
+            </div>
+          </div>
         </div>
       </Card>
 
-      <Card className="p-6">
+      {/* Tabela */}
+      <Card className="p-0 overflow-hidden">
         {loading ? (
           <p className="text-center text-muted-foreground py-8">{tCommon('loading')}</p>
         ) : (
@@ -227,12 +248,12 @@ export default function ContactsPage() {
                   <Th onClick={()=>toggleSort('email')} active={sortBy==='email'} order={sortOrder}>{t('email')}</Th>
                   <Th>{t('position')}</Th>
                   <Th>{t('client')}</Th>
-                  <th className="px-4 py-2"></th>
+                  <Th>{tCommon('actions')}</Th>
                 </tr>
               </thead>
               <tbody>
                 {(Array.isArray(contacts) ? contacts : []).map(c => (
-                  <tr key={c.id}>
+                  <tr key={c.id} className="hover:bg-muted/40 transition-colors">
                     <Td>{c.id}</Td>
                     <Td>
                       <Link className="text-primary-600 hover:underline" href={`/contacts/${c.id}`}>{c.firstName}</Link>
@@ -252,26 +273,21 @@ export default function ContactsPage() {
                       )}
                     </Td>
                     <Td>
-                      <div className="flex gap-2">
-                        <Button onClick={()=>openEditContact(c)}>{tCommon('edit')}</Button>
-                        <Button onClick={()=>removeContact(c.id)}>{tCommon('delete')}</Button>
-                      </div>
+                      <Button variant="destructive" size="sm" onClick={()=>removeContact(c.id)}>{tCommon('delete')}</Button>
                     </Td>
                   </tr>
                 ))}
               </tbody>
             </Table>
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <Pagination page={meta.page} pages={meta.pages} onPage={(p)=>load(p)} />
-              <div className="flex items-center gap-2 md:justify-end">
-                <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">{tCommon('pageSize')}:</label>
-                <select className="flex h-9 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={String(pageSize)} onChange={e=>setPageSize(Number(e.target.value))}>
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                </select>
-              </div>
-            </div>
+          </div>
+        )}
+
+        {meta.pages > 1 && (
+          <div className="border-t border-border px-4 py-3 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {t('page')} {meta.page} {tCommon('of')} {meta.pages} ({meta.total.toLocaleString('pl-PL')} {t('records')})
+            </span>
+            <Pagination page={meta.page} pages={meta.pages} onPage={(p)=>load(p)} />
           </div>
         )}
       </Card>

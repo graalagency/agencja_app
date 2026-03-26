@@ -3,6 +3,7 @@ import { Suspense, useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { useSearchMemory } from '../../../hooks/useSearchMemory'
+import { useDeleteConfirmation } from '../../../hooks/useDeleteConfirmation'
 import { RememberCheckbox } from '../../../components/ui/RememberCheckbox'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
@@ -40,6 +41,7 @@ function TitlesPageInner() {
   const router = useRouter()
   const t = useTranslations()
   const params = useSearchParams()
+  const { openDeleteConfirmation } = useDeleteConfirmation()
 
   const { remember, setRemember, initialCriteria, save } = useSearchMemory('titles', {
     search: '', sortBy: 'title', sortOrder: 'asc', pageSize: 20,
@@ -118,10 +120,15 @@ function TitlesPageInner() {
     await load(1)
   }
 
-  const removeTitle = async (id: number) => {
-    if (!confirm(t('titlesPage.confirmDelete'))) return
-    await fetch(`/api/titles/${id}`, { method: 'DELETE' })
-    await load(meta.page)
+  const removeTitle = (id: number) => {
+    openDeleteConfirmation({
+      title: t('titlesPage.deleteTitle'),
+      message: t('titlesPage.deleteMessage'),
+      onConfirm: async () => {
+        await fetch(`/api/titles/${id}`, { method: 'DELETE' })
+        await load(meta.page)
+      },
+    })
   }
 
   const badges = (title: Title) => {
@@ -133,28 +140,48 @@ function TitlesPageInner() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">{t('common.title')}</h1>
-          <Button variant="primary" onClick={() => setShowAdd(true)}>{t('titlesPage.newTitle')}</Button>
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">{t('common.title')}</h1>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            {t('titlesPage.total')} <strong>{meta.total.toLocaleString('pl-PL')}</strong>
+          </span>
+          <Button size="sm" onClick={() => setShowAdd(true)}>{t('titlesPage.newTitle')}</Button>
         </div>
-        <div className="max-w-md">
-          <div className="flex items-center justify-between mb-1">
-            <label className="label">{t('titlesPage.search')}</label>
-            <RememberCheckbox checked={remember} onChange={setRemember} />
+      </div>
+
+      {/* Filtry */}
+      <Card className="p-4">
+        <div className="space-y-3">
+          <div>
+            <label className="label text-xs">{t('titlesPage.search')}</label>
+            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('titlesPage.searchHint')} />
           </div>
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('titlesPage.searchHint')} />
-          <p className="mt-1.5 text-xs text-muted-foreground">
-            {t('titlesPage.searchHelp')}
-            <br />
-            <code className="font-mono">"fraza"</code> — {t('titlesPage.searchExact')}{' '}
-            <code className="font-mono">"fraza</code> — {t('titlesPage.searchStartsWith')}
-          </p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button variant="outline" onClick={() => setSearch('')} className="h-8 text-xs">{t('titlesPage.clearFilters')}</Button>
+              <RememberCheckbox checked={remember} onChange={setRemember} />
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>{t('titlesPage.perPage')}</span>
+              <select
+                value={pageSize}
+                onChange={e => setPageSize(Number(e.target.value))}
+                className="h-8 rounded border border-input bg-transparent px-2 text-xs"
+              >
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
         </div>
       </Card>
 
-      <Card className="p-6">
+      {/* Tabela */}
+      <Card className="p-0 overflow-hidden">
         {loading ? (
           <p className="text-center text-muted-foreground py-8">{t('titlesPage.loading')}</p>
         ) : (
@@ -170,12 +197,12 @@ function TitlesPageInner() {
                   <Th onClick={() => toggleSort('classCode')} active={sortBy === 'classCode'} order={sortOrder}>{t('titlesPage.columnClass')}</Th>
                   <Th>{t('titlesPage.columnOwner')}</Th>
                   <Th>{t('titlesPage.columnFeatures')}</Th>
-                  <th className="px-4 py-2"></th>
+                  <Th>{t('common.actions')}</Th>
                 </tr>
               </thead>
               <tbody>
                 {titles.map(title => (
-                  <tr key={title.id}>
+                  <tr key={title.id} className="hover:bg-muted/40 transition-colors">
                     <Td>{title.id}</Td>
                     <Td>
                       <Link href={`/titles/${title.id}`} className="text-primary-600 hover:underline font-medium">
@@ -213,12 +240,7 @@ function TitlesPageInner() {
                       </div>
                     </Td>
                     <Td>
-                      <div className="flex gap-2">
-                        <Link href={`/titles/${title.id}`}>
-                          <Button>{t('titlesPage.details')}</Button>
-                        </Link>
-                        <Button onClick={() => removeTitle(title.id)}>{t('titlesPage.delete')}</Button>
-                      </div>
+                      <Button variant="destructive" size="sm" onClick={() => removeTitle(title.id)}>{t('common.delete')}</Button>
                     </Td>
                   </tr>
                 ))}
@@ -229,21 +251,15 @@ function TitlesPageInner() {
                 )}
               </tbody>
             </Table>
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <Pagination page={meta.page} pages={meta.pages} onPage={p => { setPage(p); pushParams({ page: String(p) }); load(p) }} />
-              <div className="flex items-center gap-2 md:justify-end">
-                <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">{t('titlesPage.rowsPerPage')}</label>
-                <select
-                  className="flex h-9 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  value={String(pageSize)}
-                  onChange={e => setPageSize(Number(e.target.value))}
-                >
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="50">50</option>
-                </select>
-              </div>
-            </div>
+          </div>
+        )}
+
+        {meta.pages > 1 && (
+          <div className="border-t border-border px-4 py-3 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {t('titlesPage.page')} {meta.page} {t('common.of')} {meta.pages} ({meta.total.toLocaleString('pl-PL')} {t('titlesPage.records')})
+            </span>
+            <Pagination page={meta.page} pages={meta.pages} onPage={p => { setPage(p); pushParams({ page: String(p) }); load(p) }} />
           </div>
         )}
       </Card>

@@ -313,15 +313,17 @@ model DictLanguage {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  name         String?
-  email        String   @unique
-  passwordHash String
-  role         Role     @default(USER)
-  permissions  Json?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime
-  locale       String   @default("pl")
+  id                Int      @id @default(autoincrement())
+  name              String?
+  email             String   @unique
+  passwordHash      String
+  role              Role     @default(USER)
+  permissions       Json?
+  image             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime
+  locale            String   @default("pl")
+  dashboardConfig   Json?    // Konfiguracja widgetów dashboardu (pozycje, rozmiary, włączone)
 }
 
 // ─── Umowy ───────────────────────────────────────────────────────────────────

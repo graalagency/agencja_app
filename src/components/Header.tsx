@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import ThemeToggle from './ThemeToggle'
 import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -75,6 +75,7 @@ export function Header({ collapsed = false, onToggleSidebar }: Props) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="gap-2 px-2">
                 <Avatar className="h-8 w-8">
+                  {user?.image && <AvatarImage src={user.image} alt={userName} />}
                   <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                     {getInitials(userName)}
                   </AvatarFallback>
@@ -94,6 +95,13 @@ export function Header({ collapsed = false, onToggleSidebar }: Props) {
                   <p className="text-xs text-muted-foreground">{user?.email}</p>
                 </div>
               </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/profile" className="cursor-pointer">
+                  <User2 className="mr-2 h-4 w-4" />
+                  <span>{t('profile.title')}</span>
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={onLogout} className="text-destructive cursor-pointer">
                 <LogOut className="mr-2 h-4 w-4" />

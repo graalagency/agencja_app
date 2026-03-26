@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchMemory } from '../../../hooks/useSearchMemory'
+import { useDeleteConfirmation } from '../../../hooks/useDeleteConfirmation'
 import { RememberCheckbox } from '../../../components/ui/RememberCheckbox'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
@@ -34,6 +35,7 @@ type Meta = { page: number; pageSize: number; total: number; pages: number }
 
 export default function PublishersPage() {
   const t = useTranslations()
+  const { openDeleteConfirmation } = useDeleteConfirmation()
   const [publishers, setPublishers] = useState<Publisher[]>([])
   const [meta, setMeta] = useState<Meta>({ page: 1, pageSize: 10, total: 0, pages: 1 })
   const [loading, setLoading] = useState(true)
@@ -225,9 +227,15 @@ export default function PublishersPage() {
     }
   }
 
-  const removePublisher = async (id: number) => {
-    await fetch(`/api/publishers/${id}`, { method: 'DELETE' })
-    await load(meta.page)
+  const removePublisher = (id: number) => {
+    openDeleteConfirmation({
+      title: t('publishers.deleteTitle'),
+      message: t('publishers.deleteMessage'),
+      onConfirm: async () => {
+        await fetch(`/api/publishers/${id}`, { method: 'DELETE' })
+        await load(meta.page)
+      },
+    })
   }
 
   const toggleSort = (col: typeof sortBy) => {
@@ -259,31 +267,50 @@ export default function PublishersPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">{t('publishers.title')}</h1>
-          <Button
-            variant="primary"
-            onClick={() => {
-              resetForm()
-              setShowAddModal(true)
-            }}
-          >
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">{t('publishers.title')}</h1>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            {t('publishers.total')} <strong>{meta.total.toLocaleString('pl-PL')}</strong>
+          </span>
+          <Button size="sm" onClick={() => { resetForm(); setShowAddModal(true) }}>
             {t('publishers.createPublisher')}
           </Button>
         </div>
+      </div>
 
-        <div className="max-w-md">
-          <div className="flex items-center justify-between mb-1">
-            <label className="label">{t('common.search')}</label>
-            <RememberCheckbox checked={remember} onChange={setRemember} />
+      {/* Filtry */}
+      <Card className="p-4">
+        <div className="space-y-3">
+          <div>
+            <label className="label text-xs">{t('common.search')}</label>
+            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Nazwa/Email/Telefon/NIP" />
           </div>
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Nazwa/Email/Telefon/NIP" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button variant="outline" onClick={() => setSearch('')} className="h-8 text-xs">{t('publishers.clearFilters')}</Button>
+              <RememberCheckbox checked={remember} onChange={setRemember} />
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>{t('publishers.perPage')}</span>
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+                className="h-8 rounded border border-input bg-transparent px-2 text-xs"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+              </select>
+            </div>
+          </div>
         </div>
       </Card>
 
-      <Card className="p-6">
+      {/* Tabela */}
+      <Card className="p-0 overflow-hidden">
         {loading ? (
           <p className="text-center text-muted-foreground py-8">{t('common.loading')}</p>
         ) : (
@@ -299,12 +326,12 @@ export default function PublishersPage() {
                   <Th>{t('publishers.nip')}</Th>
                   <Th>{t('publishers.city')}</Th>
                   <Th onClick={() => toggleSort('createdAt')} active={sortBy === 'createdAt'} order={sortOrder}>{t('publishers.created')}</Th>
-                  <th className="px-4 py-2"></th>
+                  <Th>{t('common.actions')}</Th>
                 </tr>
               </thead>
               <tbody>
                 {publishers.map((publisher) => (
-                  <tr key={publisher.id}>
+                  <tr key={publisher.id} className="hover:bg-muted/40 transition-colors">
                     <Td>{publisher.id}</Td>
                     <Td>{publisher.abbreviation ?? '-'}</Td>
                     <Td>
@@ -329,26 +356,21 @@ export default function PublishersPage() {
                         : '-'}
                     </Td>
                     <Td>
-                      <div className="flex gap-2">
-                        <Button onClick={() => openEditPublisher(publisher)}>{t('common.edit')}</Button>
-                        <Button onClick={() => removePublisher(publisher.id)}>{t('common.delete')}</Button>
-                      </div>
+                      <Button variant="destructive" size="sm" onClick={() => removePublisher(publisher.id)}>{t('common.delete')}</Button>
                     </Td>
                   </tr>
                 ))}
               </tbody>
             </Table>
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <Pagination page={meta.page} pages={meta.pages} onPage={(p) => load(p)} />
-              <div className="flex items-center gap-2 md:justify-end">
-                <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">{t('common.pageSize')}:</label>
-                <select className="flex h-9 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={String(pageSize)} onChange={(e) => setPageSize(Number(e.target.value))}>
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                </select>
-              </div>
-            </div>
+          </div>
+        )}
+
+        {meta.pages > 1 && (
+          <div className="border-t border-border px-4 py-3 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {t('publishers.page')} {meta.page} {t('common.of')} {meta.pages} ({meta.total.toLocaleString('pl-PL')} {t('publishers.records')})
+            </span>
+            <Pagination page={meta.page} pages={meta.pages} onPage={(p) => load(p)} />
           </div>
         )}
       </Card>

@@ -6,7 +6,9 @@ export const UserUpsertResultSchema = z.object({
   passwordHash: z.string(),
   role: z.unknown(),
   permissions: z.unknown().optional(),
+  image: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  locale: z.string()
+  locale: z.string(),
+  dashboardConfig: z.unknown().optional()
 });

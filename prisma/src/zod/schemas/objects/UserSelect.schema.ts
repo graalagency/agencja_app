@@ -9,9 +9,11 @@ const makeSchema = () => z.object({
   passwordHash: z.boolean().optional(),
   role: z.boolean().optional(),
   permissions: z.boolean().optional(),
+  image: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
-  locale: z.boolean().optional()
+  locale: z.boolean().optional(),
+  dashboardConfig: z.boolean().optional()
 }).strict();
 export const UserSelectObjectSchema: z.ZodType<Prisma.UserSelect> = makeSchema() as unknown as z.ZodType<Prisma.UserSelect>;
 export const UserSelectObjectZodSchema = makeSchema();

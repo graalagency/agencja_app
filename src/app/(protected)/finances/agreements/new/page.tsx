@@ -236,37 +236,45 @@ export default function NewAgreementPage() {
         agrDate, status: status || null,
         currencyCode: currencyCode.trim().toUpperCase() || null,
         languageCode: languageCode.trim().toUpperCase() || null,
-        validYY, pubTermMM,
-        maxCopies, minCopies, copiesToOwner, copiesToGraal,
-        commission, commissionMaterials, graalShare, estimatedCopyPrice, graalRepresent,
+        validYY: validYY.trim() ? Number(validYY) : null,
+        pubTermMM: pubTermMM.trim() ? Number(pubTermMM) : null,
+        maxCopies: maxCopies.trim() ? Number(maxCopies) : null,
+        minCopies: minCopies.trim() ? Number(minCopies) : null,
+        copiesToOwner: copiesToOwner.trim() ? Number(copiesToOwner) : null,
+        copiesToGraal: copiesToGraal.trim() ? Number(copiesToGraal) : null,
+        commission: commission.trim() ? Number(commission) : null,
+        commissionMaterials: commissionMaterials.trim() ? Number(commissionMaterials) : null,
+        graalShare: graalShare.trim() ? Number(graalShare) : null,
+        estimatedCopyPrice: estimatedCopyPrice.trim() ? Number(estimatedCopyPrice) : null,
+        graalRepresent,
         localTitle, localIsbn, localPubDate: localPubDate || null,
         clientReference, agrDoc, remarks,
         rights: rights.map(r => ({
-          rightFormId:          r.rightFormId          || null,
-          priceTypeId:          r.priceTypeId          || null,
-          royPriceTypeId:       r.royPriceTypeId       || null,
-          royAccountIntervalId: r.royAccountIntervalId || null,
-          distributionTypeId:   r.distributionTypeId   || null,
+          rightFormId:          r.rightFormId ? Number(r.rightFormId) : null,
+          priceTypeId:          r.priceTypeId ? Number(r.priceTypeId) : null,
+          royPriceTypeId:       r.royPriceTypeId ? Number(r.royPriceTypeId) : null,
+          royAccountIntervalId: r.royAccountIntervalId ? Number(r.royAccountIntervalId) : null,
+          distributionTypeId:   r.distributionTypeId ? Number(r.distributionTypeId) : null,
           royRates: r.royRates
-            .filter(rr => rr.rate !== '')
-            .map(rr => ({ copiesMax: rr.copiesMax || null, rate: rr.rate })),
+            .filter(rr => rr.rate.trim() !== '')
+            .map(rr => ({ copiesMax: rr.copiesMax.trim() ? Number(rr.copiesMax) : null, rate: Number(rr.rate) })),
         })),
         events: events
           .filter(e => e.eventCode)
           .map(e => ({
             eventCode:  Number(e.eventCode),
-            eventDate:  e.eventDate  || null,
-            endDate:    e.endDate    || null,
-            noOfCopies: e.noOfCopies || null,
+            eventDate:  e.eventDate || null,
+            endDate:    e.endDate || null,
+            noOfCopies: e.noOfCopies ? Number(e.noOfCopies) : null,
           })),
         advances: advances
-          .filter(a => a.amount !== '')
+          .filter(a => a.amount.trim() !== '')
           .map(a => ({
-            advTypeId:  a.advTypeId  || null,
-            instalment: a.instalment || null,
-            advTermId:  a.advTermId  || null,
-            termDate:   a.termDate   || null,
-            amount:     a.amount,
+            advTypeId:  a.advTypeId ? Number(a.advTypeId) : null,
+            instalment: a.instalment.trim() ? Number(a.instalment) : null,
+            advTermId:  a.advTermId ? Number(a.advTermId) : null,
+            termDate:   a.termDate || null,
+            amount:     Number(a.amount),
           })),
       }
 

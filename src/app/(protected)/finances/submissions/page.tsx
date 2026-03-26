@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { useSearchMemory } from '../../../../hooks/useSearchMemory'
+import { useDeleteConfirmation } from '../../../../hooks/useDeleteConfirmation'
 import { RememberCheckbox } from '../../../../components/ui/RememberCheckbox'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -33,6 +34,7 @@ export default function SubmissionsPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const t = useTranslations()
+  const { openDeleteConfirmation } = useDeleteConfirmation()
   const [items, setItems]   = useState<Submission[]>([])
   const [meta, setMeta]     = useState<Meta>({ page: 1, pageSize: 20, total: 0, pages: 1 })
   const [loading, setLoading] = useState(false)
@@ -129,10 +131,15 @@ export default function SubmissionsPage() {
   const fmtDate = (iso: string) =>
     new Intl.DateTimeFormat('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso))
 
-  const deleteSubmission = async (id: number) => {
-    if (!confirm(t('submissionsPage.confirmDelete'))) return
-    await fetch(`/api/submissions/${id}`, { method: 'DELETE' })
-    await fetchData(meta.page)
+  const deleteSubmission = (id: number) => {
+    openDeleteConfirmation({
+      title: t('submissionsPage.deleteTitle'),
+      message: t('submissionsPage.deleteMessage'),
+      onConfirm: async () => {
+        await fetch(`/api/submissions/${id}`, { method: 'DELETE' })
+        await fetchData(meta.page)
+      },
+    })
   }
 
   const SortTh = ({ field, children, className = '' }: { field: SortField; children: React.ReactNode; className?: string }) => (

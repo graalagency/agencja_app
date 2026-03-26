@@ -10,9 +10,11 @@ const makeSchema = () => z.object({
   passwordHash: SortOrderSchema.optional(),
   role: SortOrderSchema.optional(),
   permissions: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  image: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
-  locale: SortOrderSchema.optional()
+  locale: SortOrderSchema.optional(),
+  dashboardConfig: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional()
 }).strict();
 export const UserOrderByWithRelationInputObjectSchema: z.ZodType<Prisma.UserOrderByWithRelationInput> = makeSchema() as unknown as z.ZodType<Prisma.UserOrderByWithRelationInput>;
 export const UserOrderByWithRelationInputObjectZodSchema = makeSchema();

@@ -39,6 +39,7 @@
     "sortBy": "Sortuj według",
     "pageSize": "Rozmiar strony",
     "saving": "Zapis...",
+    "deleting": "Usuwanie",
     "title": "Tytuł",
     "dateModified": "Data modyfikacji",
     "order": "Kierunek",
@@ -49,7 +50,8 @@
     "connectionError": "Błąd połączenia z serwerem",
     "dateFrom": "Data od",
     "dateTo": "Data do",
-    "selectClient": "Wybierz klienta"
+    "selectClient": "Wybierz klienta",
+    "rememberCriteria": "Zapamiętaj kryteria"
   },
   "auth": {
     "login": "Zaloguj się",
@@ -132,7 +134,15 @@
     "autoFill": "Autouzupełnianie danych z rejestru",
     "fetchData": "Pobierz dane",
     "fetching": "Pobieranie...",
-    "autoFillHint": "Wprowadź NIP i kliknij \"Pobierz dane\" aby automatycznie wypełnić formularz danymi z CEIDG"
+    "autoFillHint": "Wprowadź NIP i kliknij \"Pobierz dane\" aby automatycznie wypełnić formularz danymi z CEIDG",
+    "clearFilters": "Wyczyść filtry",
+    "total": "Razem:",
+    "page": "Strona",
+    "records": "rekordów",
+    "perPage": "Na stronie",
+    "confirmDelete": "Czy na pewno chcesz usunąć tego kontrahenta?",
+    "deleteTitle": "Usuń kontrahenta",
+    "deleteMessage": "Czy na pewno chcesz usunąć tego kontrahenta? Tej czynności nie można cofnąć."
   },
   "publishers": {
     "title": "Wydawcy",
@@ -166,7 +176,15 @@
     "autoFillHint": "Wprowadź NIP i kliknij \"Pobierz dane\" aby automatycznie wypełnić formularz danymi z CEIDG",
     "basicData": "Podstawowe dane",
     "addressSection": "Adres",
-    "companyData": "Dane firmowe"
+    "companyData": "Dane firmowe",
+    "clearFilters": "Wyczyść filtry",
+    "total": "Razem:",
+    "page": "Strona",
+    "records": "rekordów",
+    "perPage": "Na stronie",
+    "confirmDelete": "Czy na pewno chcesz usunąć tego wydawcę?",
+    "deleteTitle": "Usuń wydawcę",
+    "deleteMessage": "Czy na pewno chcesz usunąć tego wydawcę? Tej czynności nie można cofnąć."
   },
   "invoices": {
     "title": "Faktury",
@@ -258,7 +276,15 @@
     "uploading": "Przesyłanie...",
     "noPhotos": "Brak zdjęć. Kliknij \"Dodaj zdjęcie\" aby przesłać pierwsze zdjęcie.",
     "photoPreview": "Podgląd zdjęcia",
-    "confirmDeletePhoto": "Czy na pewno chcesz usunąć to zdjęcie? Ta operacja jest nieodwracalna."
+    "confirmDeletePhoto": "Czy na pewno chcesz usunąć to zdjęcie? Ta operacja jest nieodwracalna.",
+    "clearFilters": "Wyczyść filtry",
+    "total": "Razem:",
+    "page": "Strona",
+    "records": "rekordów",
+    "perPage": "Na stronie",
+    "confirmDelete": "Czy na pewno chcesz usunąć ten kontakt?",
+    "deleteTitle": "Usuń kontakt",
+    "deleteMessage": "Czy na pewno chcesz usunąć ten kontakt? Tej czynności nie można cofnąć."
   },
   "header": {
     "userProfile": "Profil użytkownika",
@@ -356,6 +382,8 @@
     "authorDeleted": "Autor został usunięty",
     "firstLastNameRequired": "Imię i nazwisko są wymagane",
     "confirmDelete": "Czy na pewno chcesz usunąć tego autora?",
+    "deleteTitle": "Usuń autora",
+    "deleteMessage": "Czy na pewno chcesz usunąć tego autora? Tej czynności nie można cofnąć.",
     "total": "Razem",
     "records": "rekordów",
     "notFound": "Nie znaleziono autora",
@@ -694,6 +722,8 @@
     "columnLanguage": "Język",
     "columnCommission": "Prowizja %",
     "columnStatus": "Status",
+    "deleteTitle": "Usuń umowę",
+    "deleteMessage": "Czy na pewno chcesz usunąć tę umowę? Tej czynności nie można cofnąć.",
     "page": "Strona",
     "records": "rekordów",
     "pagination": "Strona {page} z {pages} ({total} rekordów)"
@@ -727,7 +757,10 @@
     "columnEvent": "Zdarzenie",
     "page": "Strona",
     "records": "rekordów",
-    "pagination": "Strona {page} z {pages} ({total} rekordów)"
+    "pagination": "Strona {page} z {pages} ({total} rekordów)",
+    "deleteTitle": "Usuń wysyłkę",
+    "deleteMessage": "Czy na pewno chcesz usunąć tę wysyłkę? Tej czynności nie można cofnąć.",
+    "confirmDelete": "Czy na pewno chcesz usunąć tę wysyłkę?"
   },
   "titlesPage": {
     "title": "Tytuły",
@@ -752,6 +785,8 @@
     "rowsPerPage": "Wierszy na stronę:",
     "addTitle": "Dodaj tytuł",
     "confirmDelete": "Usunąć tytuł?",
+    "deleteTitle": "Usuń tytuł",
+    "deleteMessage": "Czy na pewno chcesz usunąć ten tytuł? Tej czynności nie można cofnąć.",
     "badgeCollection": "Kolekcja",
     "titleLabel": "Tytuł *",
     "isbnLabel": "ISBN",
@@ -770,7 +805,12 @@
     "isCDLabel": "CD",
     "notesLabel": "Notatki",
     "cancel": "Anuluj",
-    "add": "Dodaj"
+    "add": "Dodaj",
+    "clearFilters": "Wyczyść filtry",
+    "total": "Razem:",
+    "page": "Strona",
+    "records": "rekordów",
+    "perPage": "Na stronie"
   },
   "submissionDetail": {
     "title": "Tytuł",
@@ -1040,5 +1080,52 @@
     "date": "Data",
     "amount": "Kwota",
     "notes": "Notatki"
+  },
+  "profile": {
+    "title": "Mój profil",
+    "tabInfo": "Informacje ogólne",
+    "tabPermissions": "Uprawnienia",
+    "tabPassword": "Zmiana hasła",
+    "name": "Imię",
+    "namePlaceholder": "Twoje imię",
+    "email": "Email",
+    "locale": "Język interfejsu",
+    "uploadPhoto": "Wgraj zdjęcie",
+    "deletePhoto": "Usuń zdjęcie",
+    "photoPreview": "Podgląd zdjęcia",
+    "confirmUpload": "Potwierdź upload",
+    "confirmDeletePhoto": "Czy na pewno chcesz usunąć zdjęcie profilowe?",
+    "photoUploaded": "Zdjęcie wgrane pomyślnie",
+    "photoUploadError": "Błąd przy wgrywaniu zdjęcia",
+    "photoDeleted": "Zdjęcie usunięte",
+    "photoDeleteError": "Błąd przy usuwaniu zdjęcia",
+    "saveSuccess": "Profil zaktualizowany",
+    "saveError": "Błąd przy zapisie profilu",
+    "loadError": "Błąd przy ładowaniu profilu",
+    "role": "Rola",
+    "modules": "Moduły dostępu",
+    "noPermissions": "Brak uprawnień do modułów",
+    "currentPassword": "Obecne hasło",
+    "newPassword": "Nowe hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "changePassword": "Zmień hasło",
+    "passwordChanged": "Hasło zmienione pomyślnie",
+    "passwordMismatch": "Hasła nie pasują do siebie",
+    "passwordChangeError": "Błąd przy zmianie hasła",
+    "avatar": "Awatar",
+    "photoHint": "Obsługiwane: JPG, PNG, GIF, WebP. Rekomendowane: 400x400px lub więcej.",
+    "previewSample": "Podgląd jak będzie wyglądać",
+    "tabWidgets": "Widgety",
+    "widgetsEmpty": "Ta sekcja jest jeszcze pusta",
+    "availableWidgets": "Dostępne widgety",
+    "gridPreview": "Podgląd gridu",
+    "gridSize": "Rozmiar gridu",
+    "resetToDefault": "Resetuj do domyślnie",
+    "widget": {
+      "topAuthors": "Top 10 Autorzy",
+      "topPublishers": "Top 10 Wydawcy",
+      "agreementsStatus": "Umowy - statusy",
+      "submissionsStatus": "Wysyłki - statusy"
+    }
   }
 }

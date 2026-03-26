@@ -9,9 +9,11 @@ const makeSchema = () => z.object({
   passwordHash: SortOrderSchema.optional(),
   role: SortOrderSchema.optional(),
   permissions: SortOrderSchema.optional(),
+  image: SortOrderSchema.optional(),
   createdAt: SortOrderSchema.optional(),
   updatedAt: SortOrderSchema.optional(),
-  locale: SortOrderSchema.optional()
+  locale: SortOrderSchema.optional(),
+  dashboardConfig: SortOrderSchema.optional()
 }).strict();
 export const UserCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.UserCountOrderByAggregateInput> = makeSchema() as unknown as z.ZodType<Prisma.UserCountOrderByAggregateInput>;
 export const UserCountOrderByAggregateInputObjectZodSchema = makeSchema();

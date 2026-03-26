@@ -1,11 +1,14 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 type Props = {
   checked: boolean
   onChange: (v: boolean) => void
 }
 
 export function RememberCheckbox({ checked, onChange }: Props) {
+  const t = useTranslations('common')
   return (
     <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none whitespace-nowrap">
       <input
@@ -14,7 +17,7 @@ export function RememberCheckbox({ checked, onChange }: Props) {
         onChange={e => onChange(e.target.checked)}
         className="rounded border-input"
       />
-      Zapamiętaj kryteria
+      {t('rememberCriteria')}
     </label>
   )
 }

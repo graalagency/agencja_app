@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useSearchMemory } from '../../../hooks/useSearchMemory'
+import { useDeleteConfirmation } from '../../../hooks/useDeleteConfirmation'
 import { RememberCheckbox } from '../../../components/ui/RememberCheckbox'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
@@ -28,6 +29,7 @@ type Meta = { page: number; pageSize: number; total: number; pages: number }
 export default function AuthorsPage() {
   const t = useTranslations('authors')
   const tCommon = useTranslations('common')
+  const { openDeleteConfirmation } = useDeleteConfirmation()
   const [authors, setAuthors] = useState<Author[]>([])
   const [meta, setMeta] = useState<Meta>({ page: 1, pageSize: 10, total: 0, pages: 1 })
   const [loading, setLoading] = useState(true)
@@ -119,10 +121,15 @@ export default function AuthorsPage() {
 
 
 
-  const removeAuthor = async (id: number) => {
-    if (!confirm(t('confirmDelete'))) return
-    await fetch(`/api/authors/${id}`, { method: 'DELETE' })
-    await load(meta.page)
+  const removeAuthor = (id: number) => {
+    openDeleteConfirmation({
+      title: t('deleteTitle'),
+      message: t('deleteMessage'),
+      onConfirm: async () => {
+        await fetch(`/api/authors/${id}`, { method: 'DELETE' })
+        await load(meta.page)
+      },
+    })
   }
 
   const toggleSort = (col: typeof sortBy) => {
@@ -216,7 +223,7 @@ export default function AuthorsPage() {
                     </Td>
                     <Td>{a.penName ?? '-'}</Td>
                     <Td>{a.dateMod ? new Intl.DateTimeFormat('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(a.dateMod)) : '-'}</Td>
-                    <Td>
+                    <Td className="text-right">
                       <Button variant="destructive" size="sm" onClick={() => removeAuthor(a.id)}>{tCommon('delete')}</Button>
                     </Td>
                   </tr>

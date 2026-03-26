@@ -9,9 +9,11 @@ const makeSchema = () => z.object({
   passwordHash: z.literal(true).optional(),
   role: z.literal(true).optional(),
   permissions: z.literal(true).optional(),
+  image: z.literal(true).optional(),
   createdAt: z.literal(true).optional(),
   updatedAt: z.literal(true).optional(),
   locale: z.literal(true).optional(),
+  dashboardConfig: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const UserCountAggregateInputObjectSchema: z.ZodType<Prisma.UserCountAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.UserCountAggregateInputType>;

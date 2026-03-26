@@ -18,9 +18,11 @@ const userwhereinputSchema = z.object({
   passwordHash: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
   role: z.union([z.lazy(() => EnumRoleFilterObjectSchema), RoleSchema]).optional(),
   permissions: z.lazy(() => JsonNullableFilterObjectSchema).optional(),
+  image: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-  locale: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional()
+  locale: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+  dashboardConfig: z.lazy(() => JsonNullableFilterObjectSchema).optional()
 }).strict();
 export const UserWhereInputObjectSchema: z.ZodType<Prisma.UserWhereInput> = userwhereinputSchema as unknown as z.ZodType<Prisma.UserWhereInput>;
 export const UserWhereInputObjectZodSchema = userwhereinputSchema;

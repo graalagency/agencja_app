@@ -39,6 +39,7 @@
     "sortBy": "Sort by",
     "pageSize": "Page size",
     "saving": "Saving...",
+    "deleting": "Deleting",
     "title": "Title",
     "dateModified": "Date modified",
     "order": "Sort order",
@@ -49,7 +50,8 @@
     "connectionError": "Connection error with server",
     "dateFrom": "Date from",
     "dateTo": "Date to",
-    "selectClient": "Select client"
+    "selectClient": "Select client",
+    "rememberCriteria": "Remember criteria"
   },
   "auth": {
     "login": "Log in",
@@ -132,7 +134,15 @@
     "autoFill": "Auto-fill data from registry",
     "fetchData": "Fetch data",
     "fetching": "Fetching...",
-    "autoFillHint": "Enter Tax ID and click \"Fetch data\" to automatically fill the form with data from CEIDG"
+    "autoFillHint": "Enter Tax ID and click \"Fetch data\" to automatically fill the form with data from CEIDG",
+    "clearFilters": "Clear filters",
+    "total": "Total:",
+    "page": "Page",
+    "records": "records",
+    "perPage": "Per page",
+    "confirmDelete": "Are you sure you want to delete this customer?",
+    "deleteTitle": "Delete customer",
+    "deleteMessage": "Are you sure you want to delete this customer? This action cannot be undone."
   },
   "publishers": {
     "title": "Publishers",
@@ -166,7 +176,15 @@
     "autoFillHint": "Enter Tax ID and click \"Fetch data\" to automatically fill the form with data from CEIDG",
     "basicData": "Basic data",
     "addressSection": "Address",
-    "companyData": "Company data"
+    "companyData": "Company data",
+    "clearFilters": "Clear filters",
+    "total": "Total:",
+    "page": "Page",
+    "records": "records",
+    "perPage": "Per page",
+    "confirmDelete": "Are you sure you want to delete this publisher?",
+    "deleteTitle": "Delete publisher",
+    "deleteMessage": "Are you sure you want to delete this publisher? This action cannot be undone."
   },
   "invoices": {
     "title": "Invoices",
@@ -258,7 +276,15 @@
     "uploading": "Uploading...",
     "noPhotos": "No photos. Click \"Add Photo\" to upload the first photo.",
     "photoPreview": "Photo Preview",
-    "confirmDeletePhoto": "Are you sure you want to delete this photo? This action cannot be undone."
+    "confirmDeletePhoto": "Are you sure you want to delete this photo? This action cannot be undone.",
+    "clearFilters": "Clear filters",
+    "total": "Total:",
+    "page": "Page",
+    "records": "records",
+    "perPage": "Per page",
+    "confirmDelete": "Are you sure you want to delete this contact?",
+    "deleteTitle": "Delete contact",
+    "deleteMessage": "Are you sure you want to delete this contact? This action cannot be undone."
   },
   "header": {
     "userProfile": "User Profile",
@@ -356,6 +382,8 @@
     "authorDeleted": "Author has been deleted",
     "firstLastNameRequired": "First name and last name are required",
     "confirmDelete": "Are you sure you want to delete this author?",
+    "deleteTitle": "Delete author",
+    "deleteMessage": "Are you sure you want to delete this author? This action cannot be undone.",
     "total": "Total",
     "records": "records",
     "notFound": "Author not found",
@@ -696,6 +724,8 @@
     "columnLanguage": "Language",
     "columnCommission": "Commission %",
     "columnStatus": "Status",
+    "deleteTitle": "Delete agreement",
+    "deleteMessage": "Are you sure you want to delete this agreement? This action cannot be undone.",
     "page": "Page",
     "records": "records",
     "pagination": "Page {page} of {pages} ({total} records)"
@@ -729,7 +759,10 @@
     "columnEvent": "Event",
     "page": "Page",
     "records": "records",
-    "pagination": "Page {page} of {pages} ({total} records)"
+    "pagination": "Page {page} of {pages} ({total} records)",
+    "deleteTitle": "Delete submission",
+    "deleteMessage": "Are you sure you want to delete this submission? This action cannot be undone.",
+    "confirmDelete": "Are you sure you want to delete this submission?"
   },
   "titlesPage": {
     "title": "Titles",
@@ -754,6 +787,8 @@
     "rowsPerPage": "Rows per page:",
     "addTitle": "Add title",
     "confirmDelete": "Delete title?",
+    "deleteTitle": "Delete title",
+    "deleteMessage": "Are you sure you want to delete this title? This action cannot be undone.",
     "badgeCollection": "Collection",
     "titleLabel": "Title *",
     "isbnLabel": "ISBN",
@@ -772,7 +807,12 @@
     "isCDLabel": "CD",
     "notesLabel": "Notes",
     "cancel": "Cancel",
-    "add": "Add"
+    "add": "Add",
+    "clearFilters": "Clear filters",
+    "total": "Total:",
+    "page": "Page",
+    "records": "records",
+    "perPage": "Per page"
   },
   "submissionDetail": {
     "title": "Title",
@@ -1042,5 +1082,52 @@
     "date": "Date",
     "amount": "Amount",
     "notes": "Notes"
+  },
+  "profile": {
+    "title": "My Profile",
+    "tabInfo": "General Information",
+    "tabPermissions": "Permissions",
+    "tabPassword": "Change Password",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "locale": "Interface Language",
+    "uploadPhoto": "Upload Photo",
+    "deletePhoto": "Delete Photo",
+    "photoPreview": "Photo Preview",
+    "confirmUpload": "Confirm Upload",
+    "confirmDeletePhoto": "Are you sure you want to delete your profile photo?",
+    "photoUploaded": "Photo uploaded successfully",
+    "photoUploadError": "Error uploading photo",
+    "photoDeleted": "Photo deleted successfully",
+    "photoDeleteError": "Error deleting photo",
+    "saveSuccess": "Profile updated",
+    "saveError": "Error saving profile",
+    "loadError": "Error loading profile",
+    "role": "Role",
+    "modules": "Module Access",
+    "noPermissions": "No module permissions",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "changePassword": "Change Password",
+    "passwordChanged": "Password changed successfully",
+    "passwordMismatch": "Passwords do not match",
+    "passwordChangeError": "Error changing password",
+    "avatar": "Avatar",
+    "photoHint": "Supported: JPG, PNG, GIF, WebP. Recommended: 400x400px or larger.",
+    "previewSample": "Preview of how it will look",
+    "tabWidgets": "Widgets",
+    "widgetsEmpty": "This section is currently empty",
+    "availableWidgets": "Available widgets",
+    "gridPreview": "Grid preview",
+    "gridSize": "Grid size",
+    "resetToDefault": "Reset to default",
+    "widget": {
+      "topAuthors": "Top 10 Authors",
+      "topPublishers": "Top 10 Publishers",
+      "agreementsStatus": "Agreements - statuses",
+      "submissionsStatus": "Submissions - statuses"
+    }
   }
 }

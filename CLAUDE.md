@@ -55,7 +55,7 @@
 ### Zasady dotyczące projektowania formularzy list i szczegółów
 - Lista:
   - stosuj wszędzie wzór listy: http://localhost:3000/finances/submissions (wyglad, layout, kolorystyka, etc)
-  - Kazda lista musi mieć w kolumach kluczowe pola oraz przycisk Usuń
+  - Kazda lista musi mieć w kolumach kluczowe pola oraz przycisk Usuń (w kolorze czerwonym z białym napisem). Kolumna Akcje zawsze do prawej strony
   - Na liscie musi byc link do szczegółów na jednym z pól (np. Nazwa klienta, Pełna nazwa autora, etc)
   - w nagłówku listy, obok przycisku Nowy powinna być liczba rekodrów wg danej selekcji
   - w sekcji wyszukiwania muszą być opcje Wyczyść filrty, zapamiętaj kryteria oraz Na stronie (liczba wierszy)
@@ -76,3 +76,4 @@
 - Testy uruchamiaj tylko dla zmienionych modułów.
 - Jeśli zadanie jest jasne — działaj bez pytania o potwierdzenie.
 - Gdy zmienia się temat — przypomnij o `/compact` lub `/clear`.
+- wyszukując jakieś pliki lub dane zawsze ograniczaj się TYLKO do folderów projektu

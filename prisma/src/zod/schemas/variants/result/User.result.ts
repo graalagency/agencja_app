@@ -8,9 +8,11 @@ export const UserResultSchema = z.object({
     passwordHash: z.string(),
     role: RoleSchema,
     permissions: z.unknown().nullable(),
+    image: z.string().nullable(),
     createdAt: z.date(),
     updatedAt: z.date(),
-    locale: z.string()
+    locale: z.string(),
+    dashboardConfig: z.unknown().nullable()
 }).strict();
 
 export type UserResultType = z.infer<typeof UserResultSchema>;

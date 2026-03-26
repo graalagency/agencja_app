@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
           // Timeout dla zapytania do bazy (10 sekund)
           const userPromise = prisma.user.findUnique({
             where: { email: credentials.email },
-            select: { id: true, passwordHash: true, email: true, name: true, role: true, permissions: true, locale: true }
+            select: { id: true, passwordHash: true, email: true, name: true, role: true, permissions: true, locale: true, image: true }
           })
 
           const timeoutPromise = new Promise((_, reject) =>
@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
           const ok = await bcrypt.compare(credentials.password, user.passwordHash)
           if (!ok) return null
 
-          return { id: String(user.id), name: user.name ?? user.email, email: user.email, role: user.role, permissions: user.permissions ?? {}, locale: user.locale }
+          return { id: String(user.id), name: user.name ?? user.email, email: user.email, role: user.role, permissions: user.permissions ?? {}, locale: user.locale, image: user.image ?? null }
         } catch (error: any) {
           if (error?.message === 'DatabaseUnavailable') {
             console.error('Auth error: database unavailable')
@@ -61,6 +61,8 @@ export const authOptions: NextAuthOptions = {
         token.permissions = (user as any).permissions ?? {}
         // @ts-ignore
         token.locale = (user as any).locale ?? 'pl'
+        // @ts-ignore
+        token.image = (user as any).image ?? null
       }
       return token
     },
@@ -74,6 +76,8 @@ export const authOptions: NextAuthOptions = {
       session.user.locale = token.locale ?? 'pl'
       // @ts-ignore
       session.user.permissions = token.permissions ?? {}
+      // @ts-ignore
+      session.user.image = token.image ?? null
       return session
     }
   },

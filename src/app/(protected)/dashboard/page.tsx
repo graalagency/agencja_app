@@ -1,9 +1,9 @@
 import { prisma } from '../../../lib/prisma'
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card'
+import { Card, CardContent } from '../../../components/ui/card'
 import { getTranslations } from 'next-intl/server'
 import { EVENT_LABELS } from '../../../components/AgreementEventBadge'
 import { getSubmissionEventColor } from '../../../components/SubmissionEventBadge'
-import Link from 'next/link'
+import { DashboardGrid } from '../../../components/dashboard/DashboardGrid'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,16 +29,6 @@ type TopPublisherRow = {
 function toNumber(value: bigint | number | null | undefined): number {
   if (typeof value === 'bigint') return Number(value)
   return Number(value ?? 0)
-}
-
-function getBaseBgClass(classes: string): string {
-  const tokens = classes.split(/\s+/).filter(Boolean)
-  return tokens.find((token) => token.startsWith('bg-') && !token.startsWith('dark:')) ?? 'bg-slate-300'
-}
-
-function toPercent(value: number, total: number): number {
-  if (!total) return 0
-  return Math.max(0, Math.min(100, Math.round((value / total) * 100)))
 }
 
 export default async function DashboardPage() {
@@ -163,139 +153,27 @@ export default async function DashboardPage() {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card className="border-0 shadow-md bg-gradient-to-br from-sky-50 via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">{t('dashboard.agreementsWidgetTitle')}</CardTitle>
-            <p className="text-sm text-muted-foreground">{t('dashboard.totalWithLastStatus', { count: agreementsTotal.toLocaleString('pl-PL') })}</p>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {agreementStatuses.map((item) => {
-              const bgClass = getBaseBgClass(item.badgeClass)
-              const percent = toPercent(item.count, agreementsTotal)
-              return (
-                <div key={item.code} className="space-y-1.5">
-                  <div className="flex items-center justify-between gap-3">
-                    <Link
-                      href={`/finances/agreements?lastEventCode=${item.code}`}
-                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${item.badgeClass} hover:opacity-85 transition-opacity`}
-                    >
-                      {item.label}
-                    </Link>
-                    <Link
-                      href={`/finances/agreements?lastEventCode=${item.code}`}
-                      className="text-sm font-semibold tabular-nums hover:underline"
-                    >
-                      {item.count.toLocaleString('pl-PL')}
-                    </Link>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                    <div className={`h-2 rounded-full ${bgClass}`} style={{ width: `${percent}%` }} />
-                  </div>
-                </div>
-              )
-            })}
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-md bg-gradient-to-br from-emerald-50 via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">{t('dashboard.submissionsWidgetTitle')}</CardTitle>
-            <p className="text-sm text-muted-foreground">{t('dashboard.totalWithLastStatus', { count: submissionsTotal.toLocaleString('pl-PL') })}</p>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {submissionStatuses.map((item) => {
-              const bgClass = getBaseBgClass(item.badgeClass)
-              const percent = toPercent(item.count, submissionsTotal)
-              return (
-                <div key={item.code} className="space-y-1.5">
-                  <div className="flex items-center justify-between gap-3">
-                    <Link
-                      href={`/finances/submissions?lastEventCode=${item.code}`}
-                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${item.badgeClass} hover:opacity-85 transition-opacity`}
-                    >
-                      {item.label}
-                    </Link>
-                    <Link
-                      href={`/finances/submissions?lastEventCode=${item.code}`}
-                      className="text-sm font-semibold tabular-nums hover:underline"
-                    >
-                      {item.count.toLocaleString('pl-PL')}
-                    </Link>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                    <div className={`h-2 rounded-full ${bgClass}`} style={{ width: `${percent}%` }} />
-                  </div>
-                </div>
-              )
-            })}
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <Card className="border-0 shadow-md bg-gradient-to-br from-amber-50 via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">{t('dashboard.topAuthorsWidgetTitle')}</CardTitle>
-            <p className="text-sm text-muted-foreground">{t('dashboard.topByAgreements')}</p>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {topAuthors.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{t('dashboard.noRankingData')}</p>
-            ) : topAuthors.map((author, idx) => {
-              const percent = toPercent(author.agreementsCount, topAuthorsMax)
-              return (
-                <Link
-                  key={author.id}
-                  href={`/authors/${author.id}`}
-                  className="group block rounded-lg border border-border/60 bg-background/70 p-3 hover:bg-background transition-colors"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs font-mono text-muted-foreground">#{idx + 1}</span>
-                    <span className="flex-1 truncate text-sm font-medium group-hover:underline">{author.fullName}</span>
-                    <span className="text-sm font-semibold tabular-nums">{author.agreementsCount.toLocaleString('pl-PL')}</span>
-                  </div>
-                  <div className="mt-2 h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                    <div className="h-1.5 rounded-full bg-amber-500" style={{ width: `${percent}%` }} />
-                  </div>
-                </Link>
-              )
-            })}
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-md bg-gradient-to-br from-violet-50 via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">{t('dashboard.topPublishersWidgetTitle')}</CardTitle>
-            <p className="text-sm text-muted-foreground">{t('dashboard.topByAgreements')}</p>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {topPublishers.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{t('dashboard.noRankingData')}</p>
-            ) : topPublishers.map((publisher, idx) => {
-              const percent = toPercent(publisher.agreementsCount, topPublishersMax)
-              return (
-                <Link
-                  key={publisher.id}
-                  href={`/publishers/${publisher.id}`}
-                  className="group block rounded-lg border border-border/60 bg-background/70 p-3 hover:bg-background transition-colors"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs font-mono text-muted-foreground">#{idx + 1}</span>
-                    <span className="flex-1 truncate text-sm font-medium group-hover:underline" title={publisher.name}>
-                      {publisher.abbreviation ? `${publisher.abbreviation} - ${publisher.name}` : publisher.name}
-                    </span>
-                    <span className="text-sm font-semibold tabular-nums">{publisher.agreementsCount.toLocaleString('pl-PL')}</span>
-                  </div>
-                  <div className="mt-2 h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                    <div className="h-1.5 rounded-full bg-violet-500" style={{ width: `${percent}%` }} />
-                  </div>
-                </Link>
-              )
-            })}
-          </CardContent>
-        </Card>
-      </div>
+      <DashboardGrid
+        data={{
+          agreementStatuses,
+          agreementsTotal,
+          submissionStatuses,
+          submissionsTotal,
+          topAuthors,
+          topPublishers,
+        }}
+        translations={{
+          agreementsTitle: t('dashboard.agreementsWidgetTitle'),
+          agreementsSubtitle: t('dashboard.totalWithLastStatus', { count: agreementsTotal.toLocaleString('pl-PL') }),
+          submissionsTitle: t('dashboard.submissionsWidgetTitle'),
+          submissionsSubtitle: t('dashboard.totalWithLastStatus', { count: submissionsTotal.toLocaleString('pl-PL') }),
+          topAuthorsTitle: t('dashboard.topAuthorsWidgetTitle'),
+          topAuthorsSubtitle: t('dashboard.topByAgreements'),
+          topPublishersTitle: t('dashboard.topPublishersWidgetTitle'),
+          topPublishersSubtitle: t('dashboard.topByAgreements'),
+          noRankingData: t('dashboard.noRankingData'),
+        }}
+      />
     </div>
   )
 }
