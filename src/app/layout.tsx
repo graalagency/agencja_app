@@ -7,8 +7,11 @@ import { getMessages, getLocale } from 'next-intl/server'
 import { Providers } from '../components/Providers'
 
 export const metadata: Metadata = {
-  title: 'Aplikacja',
+  title: 'Agencja',
   description: 'Panel administracyjny aplikacji',
+  icons: {
+    icon: '/icon.svg',
+  },
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

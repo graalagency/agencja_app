@@ -4,16 +4,129 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
-import { Database, Search, Star } from 'lucide-react'
+import {
+  BadgeDollarSign,
+  BookOpen,
+  BookType,
+  Boxes,
+  Building2,
+  CalendarClock,
+  ClipboardList,
+  Coins,
+  Database,
+  FileSpreadsheet,
+  FileStack,
+  Flag,
+  Globe,
+  Languages,
+  Library,
+  MapPinned,
+  Newspaper,
+  Package,
+  Percent,
+  Printer,
+  Scale,
+  Search,
+  Send,
+  ShieldCheck,
+  Star,
+  Tags,
+  Users,
+  type LucideIcon,
+} from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { DICTIONARIES, DICTIONARY_GROUPS } from '@/lib/dictionaries'
+import type { DictionaryDefinition, DictionaryGroupKey } from '@/lib/dictionaries'
 
 const FAVORITES_STORAGE_KEY = 'dictionary_hub_favorites'
 
-function iconForDictionary() {
-  return <Database className="h-4 w-4" />
+type IconVisual = {
+  icon: LucideIcon
+  iconClass: string
+  chipClass: string
+}
+
+const GROUP_DEFAULT_VISUALS: Record<DictionaryGroupKey, IconVisual> = {
+  core: {
+    icon: Globe,
+    iconClass: 'text-blue-600 dark:text-blue-300',
+    chipClass: 'bg-blue-100 dark:bg-blue-900/30',
+  },
+  contracts: {
+    icon: FileStack,
+    iconClass: 'text-amber-600 dark:text-amber-300',
+    chipClass: 'bg-amber-100 dark:bg-amber-900/30',
+  },
+  rights: {
+    icon: ShieldCheck,
+    iconClass: 'text-emerald-600 dark:text-emerald-300',
+    chipClass: 'bg-emerald-100 dark:bg-emerald-900/30',
+  },
+  titles: {
+    icon: BookType,
+    iconClass: 'text-violet-600 dark:text-violet-300',
+    chipClass: 'bg-violet-100 dark:bg-violet-900/30',
+  },
+  finance: {
+    icon: Coins,
+    iconClass: 'text-orange-600 dark:text-orange-300',
+    chipClass: 'bg-orange-100 dark:bg-orange-900/30',
+  },
+  rates: {
+    icon: Percent,
+    iconClass: 'text-cyan-600 dark:text-cyan-300',
+    chipClass: 'bg-cyan-100 dark:bg-cyan-900/30',
+  },
+}
+
+const DICTIONARY_VISUALS: Record<string, Partial<IconVisual>> = {
+  countries: { icon: Flag },
+  currencies: { icon: BadgeDollarSign },
+  languages: { icon: Languages },
+  states: { icon: MapPinned },
+  articles: { icon: Newspaper },
+  events: { icon: CalendarClock },
+  'agreement-events': { icon: ClipboardList },
+  'agreement-templates': { icon: FileStack },
+  'submission-sent-types': { icon: Send },
+  'distribution-types': { icon: Boxes },
+  'copy-types': { icon: Package },
+  'target-groups': { icon: Users },
+  'title-main-class': { icon: Library },
+  'title-sub-class': { icon: BookOpen },
+  'material-types': { icon: Package },
+  'cover-formats': { icon: BookType },
+  'print-types': { icon: Printer },
+  isbn: { icon: BookOpen },
+  'rights-forms': { icon: Scale },
+  'royalty-types': { icon: Percent },
+  'royalty-price-types': { icon: Coins },
+  'royalty-account-interval': { icon: CalendarClock },
+  'miss-royalty-reasons': { icon: ClipboardList },
+  'advance-types': { icon: Coins },
+  'advance-term': { icon: CalendarClock },
+  'advance-exclude-reasons': { icon: ClipboardList },
+  'report-modes': { icon: FileSpreadsheet },
+  'price-types': { icon: Tags },
+  'customer-types': { icon: Building2 },
+  'xrate-excel-names': { icon: FileSpreadsheet },
+  xrates: { icon: BadgeDollarSign },
+}
+
+function iconForDictionary(item: DictionaryDefinition) {
+  const fallback = GROUP_DEFAULT_VISUALS[item.group]
+  const custom = DICTIONARY_VISUALS[item.key]
+  const Icon = custom?.icon ?? fallback.icon
+  const iconClass = custom?.iconClass ?? fallback.iconClass
+  const chipClass = custom?.chipClass ?? fallback.chipClass
+
+  return (
+    <span className={`inline-flex h-6 w-6 items-center justify-center rounded-md ${chipClass}`}>
+      <Icon className={`h-4 w-4 ${iconClass}`} />
+    </span>
+  )
 }
 
 export default function DictionariesHubPage() {
@@ -143,7 +256,7 @@ export default function DictionariesHubPage() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 font-medium">
-                          {iconForDictionary()}
+                          {iconForDictionary(item)}
                           <span>{item.label}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">{item.description}</p>
@@ -184,7 +297,7 @@ export default function DictionariesHubPage() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="space-y-1">
                             <div className="flex items-center gap-2 font-medium">
-                              {iconForDictionary()}
+                              {iconForDictionary(item)}
                               <span>{item.label}</span>
                             </div>
                             <p className="text-xs text-muted-foreground">{item.description}</p>

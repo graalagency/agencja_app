@@ -38,14 +38,23 @@ export function useSearchMemory<T extends Record<string, unknown>>(
     return defaults
   })()
 
+  // Holds the latest criteria so we can save immediately when remember is toggled on.
+  const latestCriteriaRef = useRef<T>(defaults)
+
   const setRemember = (value: boolean) => {
     setRememberState(value)
     rememberRef.current = value
     localStorage.setItem(rememberKey, String(value))
-    if (!value) localStorage.removeItem(criteriaKey)
+    if (!value) {
+      localStorage.removeItem(criteriaKey)
+    } else {
+      // Save the criteria that are current at the moment the user checks "Remember".
+      localStorage.setItem(criteriaKey, JSON.stringify(latestCriteriaRef.current))
+    }
   }
 
   const save = (criteria: T) => {
+    latestCriteriaRef.current = criteria
     if (rememberRef.current) {
       localStorage.setItem(criteriaKey, JSON.stringify(criteria))
     }

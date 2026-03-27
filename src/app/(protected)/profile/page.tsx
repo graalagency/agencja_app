@@ -28,7 +28,7 @@ const AVATAR_SIZE = 128
 
 export default function ProfilePage() {
   const router = useRouter()
-  const { data: session, update: updateSession } = useSession()
+  const { data: session, status, update: updateSession } = useSession()
   const t = useTranslations()
 
   const [profile, setProfile] = useState<ProfileData | null>(null)
@@ -48,12 +48,14 @@ export default function ProfilePage() {
   const [confirmPassword, setConfirmPassword] = useState('')
 
   useEffect(() => {
+    if (status === 'loading') return
+
     if (!session?.user) {
       router.push('/login')
       return
     }
     fetchProfile()
-  }, [session, router])
+  }, [session, status, router])
 
   const fetchProfile = async () => {
     try {
@@ -177,15 +179,18 @@ export default function ProfilePage() {
       if (!res.ok) throw new Error('Save failed')
       const updated = await res.json()
       setProfile(updated)
-      await updateSession({ locale: updated.locale })
+
+      // Align behavior with LanguageSwitcher: locale change is applied via cookie + page reload.
+      // Skipping session update here avoids edge cases that may force re-authentication.
+      if (!localeChanged) {
+        await updateSession({ locale: updated.locale })
+      }
       setMessage({ type: 'success', text: t('profile.saveSuccess') })
 
-      // If language changed, update cookie and reload page to apply locale across UI
+      // If language changed, update cookie and reload app with translated messages.
       if (localeChanged) {
-        document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000; SameSite=Lax`
-        setTimeout(() => {
-          window.location.reload()
-        }, 500)
+        document.cookie = `NEXT_LOCALE=${updated.locale}; path=/; max-age=31536000; SameSite=Lax`
+        window.location.reload()
       }
     } catch (err) {
       setMessage({ type: 'error', text: t('profile.saveError') })

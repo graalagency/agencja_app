@@ -92,6 +92,9 @@ function TitlesPageInner() {
 
   useEffect(() => {
     save({ search, sortBy, sortOrder, pageSize })
+  }, [search, sortBy, sortOrder, pageSize])
+
+  useEffect(() => {
     if (isFirstRender.current) { isFirstRender.current = false; load(page); return }
     setPage(1)
     pushParams({ page: '1' })

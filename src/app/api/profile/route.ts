@@ -79,7 +79,16 @@ export async function PUT(req: Request) {
       },
     })
 
-    return NextResponse.json(user)
+    const response = NextResponse.json(user)
+    if (user.locale) {
+      response.cookies.set('NEXT_LOCALE', user.locale, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: 'lax',
+      })
+    }
+
+    return response
   } catch (err) {
     console.error('PUT /api/profile error:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
