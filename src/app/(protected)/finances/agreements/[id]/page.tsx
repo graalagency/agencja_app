@@ -366,8 +366,8 @@ export default function AgreementDetailPage() {
   const tabs: { key: Tab; label: string; count?: number }[] = [
     { key: 'info',     label: 'Informacje ogólne' },
     { key: 'rights',   label: 'Prawa',    count: editing ? form?.rights.length   : agr.rights.length   },
-    { key: 'events',   label: 'Zdarzenia', count: agr.events.length  },
     { key: 'advances', label: 'Zaliczki', count: editing ? form?.advances.length : agr.advances.length },
+    { key: 'events',   label: 'Zdarzenia', count: agr.events.length  },
   ]
 
   return (
