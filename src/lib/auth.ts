@@ -51,7 +51,7 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         // @ts-ignore
         token.id = user.id
@@ -64,6 +64,17 @@ export const authOptions: NextAuthOptions = {
         // @ts-ignore
         token.image = (user as any).image ?? null
       }
+
+      if (trigger === 'update' && session) {
+        // Synchronizuje zmienione pola profilu (np. avatar) bez ponownego logowania.
+        // @ts-ignore
+        if ((session as any).name !== undefined) token.name = (session as any).name
+        // @ts-ignore
+        if ((session as any).locale !== undefined) token.locale = (session as any).locale
+        // @ts-ignore
+        if ((session as any).image !== undefined) token.image = (session as any).image
+      }
+
       return token
     },
     async session({ session, token }) {
@@ -78,6 +89,8 @@ export const authOptions: NextAuthOptions = {
       session.user.permissions = token.permissions ?? {}
       // @ts-ignore
       session.user.image = token.image ?? null
+      // @ts-ignore
+      if (token.name) session.user.name = token.name
       return session
     }
   },

@@ -99,8 +99,8 @@
     "agreementsWidgetTitle": "Agreements - statuses",
     "submissionsWidgetTitle": "Submissions - statuses",
     "totalWithLastStatus": "Total: {count}",
-    "topAuthorsWidgetTitle": "Top 10 Authors",
-    "topPublishersWidgetTitle": "Top 10 Publishers",
+    "topAuthorsWidgetTitle": "Top 9 Authors",
+    "topPublishersWidgetTitle": "Top 9 Publishers",
     "topByAgreements": "Ranking by agreements count",
     "noRankingData": "No ranking data"
   },
@@ -1124,8 +1124,8 @@
     "gridSize": "Grid size",
     "resetToDefault": "Reset to default",
     "widget": {
-      "topAuthors": "Top 10 Authors",
-      "topPublishers": "Top 10 Publishers",
+      "topAuthors": "Top 9Authors",
+      "topPublishers": "Top 9 Publishers",
       "agreementsStatus": "Agreements - statuses",
       "submissionsStatus": "Submissions - statuses"
     }

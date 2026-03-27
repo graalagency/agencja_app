@@ -23,6 +23,9 @@ function toPercent(value: number, total: number): number {
   return Math.max(0, Math.min(100, Math.round((value / total) * 100)))
 }
 
+const SMALL_ROW_CLASS = 'h-8'
+const LARGE_ROW_CLASS = 'h-11'
+
 export function TopPublishersWidget({ publishers, title, subtitle, noDataLabel, size }: Props) {
   const max = Math.max(...publishers.map(p => p.agreementsCount), 0)
 
@@ -36,19 +39,19 @@ export function TopPublishersWidget({ publishers, title, subtitle, noDataLabel, 
           {publishers.length === 0 ? (
             <div className="px-4 py-1.5 text-xs text-muted-foreground">{noDataLabel}</div>
           ) : (
-            <table className="w-full h-full">
+            <table className="w-full h-full table-fixed">
               <tbody className="divide-y divide-border/50 text-xs">
                 {publishers.map((publisher, idx) => (
-                  <tr key={publisher.id} className="hover:bg-violet-50 dark:hover:bg-violet-900/10 transition-colors" title={publisher.name}>
-                    <td className="px-4 py-1.5">
+                  <tr key={publisher.id} className={`${SMALL_ROW_CLASS} hover:bg-violet-50 dark:hover:bg-violet-900/10 transition-colors`} title={publisher.name}>
+                    <td className="px-4 align-middle">
                       <Link
                         href={`/publishers/${publisher.id}`}
-                        className="font-medium truncate text-violet-600 dark:text-violet-400 hover:underline"
+                        className="block w-full truncate font-medium text-violet-600 dark:text-violet-400 hover:underline"
                       >
                         {idx + 1}. {publisher.abbreviation || publisher.name}
                       </Link>
                     </td>
-                    <td className="text-right px-4 py-1.5">
+                    <td className="text-right px-4 align-middle w-24">
                       <Link
                         href={`/publishers/${publisher.id}`}
                         className="font-semibold text-violet-600 dark:text-violet-400 hover:underline"
@@ -76,22 +79,22 @@ export function TopPublishersWidget({ publishers, title, subtitle, noDataLabel, 
         {publishers.length === 0 ? (
           <div className="px-6 py-2.5 text-sm text-muted-foreground">{noDataLabel}</div>
         ) : (
-          <table className="w-full h-full">
+          <table className="w-full h-full table-fixed">
             <tbody className="divide-y divide-border/30 text-sm">
               {publishers.map((publisher, idx) => {
                 const percent = toPercent(publisher.agreementsCount, max)
                 return (
-                  <tr key={publisher.id} className="hover:bg-violet-50 dark:hover:bg-violet-900/10 transition-colors" title={publisher.name}>
-                    <td className="px-6 py-2.5 font-medium">
+                  <tr key={publisher.id} className={`${LARGE_ROW_CLASS} hover:bg-violet-50 dark:hover:bg-violet-900/10 transition-colors`} title={publisher.name}>
+                    <td className="px-6 align-middle font-medium">
                       <Link
                         href={`/publishers/${publisher.id}`}
-                        className="inline-flex items-center gap-2 hover:underline"
+                        className="flex items-center gap-2 min-w-0 hover:underline"
                       >
-                        <span className="text-xs font-mono text-muted-foreground min-w-6">#{idx + 1}</span>
-                        <span className="truncate">{publisher.abbreviation ? `${publisher.abbreviation} - ${publisher.name}` : publisher.name}</span>
+                        <span className="text-xs font-mono text-muted-foreground shrink-0 min-w-6">#{idx + 1}</span>
+                        <span className="block min-w-0 truncate">{publisher.abbreviation ? `${publisher.abbreviation} - ${publisher.name}` : publisher.name}</span>
                       </Link>
                     </td>
-                    <td className="text-right px-6 py-2.5 text-xs text-muted-foreground w-32">
+                    <td className="text-right px-6 align-middle text-xs text-muted-foreground w-36">
                       <div className="flex items-center justify-end gap-3">
                         <span className="font-semibold tabular-nums text-sm">{publisher.agreementsCount.toLocaleString('pl-PL')}</span>
                         <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden flex-shrink-0">

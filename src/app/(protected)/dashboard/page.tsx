@@ -78,7 +78,7 @@ export default async function DashboardPage() {
       JOIN "Agreement" ag ON ag."titleId" = ta."titleId"
       GROUP BY a.id, a."firstName", a."middleName", a."lastName"
       ORDER BY "agreementsCount" DESC, "fullName" ASC
-      LIMIT 10
+      LIMIT 9
     `,
     prisma.$queryRaw<Array<TopPublisherRow>>`
       SELECT
@@ -90,7 +90,7 @@ export default async function DashboardPage() {
       JOIN "Agreement" ag ON ag."publisherId" = p.id
       GROUP BY p.id, p.abbreviation, p.name
       ORDER BY "agreementsCount" DESC, p.name ASC
-      LIMIT 10
+      LIMIT 9
     `,
     ])
   } catch (error) {

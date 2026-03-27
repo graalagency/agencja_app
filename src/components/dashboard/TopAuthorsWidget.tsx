@@ -22,6 +22,9 @@ function toPercent(value: number, total: number): number {
   return Math.max(0, Math.min(100, Math.round((value / total) * 100)))
 }
 
+const SMALL_ROW_CLASS = 'h-8'
+const LARGE_ROW_CLASS = 'h-11'
+
 export function TopAuthorsWidget({ authors, title, subtitle, noDataLabel, size }: Props) {
   const max = Math.max(...authors.map(a => a.agreementsCount), 0)
 
@@ -35,19 +38,19 @@ export function TopAuthorsWidget({ authors, title, subtitle, noDataLabel, size }
           {authors.length === 0 ? (
             <div className="px-4 py-1.5 text-xs text-muted-foreground">{noDataLabel}</div>
           ) : (
-            <table className="w-full h-full">
+            <table className="w-full h-full table-fixed">
               <tbody className="divide-y divide-border/50 text-xs">
                 {authors.map((author, idx) => (
-                  <tr key={author.id} className="hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors">
-                    <td className="px-4 py-1.5">
+                  <tr key={author.id} className={`${SMALL_ROW_CLASS} hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors`}>
+                    <td className="px-4 align-middle">
                       <Link
                         href={`/authors/${author.id}`}
-                        className="font-medium truncate text-amber-600 dark:text-amber-400 hover:underline"
+                        className="block truncate font-medium text-amber-600 dark:text-amber-400 hover:underline"
                       >
                         {idx + 1}. {author.fullName}
                       </Link>
                     </td>
-                    <td className="text-right px-4 py-1.5">
+                    <td className="text-right px-4 align-middle w-24">
                       <Link
                         href={`/authors/${author.id}`}
                         className="font-semibold text-amber-600 dark:text-amber-400 hover:underline"
@@ -75,22 +78,22 @@ export function TopAuthorsWidget({ authors, title, subtitle, noDataLabel, size }
         {authors.length === 0 ? (
           <div className="px-6 py-2.5 text-sm text-muted-foreground">{noDataLabel}</div>
         ) : (
-          <table className="w-full h-full">
+          <table className="w-full h-full table-fixed">
             <tbody className="divide-y divide-border/30 text-sm">
               {authors.map((author, idx) => {
                 const percent = toPercent(author.agreementsCount, max)
                 return (
-                  <tr key={author.id} className="hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors">
-                    <td className="px-6 py-2.5 font-medium">
+                  <tr key={author.id} className={`${LARGE_ROW_CLASS} hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors`}>
+                    <td className="px-6 align-middle font-medium">
                       <Link
                         href={`/authors/${author.id}`}
                         className="inline-flex items-center gap-2 hover:underline"
                       >
                         <span className="text-xs font-mono text-muted-foreground min-w-6">#{idx + 1}</span>
-                        <span className="truncate">{author.fullName}</span>
+                        <span className="truncate block">{author.fullName}</span>
                       </Link>
                     </td>
-                    <td className="text-right px-6 py-2.5 text-xs text-muted-foreground w-32">
+                    <td className="text-right px-6 align-middle text-xs text-muted-foreground w-36">
                       <div className="flex items-center justify-end gap-3">
                         <span className="font-semibold tabular-nums text-sm">{author.agreementsCount.toLocaleString('pl-PL')}</span>
                         <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden flex-shrink-0">

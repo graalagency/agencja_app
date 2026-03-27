@@ -99,8 +99,8 @@
     "agreementsWidgetTitle": "Umowy - statusy",
     "submissionsWidgetTitle": "Wysyłki - statusy",
     "totalWithLastStatus": "Łącznie: {count}",
-    "topAuthorsWidgetTitle": "Top 10 Autorzy",
-    "topPublishersWidgetTitle": "Top 10 Wydawcy",
+    "topAuthorsWidgetTitle": "Top 9 Autorzy",
+    "topPublishersWidgetTitle": "Top 9 Wydawcy",
     "topByAgreements": "Ranking wg liczby umow",
     "noRankingData": "Brak danych do rankingu"
   },
@@ -447,6 +447,7 @@
     "agreementDetails": "Szczegóły umowy",
     "publisher": "Wydawca",
     "client": "Klient",
+    "titleName": "Tytuł",
     "date": "Data umowy",
     "validYears": "Ważna (lata)",
     "pubTermMonths": "Termin pub. (m-ce)",
@@ -472,6 +473,7 @@
     "submissionDetails": "Szczegóły wysyłki",
     "publisher": "Wydawca",
     "client": "Klient",
+    "titleName": "Tytuł",
     "submissionDate": "Data wysyłki",
     "format": "Format",
     "quantity": "Ilość",
@@ -1122,8 +1124,8 @@
     "gridSize": "Rozmiar gridu",
     "resetToDefault": "Resetuj do domyślnie",
     "widget": {
-      "topAuthors": "Top 10 Autorzy",
-      "topPublishers": "Top 10 Wydawcy",
+      "topAuthors": "Top 9 Autorzy",
+      "topPublishers": "Top 9 Wydawcy",
       "agreementsStatus": "Umowy - statusy",
       "submissionsStatus": "Wysyłki - statusy"
     }

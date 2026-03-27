@@ -10,8 +10,8 @@ const WidgetConfigSchema = z.object({
   enabled: z.boolean(),
   col: z.number().min(0).max(19),
   row: z.number().min(0).max(19),
-  width: z.number().min(5).max(20),
-  height: z.number().min(5).max(20),
+  width: z.union([z.literal(5), z.literal(10)]),
+  height: z.union([z.literal(5), z.literal(10)]),
 })
 
 const DashboardConfigSchema = z.object({

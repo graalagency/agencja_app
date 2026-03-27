@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react'
 import { Suspense } from 'react'
 import { AgreementsStatusWidget } from './AgreementsStatusWidget'
 import { SubmissionsStatusWidget } from './SubmissionsStatusWidget'
@@ -51,8 +50,9 @@ const WIDGET_COMPONENTS: Record<string, any> = {
   'top-publishers': TopPublishersWidget,
 }
 
+const GRID_UNIT_PX = 34
+
 export function DashboardGrid({ data, translations }: Props) {
-  const { data: session } = useSession()
   const [config, setConfig] = useState<DashboardConfig | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -86,6 +86,7 @@ export function DashboardGrid({ data, translations }: Props) {
 
   // Calculate grid layout
   const enabledWidgets = config.widgets.filter(w => w.enabled)
+  const gridWidthPx = config.gridCols * GRID_UNIT_PX
 
   // Map widget data
   const widgetDataMap: Record<string, any> = {}
@@ -128,37 +129,39 @@ export function DashboardGrid({ data, translations }: Props) {
   })
 
   return (
-    <div
-      className="gap-6"
-      style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${config.gridCols}, minmax(0, 1fr))`,
-        gridTemplateRows: 'auto',
-        gridAutoRows: `${100 / (config.gridRows / 5)}vh`,
-      }}
-    >
-      {enabledWidgets.map(widget => {
-        const Component = WIDGET_COMPONENTS[widget.id]
-        const widgetData = widgetDataMap[widget.id]
+    <div className="overflow-x-auto pb-2">
+      <div
+        className="gap-4"
+        style={{
+          width: `${gridWidthPx}px`,
+          display: 'grid',
+          gridTemplateColumns: `repeat(${config.gridCols}, ${GRID_UNIT_PX}px)`,
+          gridAutoRows: `${GRID_UNIT_PX}px`,
+        }}
+      >
+        {enabledWidgets.map(widget => {
+          const Component = WIDGET_COMPONENTS[widget.id]
+          const widgetData = widgetDataMap[widget.id]
 
-        if (!Component || !widgetData) return null
+          if (!Component || !widgetData) return null
 
-        return (
-          <div
-            key={widget.id}
-            style={{
-              gridColumn: `${widget.col + 1} / span ${widget.width}`,
-              gridRow: `auto / span ${widget.height / 5}`,
-            }}
-          >
-            <Suspense
-              fallback={<Card className="h-full bg-muted animate-pulse" />}
+          return (
+            <div
+              key={widget.id}
+              style={{
+                gridColumn: `${widget.col + 1} / span ${widget.width}`,
+                gridRow: `${widget.row + 1} / span ${widget.height}`,
+              }}
             >
-              <Component {...widgetData} />
-            </Suspense>
-          </div>
-        )
-      })}
+              <Suspense
+                fallback={<Card className="h-full bg-muted animate-pulse" />}
+              >
+                <Component {...widgetData} />
+              </Suspense>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

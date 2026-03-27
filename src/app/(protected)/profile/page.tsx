@@ -116,16 +116,18 @@ export default function ProfilePage() {
                 throw new Error(error.error || 'Upload failed')
               }
 
+              const uploadResult = await res.json()
+
               // Odśwież profil z nowym zdjęciem
               await fetchProfile()
-              await updateSession()
+              await updateSession({ image: uploadResult?.url ?? null })
 
               setMessage({ type: 'success', text: t('profile.photoUploaded') })
 
-              // Przeładuj stronę aby zaktualizować header
+              // Delikatny fallback na starsze stany sesji
               setTimeout(() => {
                 window.location.reload()
-              }, 1000)
+              }, 400)
             },
             'image/png',
             0.95
@@ -154,6 +156,7 @@ export default function ProfilePage() {
       })
       if (!res.ok) throw new Error('Delete failed')
       setProfile(p => p ? { ...p, image: null } : null)
+      await updateSession({ image: null })
       setMessage({ type: 'success', text: t('profile.photoDeleted') })
     } catch (err) {
       setMessage({ type: 'error', text: t('profile.photoDeleteError') })
